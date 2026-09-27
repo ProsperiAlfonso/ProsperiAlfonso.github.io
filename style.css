@@ -154,9 +154,11 @@ h2 { font-family: var(--display); font-weight: 500; font-size: clamp(44px, 5vw, 
 .note-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
 .note-card { display: flex; flex-direction: column; border-radius: 20px; overflow: hidden; border: 1px solid var(--card-line); background: #fff; color: var(--navy); }
 .note-card:hover { color: var(--navy); border-color: var(--blue); }
-.note-thumb { aspect-ratio: 16 / 10; background: var(--card-line); overflow: hidden; display: grid; place-items: center; }
+.note-thumb { position: relative; aspect-ratio: 16 / 10; background: var(--card-line); overflow: hidden; display: grid; place-items: center; }
 .note-thumb img { width: 100%; height: 100%; object-fit: cover; }
 .note-noimg { font-family: var(--display); font-size: 32px; color: var(--muted); }
+.badge-outdated { position: absolute; top: 12px; left: 12px; font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: 0.02em; padding: 6px 12px; border-radius: 999px; background: #402A0C; color: #F3C98B; }
+.filter-outdated.active { background: #402A0C; border-color: #402A0C; }
 .note-body { padding: 24px; display: flex; flex-direction: column; gap: 10px; }
 .note-body strong { font-size: 19px; font-weight: 600; line-height: 1.3; }
 .note-body > span:last-child { font-size: 15px; color: var(--text-2); }
@@ -166,6 +168,8 @@ h2 { font-family: var(--display); font-weight: 500; font-size: clamp(44px, 5vw, 
 .back-link { display: inline-block; font-size: 15px; font-weight: 500; margin-bottom: 32px; }
 .article-head { display: flex; flex-direction: column; gap: 16px; padding-bottom: 32px; }
 .article-head h1 { color: var(--navy); font-size: clamp(36px, 5vw, 56px); }
+.outdated-banner { padding: 18px 22px; border-radius: 14px; background: #FDF1DF; border: 1px solid #EAC98A; color: #6B4A16; font-size: 15px; line-height: 1.5; }
+.outdated-banner strong { color: #4A3110; }
 .cat-link { font-family: var(--mono); }
 .article-body { font-size: 18px; line-height: 1.75; color: #1c2b40; display: flex; flex-direction: column; gap: 20px; }
 .article-body p { margin: 0; }
