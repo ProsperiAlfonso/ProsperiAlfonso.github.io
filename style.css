@@ -163,6 +163,7 @@ h2 { font-family: var(--display); font-weight: 500; font-size: clamp(44px, 5vw, 
 .contact-links a { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 44px; padding: 18px 0; border-bottom: 1px solid #34507A; color: var(--on-dark); font-size: 17px; word-break: break-all; }
 .contact-links a:hover { color: var(--cyan); }
 .contact-links svg { flex-shrink: 0; }
+.contact-note { margin-top: 12px; color: #8FA3C2; font-size: 14px; }
 
 .footer { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 48px; padding-bottom: 48px; font-size: 14px; color: var(--muted); }
 .footer-legal { display: flex; gap: 18px; }
