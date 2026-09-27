@@ -141,8 +141,8 @@ h2 { font-family: var(--display); font-weight: 500; font-size: clamp(44px, 5vw, 
 .cert-close { position: absolute; top: 20px; right: 24px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.08); color: #fff; font-size: 24px; line-height: 1; cursor: pointer; }
 .cert-close:hover { background: rgba(255,255,255,0.2); }
 
-.cookie-banner { position: fixed; left: 20px; right: 20px; bottom: -140px; z-index: 90; max-width: 760px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; background: var(--navy); color: var(--on-dark); border-radius: 16px; padding: 20px 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); transition: bottom .3s ease; }
-.cookie-banner.show { bottom: 20px; }
+.cookie-banner { display: none; max-width: 1440px; margin-top: 24px; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; background: var(--navy); color: var(--on-dark); border-radius: 16px; padding: 20px 24px; }
+.cookie-banner.show { display: flex; }
 .cookie-banner p { margin: 0; font-size: 14px; color: #C7D4E6; max-width: 560px; }
 .cookie-banner a { color: var(--cyan); }
 .cookie-banner button { flex-shrink: 0; }
