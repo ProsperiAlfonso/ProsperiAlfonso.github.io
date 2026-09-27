@@ -227,7 +227,8 @@ h2 { font-family: var(--display); font-weight: 500; font-size: clamp(44px, 5vw, 
   .nav { justify-content: center; }
   .menu { justify-content: center; gap: 14px 20px; font-size: 15px; }
   .hero { grid-template-columns: 1fr; gap: 32px; }
-  .hero-side { display: none; }
+  .hero-side .photo { display: none; }
+  .caption { text-align: center; }
   .label { font-size: 12px; }
   .actions .btn { flex: 1 1 auto; justify-content: center; }
   .stats { margin-top: 48px; gap: 0 16px; }
