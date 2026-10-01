@@ -246,3 +246,14 @@ h2 { font-family: var(--display); font-weight: 500; font-size: clamp(44px, 5vw, 
   .note-grid { grid-template-columns: 1fr; }
   .article-body { font-size: 17px; }
 }
+
+/* Foto in testata e logo */
+.logo-img { background: none; object-fit: cover; }
+.photo-real { position: relative; background: none; border: none; display: block; overflow: visible; }
+.photo-real .polaroid { position: absolute; left: 0; top: 8%; width: 82%; height: auto; padding: 10px 10px 34px; background: #FDFDFB; border-radius: 4px; transform: rotate(-4deg); box-shadow: 0 24px 60px rgba(0,0,0,.45); }
+.photo-real .ritratto { position: absolute; right: -4%; bottom: 4%; width: 46%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 50%; border: 6px solid #F2F6FB; box-shadow: 0 20px 50px rgba(0,0,0,.4); }
+@media (max-width: 900px) {
+  .hero-side .photo-real { display: block; width: min(300px, 80%); aspect-ratio: 1; margin: 8px auto 24px; }
+  .photo-real .polaroid { width: 84%; top: 4%; }
+  .photo-real .ritratto { width: 44%; right: -2%; bottom: 0; }
+}
