@@ -270,3 +270,6 @@ h2 { font-family: var(--display); font-weight: 500; font-size: clamp(44px, 5vw, 
 @media (max-width: 860px) { .project-wide { grid-template-columns: 1fr; gap: 18px; } }
 .project .tools-stack { font-size: 13px; color: var(--muted); }
 .shot-lock { background: var(--blue-dark); color: #7FA6D6; } .shot-lock .screen { background: #23599A; color: #C9D7E8; }
+/* freccina link esterno sulle schede progetto cliccabili */
+a.project h3::after { content: "↗"; display: inline-block; margin-left: .35em; font-size: .7em; font-weight: 500; color: var(--blue); opacity: .75; transform: translateY(-.15em); transition: transform .2s ease, opacity .2s ease; }
+a.project:hover h3::after { opacity: 1; transform: translate(.12em, -.27em); }
