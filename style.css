@@ -273,3 +273,10 @@ h2 { font-family: var(--display); font-weight: 500; font-size: clamp(44px, 5vw, 
 /* freccina link esterno sulle schede progetto cliccabili */
 a.project h3::after { content: "↗"; display: inline-block; margin-left: .35em; font-size: .7em; font-weight: 500; color: var(--blue); opacity: .75; transform: translateY(-.15em); transition: transform .2s ease, opacity .2s ease; }
 a.project:hover h3::after { opacity: 1; transform: translate(.12em, -.27em); }
+
+/* schede progetto senza link */
+.project-private:hover .shot { transform: none; }
+
+.shot-lock-cyan { background: #BFEAF2; color: #3E9DB3; } .shot-lock-cyan .screen { background: #F2FBFD; color: #2E7F93; }
+.shot-app { background: #BFEAF2; color: #4FB5CB; }
+.shot-app img { display: block; width: 100%; flex: 1; min-height: 0; object-fit: cover; object-position: top left; border-radius: 10px; box-shadow: 0 6px 18px rgba(11,42,85,.15); }
