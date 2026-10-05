@@ -280,3 +280,4 @@ a.project:hover h3::after { opacity: 1; transform: translate(.12em, -.27em); }
 .shot-lock-cyan { background: #BFEAF2; color: #3E9DB3; } .shot-lock-cyan .screen { background: #F2FBFD; color: #2E7F93; }
 .shot-app { background: #BFEAF2; color: #4FB5CB; }
 .shot-app img { display: block; width: 100%; flex: 1; min-height: 0; object-fit: cover; object-position: top left; border-radius: 10px; box-shadow: 0 6px 18px rgba(11,42,85,.15); }
+.shot-app-green{background:#D7EFDD;color:#5DBB7A}
