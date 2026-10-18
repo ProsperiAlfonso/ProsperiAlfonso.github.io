@@ -172,6 +172,8 @@ h2 { font-family: var(--display); font-weight: 500; font-size: clamp(44px, 5vw, 
 .footer-legal { display: flex; gap: 18px; }
 .footer-legal a { color: var(--muted); }
 .footer-legal a:hover { color: var(--blue); }
+.footer-home { color: var(--muted); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+.footer-home:hover { color: var(--blue); text-decoration-color: currentColor; }
 
 /* Testata piccola (blog e articoli) */
 .top-small { padding-bottom: 4px; }
