@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="max-image-preview:large">
+<title>Casa in Ordine: la web app gratuita per spese, scadenze e documenti di casa · Alfonso Prosperi</title>
+<meta name="description" content="Ho realizzato Casa in Ordine, una web app gratuita e senza pubblicità per spese, scadenze, bollette e documenti di famiglia. A chi serve, cosa fa, come si installa su Android e iPhone e come tratta i tuoi dati.">
+<meta property="og:title" content="Casa in Ordine: la web app gratuita per spese, scadenze e documenti di casa">
+<meta property="og:description" content="Spese, scadenze, bollette e documenti di famiglia in un'unica app. Gratis, senza pubblicità, installabile su Android e iPhone. A chi serve e come si usa.">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="it_IT">
+<meta property="og:url" content="https://prosperialfonso.com/blog/casa-in-ordine-web-app-gratuita/">
+<meta property="og:image" content="https://prosperialfonso.com/assets/blog/casa-in-ordine-web-app-gratuita/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Casa in Ordine: la web app gratuita per spese, scadenze e documenti di casa">
+<meta name="twitter:description" content="Spese, scadenze, bollette e documenti di famiglia in un'unica app. Gratis, senza pubblicità, installabile su Android e iPhone. A chi serve e come si usa.">
+<meta name="twitter:image" content="https://prosperialfonso.com/assets/blog/casa-in-ordine-web-app-gratuita/og-image.jpg">
+<link rel="canonical" href="https://prosperialfonso.com/blog/casa-in-ordine-web-app-gratuita/">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/favicon-96.png" type="image/png" sizes="96x96">
+<link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/barlow-condensed-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../style.css?v=20261107">
+<style>
+.cio-shots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:8px 0}
+.cio-shots figure{margin:0;display:flex;flex-direction:column;gap:8px}
+.cio-shots img{width:100%;height:auto;border-radius:16px;border:1px solid var(--card-line);display:block}
+.cio-shots figcaption{font-family:var(--mono);font-size:13px;color:var(--muted);text-align:center}
+.cio-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:8px 0}
+.cio-cta .btn{text-decoration:none}
+@media(max-width:700px){.cio-shots{gap:10px}.cio-shots figcaption{font-size:12px}}
+</style>
+</head>
+<body>
+
+<div class="top top-small">
+  <header class="nav wrap">
+    <a class="brand" href="../../" aria-label="Alfonso Prosperi, torna alla home">
+      <span class="logo logo-img" aria-hidden="true"></span>
+      <span class="brand-name">Alfonso Prosperi</span>
+    </a>
+    <nav aria-label="Menu principale">
+      <ul class="menu">
+        <li><a href="../../#competenze">Competenze</a></li>
+        <li><a href="../../#progetti">Progetti</a></li>
+        <li><a href="../../#percorso">Percorso</a></li>
+        <li><a href="../">Appunti</a></li>
+        <li><a href="../../#contatti">Contattami</a></li>
+      </ul>
+    </nav>
+  </header>
+</div>
+
+<main class="wrap article-page">
+  <a class="back-link" href="../">&larr; Tutti gli appunti</a>
+  <article class="article">
+    <header class="article-head">
+      <p class="label"><a class="cat-link" href="../?cat=programmazione">Programmazione</a> &middot; 15 novembre 2026</p>
+      <h1>Ho realizzato Casa in Ordine: una web app gratuita per la famiglia</h1>
+    </header>
+    <div class="article-body">
+      <figure class="art-figure"><img src="../../assets/blog/casa-in-ordine-web-app-gratuita/og-image.jpg" alt="Tre schermate di Casa in Ordine: scadenze, riepilogo del mese e bollette" width="1200" height="630"></figure>
+
+<p>Questa volta niente novità da raccontare: vi presento una cosa che ho sviluppato io. Si chiama <strong>Casa in Ordine</strong> ed è una web app gratuita, senza pubblicità, che si installa su Android e su iPhone. È pensata per tutti quelli che non vogliono perdere una scadenza e vogliono tenere sotto controllo entrate e uscite, senza complicarsi la vita.</p>
+
+<h3>A chi serve</h3>
+
+<p>In una famiglia le cose da tenere a mente sono tante e sparse ovunque: le spese segnate su un foglio, il bollo dell'auto ricordato all'ultimo, l'ISEE da rinnovare, le bollette tra la posta e le email, la foto della carta d'identità persa nella galleria del telefono. Le app che si trovano in giro spesso sono piene di pubblicità, chiedono un abbonamento o fanno solo una parte del lavoro.</p>
+
+<p>Casa in Ordine mette tutto in un unico posto, in modo semplice: è per chi vuole sapere a fine mese dove sono andati i soldi, per chi non vuole più ricordarsi del bollo il giorno dopo la scadenza e per chi vuole avere bollette e documenti sempre a portata di mano.</p>
+
+<h3>Cosa fa</h3>
+
+<ul>
+<li><strong>Entrate e uscite</strong> divise per categoria, con il saldo del mese, i grafici e un resoconto per periodo (ultimi mesi, anno o intervallo a scelta).</li>
+<li><strong>Da pagare e da incassare</strong>: una spesa o un'entrata si può segnare con la sua data di scadenza. Nel riepilogo vedi quanto c'è da pagare nei prossimi giorni e il saldo previsto dopo i pagamenti.</li>
+<li><strong>Scadenze</strong> come bollo, revisione, ISEE e documenti, con il conto alla rovescia dei giorni che mancano. Si vedono in elenco oppure sul calendario del mese.</li>
+<li><strong>Bollette in cartelle</strong>: luce, gas, acqua, telefono, rifiuti e le cartelle che crei tu. Puoi allegare il PDF o una foto e aggiungere subito la bolletta alle uscite da pagare.</li>
+<li><strong>Documenti di famiglia</strong>: carta d'identità, patente, passaporto, tessera sanitaria e altri documenti come l'ISEE, con foto fronte e retro. Puoi proteggerli con un PIN facoltativo (vengono cifrati, con un codice di recupero se lo dimentichi) e condividerli in un unico PDF.</li>
+<li><strong>Da PC o da telefono</strong>: se accedi con Google, puoi inserire i dati sia dal computer sia dallo smartphone (o dal tablet) e si sincronizzano, così li ritrovi aggiornati ovunque.</li>
+<li><strong>Promemoria</strong>, se li vuoi, tramite il calendario del telefono: l'avviso arriva come quello di un normale appuntamento. Non sono notifiche dell'app.</li>
+</ul>
+
+<div class="cio-shots">
+  <figure><img src="../../assets/foto/cio-riepilogo.jpg?v=2" alt="Schermata Riepilogo con il saldo del mese" width="390" height="844" loading="lazy"><figcaption>Riepilogo</figcaption></figure>
+  <figure><img src="../../assets/foto/cio-scadenze.jpg?v=2" alt="Schermata Scadenze con il conto alla rovescia" width="390" height="844" loading="lazy"><figcaption>Scadenze</figcaption></figure>
+  <figure><img src="../../assets/foto/cio-bollette.jpg?v=2" alt="Schermata Bollette con le cartelle luce, gas, acqua e telefono" width="390" height="844" loading="lazy"><figcaption>Bollette</figcaption></figure>
+</div>
+
+<h3>Cos'è una web app (e perché non la trovi negli store)</h3>
+
+<p>Casa in Ordine non si scarica dal Play Store o dall'App Store: si apre dal browser, come un sito. La differenza è che si può <strong>installare</strong>: compare un'icona sulla schermata Home, si apre a schermo intero e si comporta come un'app normale. Non chiede permessi sul telefono e si aggiorna da sola: quando la miglioro, la trovi già aggiornata.</p>
+
+<h3>Come si installa</h3>
+
+<p><strong>Su Android</strong>: apri <a href="https://prosperialfonso.com/app/casa-in-ordine/">l'app</a> con Chrome, tocca i <strong>tre puntini</strong> in alto a destra e scegli <strong>Installa app</strong>. Di solito è la stessa app a proporti l'installazione con un avviso in basso.</p>
+
+<p><strong>Su iPhone</strong>: apri l'app con Safari, tocca <strong>Condividi</strong> (il quadrato con la freccia verso l'alto) e scegli <strong>Aggiungi alla schermata Home</strong>. Conviene farlo subito, prima di inserire i dati.</p>
+
+<p>Vuoi prima capire se fa per te? Nella prima schermata c'è <strong>Prima guarda un esempio</strong>: una demo già pronta per provarla, testarla e vedere come funziona prima di iniziare.</p>
+
+<h3>Ospite o con Google</h3>
+
+<p>Alla prima apertura scegli come usarla. <strong>Come ospite</strong> i dati restano solo su quel telefono: niente account, ma se cambi telefono o cancelli i dati del browser li perdi (dal menu puoi sempre esportare un backup). <strong>Con Google</strong> i dati si salvano anche in una cartella riservata del tuo Google Drive, separata dai tuoi file, e si sincronizzano tra telefono, tablet e computer: puoi segnare una spesa dallo smartphone e ritrovarla sul PC. Puoi cambiare idea quando vuoi.</p>
+
+<h3>E la privacy?</h3>
+
+<p>È la parte a cui tengo di più. Casa in Ordine <strong>non ha un server suo</strong>: i dati restano sul tuo dispositivo o salvati nel tuo Drive e non sono visibili a nessuno. Nemmeno io vedo cosa scrivi, e non ricevo copie né statistiche. Se colleghi Google, l'app chiede solo il permesso di usare la sua cartella riservata e non può aprire gli altri tuoi documenti. Tutti i dettagli sono nell'<a href="https://prosperialfonso.com/privacy.html#casa-in-ordine">informativa sulla privacy</a>.</p>
+
+<h3>Provala e dimmi cosa ne pensi</h3>
+
+<p>Casa in Ordine continua a crescere con l'uso. Se la provi e ti viene un'idea, trovi qualcosa che non va o ti manca una funzione, scrivimi a <a href="mailto:casainordine.app@gmail.com">casainordine.app@gmail.com</a>: leggo tutto e ogni suggerimento mi aiuta a migliorarla.</p>
+
+<div class="cio-cta"><a class="btn btn-blue" href="https://prosperialfonso.com/app/casa-in-ordine/">Apri Casa in Ordine</a></div>
+
+<h3>Link utili</h3>
+
+<ul>
+<li><a href="https://prosperialfonso.com/casa-in-ordine.html">Casa in Ordine, la pagina di presentazione con tutte le funzioni</a></li>
+<li><a href="https://prosperialfonso.com/app/casa-in-ordine/">Casa in Ordine, apri l'app</a></li>
+<li><a href="https://prosperialfonso.com/privacy.html#casa-in-ordine">Informativa sulla privacy di Casa in Ordine</a></li>
+<li><a href="https://web.dev/articles/what-are-pwas" target="_blank" rel="noopener">web.dev (Google), cosa sono le Progressive Web App</a></li>
+<li><a href="https://web.dev/learn/pwa/installation?hl=it" target="_blank" rel="noopener">web.dev (Google), come si installa una web app</a></li>
+<li><a href="https://developers.google.com/drive/api/guides/appdata" target="_blank" rel="noopener">Google Drive, la cartella riservata ai dati delle app</a></li>
+<li><a href="https://myaccount.google.com/connections" target="_blank" rel="noopener">Account Google, le app collegate al tuo account</a></li>
+</ul>
+
+    </div>
+  </article>
+</main>
+
+<footer class="footer wrap">
+  <span>Alfonso Prosperi &middot; Roseto degli Abruzzi (TE)</span>
+  <a class="footer-home" href="/">prosperialfonso.com</a>
+</footer>
+
+<script defer src="/assets/js/zoom.js?v=2"></script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f60ffb502b034f91a7bcbfd4a35d2593"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
