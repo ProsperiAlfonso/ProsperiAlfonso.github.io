@@ -1164,6 +1164,24 @@ async function bolSync(){if(!db.bol)db.bol=[];
     try{await gf('https://www.googleapis.com/upload/drive/v3/files'+(r?'/'+r.fid:'')+'?uploadType=multipart',{method:r?'PATCH':'POST',body:fd})}catch(e){if(e==='auth'||e==='perm')throw e;fail++}}
   if(fail)toast(fail===1?'Il file di una bolletta non è stato salvato su Drive':'I file di '+fail+' bollette non sono stati salvati su Drive');
   return changed}
+// ---- tasto Indietro del telefono: chiude il foglio aperto o torna alla schermata precedente, invece di uscire
+let skipPop=false;
+const isOn=id=>{const e=$(id);return !!(e&&e.classList.contains('on'))};
+function atRoot(){return view==='home'&&$('viewer').hidden&&!document.querySelector('.sheet.on')}
+function closeTop(){
+  if(!$('viewer').hidden){$('viewer').hidden=true;return true}
+  if(isOn('sheet4')){askNo();return true}
+  if(isOn('sheetP')){if($('codeDone'))return true;closeSh('P');return true}
+  for(const k of ['B','M','D2','D']){if(isOn('sheet'+k)){closeSh(k);return true}}
+  if(isOn('sheet3')){sheet3(false);return true}
+  if(isOn('sheet2')){closeMenu();return true}
+  if(isOn('sheet')){closeSheet();return true}
+  return false}
+function navSync(){const g=!!(history.state&&history.state.cio);if(!atRoot()&&!g)history.pushState({cio:1},'');else if(atRoot()&&g){skipPop=true;history.back()}}
+document.addEventListener('click',()=>{setTimeout(navSync,60);setTimeout(navSync,450)},true);
+addEventListener('popstate',()=>{if(skipPop){skipPop=false;return}
+  if(!closeTop()){if(view==='doc'&&docTab==='bol'&&bolFolder){bolFolder=null;render()}else if(view==='rep')go('mov');else if(view!=='home')go('home')}
+  if(!atRoot())history.pushState({cio:1},'')});
 // ---- benvenuto: Google o ospite
 function openWelcome(noDemo){$('wDemo').hidden=!!noDemo;$('welcome').hidden=false;scrollTo(0,0)}
 function closeWelcome(){$('welcome').hidden=true;go('home')}
