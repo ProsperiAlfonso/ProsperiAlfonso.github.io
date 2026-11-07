@@ -857,12 +857,12 @@ $('dSave').onclick=async()=>{if(!db.doc)db.doc=[];const chi=$('dChi').value.trim
   store();closeSh('D');render();toast(scad?'Documento salvato: la scadenza è in Scadenze e Agenda':'Documento salvato');
   if(primo)setTimeout(()=>ask('Proteggere i documenti con un PIN?','Il PIN è facoltativo ma consigliato: numero, note e foto vengono cifrati, qui e su Google Drive. Puoi farlo anche più tardi dal tasto in alto.','Imposta il PIN',()=>setTimeout(pinSheet,260),false,null,'Più tardi'),700)};
 // ---- PIN
-const PINF=(btn)=>`<form id="pinF" autocomplete="off"><label for="pin1">Nuovo PIN</label><input class="field pin" id="pin1" type="password" maxlength="40" autocomplete="off"><label for="pin2">Ripeti il PIN</label><input class="field pin" id="pin2" type="password" maxlength="40" autocomplete="off"><button class="save" type="submit">${btn}</button></form>`;
+const PINF=(btn)=>`<form id="pinF" autocomplete="off"><label for="pin1">Nuovo PIN</label><input class="field pin" id="pin1" type="password" inputmode="numeric" maxlength="20" autocomplete="off"><label for="pin2">Ripeti il PIN</label><input class="field pin" id="pin2" type="password" inputmode="numeric" maxlength="20" autocomplete="off"><button class="save" type="submit">${btn}</button></form>`;
 function pinSheet(){
   if(locked()){toast('Sblocca prima i documenti');return}
   const on=pinOn();$('pinTitle').textContent=on?'PIN dei documenti':'Imposta un PIN';
   $('pinBody').innerHTML=on?`<p class="empty">I documenti sono cifrati con il tuo PIN, su questo dispositivo e su Google Drive.</p><button class="save" id="pinChange">Cambia PIN</button><button class="save" id="pinCode" style="background:var(--pri-t);color:var(--pri-ink);margin-top:10px">Nuovo codice di recupero</button>${pkOk()?(pkGet()?`<button class="save" id="pkOff" style="background:var(--pri-t);color:var(--pri-ink);margin-top:10px">Disattiva lo sblocco con impronta</button>`:`<button class="save" id="pkOn" style="background:var(--pri-t);color:var(--pri-ink);margin-top:10px">Sblocca con impronta su questo dispositivo</button>`):''}<button class="lnk" id="pinOff" style="width:100%;color:var(--red)">Togli il PIN</button>`
-   :`<div class="warn"><span>Con il PIN numero, note e foto dei documenti vengono <b>cifrati</b>: nessuno può leggerli senza PIN, nemmeno da Google Drive. Subito dopo ti diamo un <b>codice di recupero</b> da conservare: serve se dimentichi il PIN. Usa almeno 8 caratteri: più è lungo, più è sicuro.</span></div>`+PINF('Imposta il PIN');
+   :`<div class="warn"><span>Con il PIN numero, note e foto dei documenti vengono <b>cifrati</b>: nessuno può leggerli senza PIN, nemmeno da Google Drive. Subito dopo ti diamo un <b>codice di recupero</b> da conservare: serve se dimentichi il PIN. Usa almeno 6 cifre.</span></div>`+PINF('Imposta il PIN');
   if(on){$('pinChange').onclick=()=>{closeSh('P');setTimeout(()=>askPinFor('change'),260)};
     $('pinCode').onclick=()=>{closeSh('P');setTimeout(()=>askPinFor('code'),260)};
     if($('pkOn'))$('pkOn').onclick=()=>{closeSh('P');setTimeout(()=>askPinFor('pk'),260)};
@@ -872,7 +872,7 @@ function pinSheet(){
   openSh('P')}
 // per cambiare PIN o codice chiediamo il PIN attuale (serve a riaprire la chiave)
 function askPinFor(what){$('pinTitle').textContent=what==='change'?'Cambia PIN':what==='pk'?'Sblocco con impronta':'Nuovo codice di recupero';
-  $('pinBody').innerHTML=`<form id="pinCur" autocomplete="off"><label for="pin0">PIN attuale</label><input class="field pin" id="pin0" type="password" maxlength="40" autocomplete="off"><button class="save" type="submit">Continua</button></form>`;
+  $('pinBody').innerHTML=`<form id="pinCur" autocomplete="off"><label for="pin0">PIN attuale</label><input class="field pin" id="pin0" type="password" inputmode="numeric" maxlength="20" autocomplete="off"><button class="save" type="submit">Continua</button></form>`;
   $('pinCur').onsubmit=async e=>{e.preventDefault();const o=await openWith($('pin0').value,db.vault.salt,db.vault.wPin,db.vault.it);if(!o){toast('PIN non corretto');$('pin0').value='';return}
     if(what==='pk'){$('pinTitle').textContent='Sblocco con impronta';$('pinBody').innerHTML='<p class="empty">Tocca il pulsante e conferma con impronta o volto. Funzionerà solo su questo dispositivo; il PIN resta sempre valido.</p><button class="save" id="pkGo">Attiva</button>';$('pkGo').onclick=()=>pkEnable(o.raw);return}
     if(what==='change')newPinForm(o.raw);else{const code=await rewrapCode(o.raw);closeSh('P');setTimeout(()=>showCode(code,false),260)}};
@@ -880,7 +880,7 @@ function askPinFor(what){$('pinTitle').textContent=what==='change'?'Cambia PIN':
 function newPinForm(raw,afterRecovery){$('pinTitle').textContent=afterRecovery?'Scegli un nuovo PIN':'Nuovo PIN';$('pinBody').innerHTML=(afterRecovery?'<p class="empty">Codice di recupero corretto. Ora scegli un nuovo PIN.</p>':'')+PINF('Salva il PIN');
   bindPinForm(async a=>{await rewrapPin(raw,a);closeSh('P');render();toast('Nuovo PIN salvato')});openSh('P')}
 function bindPinForm(done){$('pinF').onsubmit=async e=>{e.preventDefault();const a=$('pin1').value,b=$('pin2').value;
-  if(a.length<8){toast('Il PIN deve avere almeno 8 caratteri: cifre, lettere o entrambi');return}if(a!==b){toast('I due PIN non coincidono');return}
+  if(a.length<6){toast('Il PIN deve avere almeno 6 cifre');return}if(a!==b){toast('I due PIN non coincidono');return}
   $('pinF').querySelector('button').textContent='Un attimo…';await done(a)}}
 function showCode(code,first){$('pinTitle').textContent='Il tuo codice di recupero';
   $('pinBody').innerHTML=`<p class="empty">Se dimentichi il PIN, con questo codice riapri i documenti e ne scegli uno nuovo. <b>Salvalo adesso</b>: per sicurezza non lo mostreremo più.</p>
