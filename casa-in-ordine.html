@@ -32,6 +32,9 @@
 .cio-box h4{margin:0;font-family:var(--display);font-weight:600;font-size:22px;color:var(--navy)}
 .cio-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 .cio-two ol,.cio-two ul{margin:0}
+.article-body a.cio-link{font-weight:600;color:var(--blue);text-decoration:none;border-bottom:2px solid #FDE7B0;white-space:nowrap}
+.article-body a.cio-link span{display:inline-block;margin-left:.2em;font-size:.85em;transition:transform .2s}
+.article-body a.cio-link:hover span{transform:translate(2px,-2px)}
 .cio-tag{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--blue)}
 @media(max-width:700px){.cio-two{grid-template-columns:1fr}.cio-shots{grid-template-columns:repeat(2,minmax(0,1fr))}.cio-shots figure:last-child{display:none}}
 </style>
@@ -86,7 +89,7 @@
       </div>
 
       <h3>Cos'è una web app</h3>
-      <p>Casa in Ordine non si scarica dal Play Store o dall'App Store: si apre da un indirizzo web, <a href="app/">prosperialfonso.com/app</a>, come un sito. La differenza è che si può <strong>installare</strong>: compare un'icona sulla schermata Home, si apre a schermo intero senza la barra del browser e funziona anche senza connessione. In pratica si comporta come un'app normale.</p>
+      <p>Casa in Ordine non si scarica dal Play Store o dall'App Store: si apre dal browser come un sito, basta toccare <a class="cio-link" href="app/">Casa in Ordine<span aria-hidden="true">↗</span></a>. La differenza è che si può <strong>installare</strong>: compare un'icona sulla schermata Home, si apre a schermo intero senza la barra del browser e funziona anche senza connessione. In pratica si comporta come un'app normale.</p>
       <p>Il vantaggio è che non occupa spazio come un'app tradizionale, non chiede permessi sul telefono e si aggiorna da sola: ogni volta che la miglioro, la trovi già aggiornata.</p>
 
       <h3 id="installa">Come installarla</h3>
@@ -95,7 +98,7 @@
           <span class="cio-tag">Android</span>
           <h4>Con Chrome</h4>
           <ol>
-            <li>Apri <strong>prosperialfonso.com/app</strong> con Chrome.</li>
+            <li>Apri <a class="cio-link" href="app/">Casa in Ordine<span aria-hidden="true">↗</span></a> con Chrome.</li>
             <li>Tocca i <strong>tre puntini</strong> in alto a destra.</li>
             <li>Scegli <strong>Aggiungi a schermata Home</strong> e poi <strong>Installa</strong>.</li>
             <li>Trovi l'icona di Casa in Ordine tra le tue app.</li>
@@ -106,7 +109,7 @@
           <span class="cio-tag">iPhone e iPad</span>
           <h4>Con Safari</h4>
           <ol>
-            <li>Apri <strong>prosperialfonso.com/app</strong> con Safari.</li>
+            <li>Apri <a class="cio-link" href="app/">Casa in Ordine<span aria-hidden="true">↗</span></a> con Safari.</li>
             <li>Tocca il tasto <strong>Condividi</strong>, il quadrato con la freccia verso l'alto.</li>
             <li>Scorri e scegli <strong>Aggiungi alla schermata Home</strong>.</li>
             <li>Se compare l'opzione <strong>Apri come app web</strong>, lasciala attiva, poi tocca <strong>Aggiungi</strong>.</li>
