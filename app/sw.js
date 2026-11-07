@@ -1,5 +1,5 @@
 // Casa in Ordine: funziona anche senza rete. Cambia VERSIONE a ogni aggiornamento.
-const VERSIONE = 'cio-v10';
+const VERSIONE = 'cio-v11';
 const FILE = ['./', 'index.html', 'manifest.webmanifest', 'icona.svg', 'icona-192.png', 'icona-512.png',
   '../assets/fonts/barlow-latin-400-normal.woff2', '../assets/fonts/barlow-latin-500-normal.woff2',
   '../assets/fonts/barlow-latin-600-normal.woff2', '../assets/fonts/barlow-condensed-latin-500-normal.woff2',
