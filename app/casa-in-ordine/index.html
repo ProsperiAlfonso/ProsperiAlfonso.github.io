@@ -218,10 +218,13 @@ body.instOn .toast{bottom:calc(240px + env(safe-area-inset-bottom))}
 .tabs button svg{width:24px;height:24px}
 .tabs button.on{color:var(--pri-ink);font-weight:600}
 /* un colore tenue per sezione: Movimenti verde, Scadenze giallo, Documenti azzurro */
-body{transition:background-color .25s}
+body{transition:background-color .25s;min-height:100vh;min-height:100dvh}
 body.sec-mov,body.sec-rep{background:#DDF0E4}
 body.sec-scad{background:#FFEFC7}
 body.sec-doc{background:#DAE9F8}
+body.sec-doc.sec-bol{background:#FBE1DE}
+body.sec-bol .tabs button[data-go=doc].on{color:#C2453F}
+body.sec-bol .fcard.new{border-color:rgba(194,69,63,.35)}
 .tabs button[data-go=mov].on{color:#1E8A55}
 .tabs button[data-go=scad].on{color:#B87A12}
 .tabs button[data-go=doc].on{color:#2B68B0}
@@ -751,7 +754,7 @@ let hideAmt=false;try{hideAmt=localStorage.getItem('casainordine.nascondi')==='1
 function applyHide(){$('eye').hidden=view==='scad'||view==='doc';$('eyeIc').innerHTML=hideAmt?'<path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.3 2 12 2 12s3.5 7 10 7c1.9 0 3.5-.6 4.9-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>':'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>';$('eye').setAttribute('aria-label',hideAmt?'Mostra gli importi':'Nascondi gli importi');$('eye').setAttribute('aria-pressed',hideAmt);
   if(!hideAmt)return;const dots='•••••• €';if(view!=='scad'&&view!=='doc')$('saldo').textContent=dots;['kE','kU'].forEach(k=>$(k).textContent='•••• €');document.querySelectorAll('#saldoPrev .pv,#dueBody .dk').forEach(e=>e.textContent='•••• €');if(view==='rep')document.querySelectorAll('#repKpi strong').forEach(e=>e.textContent='•••• €')}
 $('eye').onclick=()=>{hideAmt=!hideAmt;try{localStorage.setItem('casainordine.nascondi',hideAmt?'1':'0')}catch(e){}render()};
-const _render=render;render=function(){try{maybeInst()}catch(e){}if(!db.doc)db.doc=[];$('demoCard').hidden=!db.demo;$('syncCard').hidden=true;const needs=!!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));$('syncStrip').hidden=!needs;document.body.classList.toggle('strip',needs);if(needs)$('syncStripTxt').textContent=syncState==='perm'?'Manca il permesso su Google Drive: tocca per riprovare':'Tocca per sincronizzare con Google Drive';_render();renderAcct();if(view==='rep')renderRep();if(view==='doc'){if(!db.bol)db.bol=[];if(!db.cart)db.cart=[];document.querySelectorAll('#docSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===docTab));$('docPane').hidden=docTab!=='doc';$('bolPane').hidden=docTab!=='bol';
+const _render=render;render=function(){try{maybeInst()}catch(e){}if(!db.doc)db.doc=[];$('demoCard').hidden=!db.demo;$('syncCard').hidden=true;const needs=!!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));$('syncStrip').hidden=!needs;document.body.classList.toggle('strip',needs);if(needs)$('syncStripTxt').textContent=syncState==='perm'?'Manca il permesso su Google Drive: tocca per riprovare':'Tocca per sincronizzare con Google Drive';_render();renderAcct();if(view==='rep')renderRep();try{document.body.classList.toggle('sec-bol',view==='doc'&&docTab==='bol')}catch(e){}if(view==='doc'){if(!db.bol)db.bol=[];if(!db.cart)db.cart=[];document.querySelectorAll('#docSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===docTab));$('docPane').hidden=docTab!=='doc';$('bolPane').hidden=docTab!=='bol';
   if(docTab==='bol'){$('saldoLbl').textContent='Bollette di casa';const n=db.bol.length;$('saldo').innerHTML=n+'<span>'+(n===1?'bolletta':'bollette')+'</span>';$('fab').hidden=false;renderBol()}
   else{$('saldoLbl').textContent='Documenti di famiglia';const n=db.doc.length;$('saldo').innerHTML=n+'<span>'+(n===1?'documento':'documenti')+'</span>';renderDoc()}}applyHide()};
 function fresh(){const now=Date.now(),old=db.demo?[]:[...db.mov,...db.scad,...db.app,...(db.doc||[]),...(db.bol||[]),...(db.cart||[])].map(x=>({id:x.id,u:now}));bClear().catch(()=>{});bolFolder=null;db={mov:[],scad:[],app:[],doc:[],bol:[],cart:[],vault:{u:now,off:true},del:[...(db.demo?[]:db.del||[]),...old]};vKey=null;docCache.clear();vClear().catch(()=>{});store();cur=new Date();cur.setDate(1);sel=iso(new Date());go('home')}

@@ -1,7 +1,7 @@
 {
   "name": "Casa in Ordine",
   "short_name": "Casa in Ordine",
-  "description": "Spese, scadenze e agenda di famiglia. I dati restano sul tuo telefono.",
+  "description": "Spese, scadenze, bollette e documenti di famiglia. I dati restano sul tuo telefono.",
   "lang": "it",
   "id": "/app/casa-in-ordine/",
   "start_url": "./",
