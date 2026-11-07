@@ -660,10 +660,10 @@ $('mInst').onclick=async()=>{if(!instEvt)return;instEvt.prompt();await instEvt.u
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
 const iosWeb=(/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))&&!standalone;
 if(iosWeb){$('iosHint').hidden=false;$('iosWarn').hidden=false}
-// invito a installare: Android/Chrome con il tasto, iPhone con le istruzioni; "Non ora" lo nasconde per 14 giorni
+// invito a installare: Android/Chrome con il tasto, iPhone con le istruzioni; "Non ora" lo nasconde per 5 giorni
 const INST_K='casainordine.invito-installa';
 function instLater(){try{localStorage.setItem(INST_K,String(Date.now()))}catch(e){}}
-function instSnoozed(){try{const t=+localStorage.getItem(INST_K)||0;return Date.now()-t<14*864e5}catch(e){return false}}
+function instSnoozed(){try{const t=+localStorage.getItem(INST_K)||0;return Date.now()-t<5*864e5}catch(e){return false}}
 function maybeInst(){const c=$('instCard');if(!c)return;const show=!standalone&&!!prof&&!instSnoozed()&&(!!instEvt||iosWeb);
   if(show&&c.hidden){if(instEvt){$('instTxt').innerHTML='<b>Installa Casa in Ordine</b>Si apre come un\'app, dalla schermata Home.';$('instGo').hidden=false}
     else{$('instTxt').innerHTML='<b>Mettila nella schermata Home</b>Tocca <svg class="shr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg> Condividi, poi "Aggiungi alla schermata Home".';$('instGo').hidden=true}}
