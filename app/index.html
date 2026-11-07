@@ -116,6 +116,10 @@ body.inrep .month{visibility:hidden}
 .viewer{position:fixed;inset:0;z-index:70;background:#0b1222;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom))}
 .viewer img{max-width:100%;max-height:calc(100% - 64px);object-fit:contain;touch-action:pinch-zoom}
 .viewbar{display:flex;gap:12px;margin-top:14px}.viewbar .pill{text-decoration:none}
+.codebox{font-size:22px;letter-spacing:.08em;text-align:center;background:var(--bg);border:1.5px dashed var(--line);border-radius:12px;padding:16px 8px;margin:6px 0 12px;user-select:all;color:var(--navy);font-weight:600}
+.chk{display:flex;gap:10px;align-items:center;font-size:15px;color:var(--navy);margin:14px 0 10px}.chk input{width:20px;height:20px}
+.save:disabled{opacity:.45;cursor:default}
+#dvShare{display:flex;align-items:center;justify-content:center;gap:8px}
 .toast{position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:999px;font-size:14px;z-index:60;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
 .toast.on{opacity:1}
 .month{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border-radius:999px;padding:4px 6px}
@@ -650,6 +654,7 @@ if(iosWeb){$('iosHint').hidden=false;$('iosWarn').hidden=false}
 // Con PIN: numero, note e allegati cifrati con AES-GCM, chiave derivata dal PIN (PBKDF2). Senza PIN: in chiaro.
 const DT={ci:["Carta d'identità",'id'],pat:['Patente','car'],pas:['Passaporto','globe'],ts:['Tessera sanitaria','health'],cf:['Codice fiscale','receipt'],altro:['Altro documento','dots']};
 P.globe='<circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c2.5 2.5 2.5 13.5 0 16M12 4c-2.5 2.5-2.5 13.5 0 16"/>';
+P.share='<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.5M8.2 13.2l7.6 4.5"/>';
 P.lock='<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>';
 P.clip='<path d="M20 11.5 12.5 19a5 5 0 0 1-7-7L13 4.5a3.3 3.3 0 0 1 4.7 4.7L10.2 16.7a1.7 1.7 0 0 1-2.4-2.4l7-7"/>';
 P.file='<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>';
@@ -672,26 +677,41 @@ async function deriveKey(pin,salt){const base=await crypto.subtle.importKey('raw
   return crypto.subtle.deriveKey({name:'PBKDF2',salt:unb64(salt),iterations:310000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
 async function encObj(key,obj){const iv=crypto.getRandomValues(new Uint8Array(12));const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(obj)));return {iv:b64(iv),ct:b64(ct)}}
 async function decObj(key,e){const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(e.iv)},key,unb64(e.ct));return JSON.parse(new TextDecoder().decode(pt))}
-let vKey=null,vKeySalt=null,vLockT=null;const docCache=new Map();
-const pinOn=()=>!!(db.vault&&!db.vault.off&&db.vault.salt);
+let vKey=null,vKid=null,vLockT=null;const docCache=new Map();
+// Chiave dei documenti (casuale) "avvolta" due volte: con il PIN e con il codice di recupero.
+const pinOn=()=>!!(db.vault&&!db.vault.off&&db.vault.wPin);
 const locked=()=>pinOn()&&!vKey;
-function lockNow(){vKey=null;docCache.forEach(c=>c.files.forEach(f=>f.url&&URL.revokeObjectURL(f.url)));docCache.clear();if(view==='doc')render()}
+function lockNow(){vKey=null;vKid=null;docCache.forEach(c=>c.files.forEach(f=>f.url&&URL.revokeObjectURL(f.url)));docCache.clear();if(view==='doc')render()}
 document.addEventListener('visibilitychange',()=>{if(document.hidden){clearTimeout(vLockT);vLockT=setTimeout(()=>{if(pinOn())lockNow()},60000)}else clearTimeout(vLockT)});
-async function unlock(pin){const k=await deriveKey(pin,db.vault.salt);try{const t=await decObj(k,db.vault.check);if(t!=='casainordine')throw 0}catch(e){return false}vKey=k;vKeySalt=db.vault.salt;await healVault();return true}
+const importDek=raw=>crypto.subtle.importKey('raw',raw,{name:'AES-GCM'},false,['encrypt','decrypt']);
+const normCode=c=>String(c||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+function newCode(){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r=crypto.getRandomValues(new Uint8Array(16));let c='';r.forEach((x,i)=>{c+=A[x%32];if(i%4===3&&i<15)c+='-'});return c}
+const newSalt=()=>b64(crypto.getRandomValues(new Uint8Array(16)));
+async function openWith(secret,salt,wrapped){try{const k=await deriveKey(secret,salt);const raw=unb64(await decObj(k,wrapped));return {raw,key:await importDek(raw)}}catch(e){return null}}
+async function useDek(o){vKey=o.key;vKid=db.vault.kid;await healVault()}
+async function unlock(pin){const o=await openWith(pin,db.vault.salt,db.vault.wPin);if(!o)return false;await useDek(o);return true}
+let recRaw=null;
+async function unlockRecovery(code){const o=await openWith(normCode(code),db.vault.rsalt,db.vault.wRec);if(!o)return false;recRaw=o.raw;await useDek(o);return true}
 async function sealRec(id,data){const u=Date.now();if(pinOn()){if(!vKey)throw 'locked';return {id,u,enc:await encObj(vKey,data)}}return {id,u,plain:data}}
 async function openRec(rec){if(!rec)return {num:'',note:'',files:[]};if(rec.plain)return rec.plain;if(rec.enc){if(!vKey)throw 'locked';return decObj(vKey,rec.enc)}return {num:'',note:'',files:[]}}
 // porta tutti i record allo stato giusto (cifrati se c'è il PIN, in chiaro se non c'è)
 async function healVault(){const all=await vAll();let n=0;for(const r of all){
   if(pinOn()&&r.plain&&vKey){await vPut(await sealRec(r.id,r.plain));n++}
   else if(!pinOn()&&r.enc&&vKey){try{await vPut({id:r.id,u:Date.now(),plain:await decObj(vKey,r.enc)});n++}catch(e){}}}
-  if(!pinOn())vKey=null;if(n){docCache.clear();markDirty()}}
+  if(!pinOn()){vKey=null;vKid=null}if(n){docCache.clear();markDirty()}}
 function markDirty(){if(prof&&prof.mode==='google'){prof.dirty=true;saveProf();clearTimeout(store.t);store.t=setTimeout(()=>sync(false),1500)}}
-async function setPin(pin){const salt=b64(crypto.getRandomValues(new Uint8Array(16)));const k=await deriveKey(pin,salt);
+// primo PIN: crea la chiave, cifra i documenti, restituisce il codice di recupero
+async function setPin(pin){const raw=crypto.getRandomValues(new Uint8Array(32)),code=newCode();
   const recs=[];for(const r of await vAll())recs.push({id:r.id,data:await openRec(r)});
-  db.vault={u:Date.now(),salt,check:await encObj(k,'casainordine')};vKey=k;vKeySalt=salt;
-  for(const r of recs)await vPut(await sealRec(r.id,r.data));docCache.clear();store()}
+  const salt=newSalt(),rsalt=newSalt();
+  db.vault={u:Date.now(),v:2,kid:b64(crypto.getRandomValues(new Uint8Array(9))),salt,wPin:await encObj(await deriveKey(pin,salt),b64(raw)),rsalt,wRec:await encObj(await deriveKey(normCode(code),rsalt),b64(raw))};
+  vKey=await importDek(raw);vKid=db.vault.kid;
+  for(const r of recs)await vPut(await sealRec(r.id,r.data));docCache.clear();store();return code}
+// cambio PIN: serve la chiave in chiaro, che si ottiene di nuovo con il PIN attuale o con il codice
+async function rewrapPin(raw,pin){const salt=newSalt();db.vault={...db.vault,u:Date.now(),salt,wPin:await encObj(await deriveKey(pin,salt),b64(raw))};store()}
+async function rewrapCode(raw){const code=newCode(),rsalt=newSalt();db.vault={...db.vault,u:Date.now(),rsalt,wRec:await encObj(await deriveKey(normCode(code),rsalt),b64(raw))};store();return code}
 async function removePin(){const recs=[];for(const r of await vAll())recs.push({id:r.id,data:await openRec(r)});
-  db.vault={u:Date.now(),off:true};for(const r of recs)await vPut({id:r.id,u:Date.now(),plain:r.data});vKey=null;docCache.clear();store()}
+  db.vault={u:Date.now(),off:true};for(const r of recs)await vPut({id:r.id,u:Date.now(),plain:r.data});vKey=null;vKid=null;docCache.clear();store()}
 // ---- allegati
 function fileToData(f){return new Promise((ok,ko)=>{
   if(f.type==='application/pdf'){if(f.size>3e6)return ko('grande');const r=new FileReader();r.onload=()=>ok({type:f.type,name:f.name,data:r.result.split(',')[1]});r.onerror=ko;r.readAsDataURL(f);return}
@@ -704,7 +724,7 @@ async function getDoc(id){if(docCache.has(id))return docCache.get(id);const d=aw
 // ---- vista Documenti
 const maskNum=n=>!n?'':n.length<=4?n:'•••• '+n.slice(-4);
 async function renderDoc(){
-  const el=$('docList');if(!el)return;if(vKey&&pinOn()&&db.vault.salt!==vKeySalt){vKey=null;docCache.clear()}
+  const el=$('docList');if(!el)return;if(vKey&&pinOn()&&db.vault.kid!==vKid){vKey=null;vKid=null;docCache.clear()}
   $('fab').hidden=locked();
   $('docTools').innerHTML=locked()?'':pinOn()?`<button class="pill" id="dLock">${ico('lock','currentColor',14)} Blocca</button><button class="pill" id="dPin">PIN</button>`:`<button class="pill" id="dPin">${ico('lock','currentColor',14)} Imposta un PIN</button>`;
   if(locked()){el.innerHTML=`<div class="card lockcard"><span class="ic big" style="background:var(--pri-t);color:var(--pri-ink)">${ico('lock','currentColor',26)}</span><h3 style="justify-content:center">Documenti protetti</h3><p class="empty" style="text-align:center">Inserisci il PIN per vedere i tuoi documenti.</p>
@@ -722,7 +742,7 @@ async function renderDoc(){
   el.innerHTML=banner+rows.join('');bindDocTools();
 }
 function bindDocTools(){const pinBtn=()=>pinSheet();if($('dPin'))$('dPin').onclick=pinBtn;if($('dPin2'))$('dPin2').onclick=pinBtn;if($('dLock'))$('dLock').onclick=()=>{lockNow();toast('Documenti bloccati')};
-  if($('dForgot'))$('dForgot').onclick=()=>ask('PIN dimenticato','Senza il PIN i documenti protetti non si possono recuperare, né da qui né da altri dispositivi. Puoi solo cancellarli e ricominciare la sezione Documenti. Movimenti, scadenze e agenda restano.','Continua',()=>setTimeout(()=>ask('Ultima conferma','Verranno cancellati tutti i documenti e le loro foto, anche da Google Drive. Non si può annullare.','Sì, cancella i documenti',async()=>{await wipeDocs();toast('Documenti cancellati')},true),320),true)}
+  if($('dForgot'))$('dForgot').onclick=forgotSheet}
 async function wipeDocs(){if(!db.doc)db.doc=[];const now=Date.now();db.del=[...(db.del||[]),...db.doc.map(d=>({id:d.id,u:now})),...db.scad.filter(s=>s.doc).map(s=>({id:s.id,u:now}))];
   db.scad=db.scad.filter(s=>!s.doc);db.doc=[];db.vault={u:now,off:true};vKey=null;docCache.clear();await vClear();store();render()}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-doc]');if(b)openDocDetail(b.dataset.doc)});
@@ -734,18 +754,42 @@ async function openDocDetail(id){if(!db.doc)db.doc=[];const d=db.doc.find(x=>x.i
    ${c.num?`<button class="pill" id="dvCopy">Copia il numero</button>`:''}
    ${c.note?`<label>Note</label><p class="dvval" style="white-space:pre-wrap">${esc(c.note)}</p>`:''}
    <div class="thumbs">${c.files.map((f,i)=>f.type==='application/pdf'?`<a class="thumb pdf" href="${f.url}" target="_blank" rel="noopener">${ico('file','currentColor',28)}<span>${esc(f.name||'PDF')}</span></a>`:`<button class="thumb" data-view="${i}"><img src="${f.url}" alt="Allegato ${i+1}"></button>`).join('')}</div>
-   ${c.files.length?`<p class="note" style="text-align:left">Tocca una foto per ingrandirla.</p>`:''}
+   ${c.files.length?`<p class="note" style="text-align:left">Tocca una foto per ingrandirla.</p><button class="save" id="dvShare" style="margin-top:12px;background:var(--pri-t);color:var(--pri-ink)">${ico('share','currentColor',18)} Condividi${c.files.some(f=>f.type==='image/jpeg')?' in un unico PDF':''}</button>${pinOn()?'<p class="note" style="text-align:left">Il file condiviso non è protetto dal PIN: condividilo solo con chi ti fidi.</p>':''}`:''}
    <div class="two" style="margin-top:14px"><button class="save" id="dvEdit">Modifica</button><button class="save" id="dvDel" style="background:#FDECEC;color:var(--red)">Elimina</button></div>`;
   $('dvBody').querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{const f=c.files[+b.dataset.view];$('viewImg').src=f.url;$('viewDl').href=f.url;$('viewDl').download=f.name||'documento.jpg';$('viewer').hidden=false});
+  if($('dvShare'))$('dvShare').onclick=()=>shareDoc(d,c);
   if($('dvCopy'))$('dvCopy').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(c.num).then(()=>toast('Numero copiato'),()=>toast('Copia non riuscita'))};
   $('dvEdit').onclick=()=>{closeSh('D2');setTimeout(()=>openDocForm(id),260)};
   $('dvDel').onclick=()=>{closeSh('D2');ask('Eliminare il documento?','Verranno cancellati il documento e le sue foto, anche dagli altri dispositivi collegati.','Elimina',()=>delDoc(id),true)};
   openSh('D2')}
-function openSh(k){$('toast').classList.remove('on');$('bg'+k).style.display='block';requestAnimationFrame(()=>$('sheet'+k).classList.add('on'))}
+function openSh(k){$('toast').classList.remove('on');if(k==='P'&&!$('codeDone'))$('bgP').onclick=bgPclose;$('bg'+k).style.display='block';requestAnimationFrame(()=>$('sheet'+k).classList.add('on'))}
 function closeSh(k){$('sheet'+k).classList.remove('on');setTimeout(()=>$('bg'+k).style.display='none',250)}
 $('viewClose').onclick=()=>{$('viewer').hidden=true;$('viewImg').removeAttribute('src')};
 async function delDoc(id){if(!db.doc)db.doc=[];const now=Date.now();db.doc=db.doc.filter(x=>x.id!==id);const sd=db.scad.filter(s=>s.doc===id);db.scad=db.scad.filter(s=>s.doc!==id);
   db.del=[...(db.del||[]),{id,u:now},...sd.map(s=>({id:s.id,u:now}))];await vDel(id);docCache.delete(id);store();render();toast('Documento eliminato')}
+// ---- condivisione: fronte e retro in un unico PDF (costruito a mano, senza librerie)
+function jpgSize(u8){let i=2;while(i<u8.length){if(u8[i]!==0xFF){i++;continue}const m=u8[i+1],len=(u8[i+2]<<8)|u8[i+3];if(m>=0xC0&&m<=0xCF&&m!==0xC4&&m!==0xC8&&m!==0xCC)return {h:(u8[i+5]<<8)|u8[i+6],w:(u8[i+7]<<8)|u8[i+8]};i+=2+len}return {w:1000,h:630}}
+function buildPdf(imgs){const enc=new TextEncoder(),parts=[],offs=[];let pos=0;const add=x=>{const b=typeof x==='string'?enc.encode(x):x;parts.push(b);pos+=b.length};
+  const W=595,H=842,M=36,n=imgs.length,slot=(H-M*(n+1))/n;let content='';const objs=[];
+  imgs.forEach((im,i)=>{const sc=Math.min((W-2*M)/im.w,slot/im.h),w=im.w*sc,h=im.h*sc,x=(W-w)/2,y=H-M-(i*(slot+M))-(slot+h)/2;content+=`q ${w.toFixed(2)} 0 0 ${h.toFixed(2)} ${x.toFixed(2)} ${y.toFixed(2)} cm /Im${i} Do Q\n`});
+  add('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
+  const obj=(num,body)=>{offs[num]=pos;add(num+' 0 obj\n');body.forEach(add);add('\nendobj\n')};
+  const first=5;obj(1,['<< /Type /Catalog /Pages 2 0 R >>']);obj(2,['<< /Type /Pages /Kids [3 0 R] /Count 1 >>']);
+  obj(3,[`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /XObject << ${imgs.map((_,i)=>`/Im${i} ${first+i} 0 R`).join(' ')} >> >> /Contents 4 0 R >>`]);
+  obj(4,[`<< /Length ${content.length} >>\nstream\n${content}endstream`]);
+  imgs.forEach((im,i)=>obj(first+i,[`<< /Type /XObject /Subtype /Image /Width ${im.w} /Height ${im.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${im.bytes.length} >>\nstream\n`,im.bytes,'\nendstream']));
+  const total=first+imgs.length,xref=pos;let x=`xref\n0 ${total}\n0000000000 65535 f \n`;for(let k=1;k<total;k++)x+=String(offs[k]).padStart(10,'0')+' 00000 n \n';
+  add(x+`trailer\n<< /Size ${total} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);return new Blob(parts,{type:'application/pdf'})}
+const safeName=t=>t.replace(/[\\/:*?"<>|]+/g,'').replace(/\s+/g,' ').trim()||'documento';
+// tutto sincrono: Safari permette la condivisione solo se parte subito dal tocco
+function shareDoc(d,c){const t=dt(d.tipo)[0],base=safeName(t+(d.chi?' - '+d.chi:''));
+  const imgs=c.files.filter(f=>f.type==='image/jpeg').map(f=>{const bytes=unb64(f.data);return {bytes,...jpgSize(bytes)}});
+  const out=[];if(imgs.length)out.push(new File([buildPdf(imgs)],base+'.pdf',{type:'application/pdf'}));
+  c.files.filter(f=>f.type==='application/pdf').forEach((f,i)=>out.push(new File([unb64(f.data)],base+(i?' '+(i+1):'')+' allegato.pdf',{type:'application/pdf'})));
+  if(!out.length){toast('Questo documento non ha foto o PDF da condividere');return}
+  const data={files:out,title:base};
+  if(navigator.canShare&&navigator.canShare(data)){navigator.share(data).catch(e=>{if(e&&e.name!=='AbortError')toast('Condivisione non riuscita')});return}
+  out.forEach(f=>{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;document.body.appendChild(a);a.click();a.remove()});toast('Il PDF è stato salvato nei download')}
 // ---- modulo
 let dForm={id:null,tipo:'ci',files:[]};
 async function openDocForm(id){if(!db.doc)db.doc=[];if(locked()){toast('Sblocca prima i documenti');return}
@@ -774,26 +818,54 @@ $('dSave').onclick=async()=>{if(!db.doc)db.doc=[];const chi=$('dChi').value.trim
   else if(old){db.del=[...(db.del||[]),{id:old.id,u:now}]}
   store();closeSh('D');render();toast(scad?'Documento salvato: la scadenza è in Scadenze e Agenda':'Documento salvato')};
 // ---- PIN
+const PINF=(btn)=>`<form id="pinF" autocomplete="off"><label for="pin1">Nuovo PIN</label><input class="field pin" id="pin1" type="password" inputmode="numeric" maxlength="20"><label for="pin2">Ripeti il PIN</label><input class="field pin" id="pin2" type="password" inputmode="numeric" maxlength="20"><button class="save" type="submit">${btn}</button></form>`;
 function pinSheet(){
   if(locked()){toast('Sblocca prima i documenti');return}
   const on=pinOn();$('pinTitle').textContent=on?'PIN dei documenti':'Imposta un PIN';
-  $('pinBody').innerHTML=on?`<p class="empty">I documenti sono cifrati con il tuo PIN, su questo dispositivo e su Google Drive.</p><button class="save" id="pinChange">Cambia PIN</button><button class="lnk" id="pinOff" style="width:100%;color:var(--red)">Togli il PIN</button>`
-   :`<div class="warn"><span>Con il PIN numero, note e foto dei documenti vengono <b>cifrati</b>: nessuno può leggerli senza PIN, nemmeno da Google Drive. <b>Se lo dimentichi non si possono recuperare</b>, quindi scegline uno che ricordi. Usa almeno 6 cifre.</span></div>
-     <form id="pinF" autocomplete="off"><label for="pin1">Nuovo PIN</label><input class="field pin" id="pin1" type="password" inputmode="numeric" maxlength="20"><label for="pin2">Ripeti il PIN</label><input class="field pin" id="pin2" type="password" inputmode="numeric" maxlength="20"><button class="save" type="submit">Imposta il PIN</button></form>`;
-  if(on){$('pinChange').onclick=()=>{closeSh('P');setTimeout(()=>pinNew(true),260)};
-    $('pinOff').onclick=()=>{closeSh('P');ask('Togliere il PIN?','I documenti non saranno più cifrati: chi usa questo dispositivo sbloccato potrà vederli.','Togli il PIN',async()=>{await removePin();render();toast('PIN tolto')},true)}}
-  else bindPinForm();
+  $('pinBody').innerHTML=on?`<p class="empty">I documenti sono cifrati con il tuo PIN, su questo dispositivo e su Google Drive.</p><button class="save" id="pinChange">Cambia PIN</button><button class="save" id="pinCode" style="background:var(--pri-t);color:var(--pri-ink);margin-top:10px">Nuovo codice di recupero</button><button class="lnk" id="pinOff" style="width:100%;color:var(--red)">Togli il PIN</button>`
+   :`<div class="warn"><span>Con il PIN numero, note e foto dei documenti vengono <b>cifrati</b>: nessuno può leggerli senza PIN, nemmeno da Google Drive. Subito dopo ti diamo un <b>codice di recupero</b> da conservare: serve se dimentichi il PIN. Usa almeno 6 cifre.</span></div>`+PINF('Imposta il PIN');
+  if(on){$('pinChange').onclick=()=>{closeSh('P');setTimeout(()=>askPinFor('change'),260)};
+    $('pinCode').onclick=()=>{closeSh('P');setTimeout(()=>askPinFor('code'),260)};
+    $('pinOff').onclick=()=>{closeSh('P');ask('Togliere il PIN?','I documenti non saranno più cifrati: chi usa questo dispositivo sbloccato potrà vederli. Anche il codice di recupero non servirà più.','Togli il PIN',async()=>{await removePin();render();toast('PIN tolto')},true)}}
+  else bindPinForm(async a=>{const code=await setPin(a);closeSh('P');render();setTimeout(()=>showCode(code,true),260)});
   openSh('P')}
-function pinNew(change){$('pinTitle').textContent=change?'Nuovo PIN':'Imposta un PIN';$('pinBody').innerHTML=`<form id="pinF" autocomplete="off"><label for="pin1">Nuovo PIN</label><input class="field pin" id="pin1" type="password" inputmode="numeric" maxlength="20"><label for="pin2">Ripeti il PIN</label><input class="field pin" id="pin2" type="password" inputmode="numeric" maxlength="20"><button class="save" type="submit">Salva il PIN</button></form>`;bindPinForm();openSh('P')}
-function bindPinForm(){$('pinF').onsubmit=async e=>{e.preventDefault();const a=$('pin1').value,b=$('pin2').value;
+// per cambiare PIN o codice chiediamo il PIN attuale (serve a riaprire la chiave)
+function askPinFor(what){$('pinTitle').textContent=what==='change'?'Cambia PIN':'Nuovo codice di recupero';
+  $('pinBody').innerHTML=`<form id="pinCur" autocomplete="off"><label for="pin0">PIN attuale</label><input class="field pin" id="pin0" type="password" inputmode="numeric" maxlength="20"><button class="save" type="submit">Continua</button></form>`;
+  $('pinCur').onsubmit=async e=>{e.preventDefault();const o=await openWith($('pin0').value,db.vault.salt,db.vault.wPin);if(!o){toast('PIN non corretto');$('pin0').value='';return}
+    if(what==='change')newPinForm(o.raw);else{const code=await rewrapCode(o.raw);closeSh('P');setTimeout(()=>showCode(code,false),260)}};
+  openSh('P')}
+function newPinForm(raw,afterRecovery){$('pinTitle').textContent=afterRecovery?'Scegli un nuovo PIN':'Nuovo PIN';$('pinBody').innerHTML=(afterRecovery?'<p class="empty">Codice di recupero corretto. Ora scegli un nuovo PIN.</p>':'')+PINF('Salva il PIN');
+  bindPinForm(async a=>{await rewrapPin(raw,a);closeSh('P');render();toast('Nuovo PIN salvato')});openSh('P')}
+function bindPinForm(done){$('pinF').onsubmit=async e=>{e.preventDefault();const a=$('pin1').value,b=$('pin2').value;
   if(a.length<6){toast('Il PIN deve avere almeno 6 caratteri');return}if(a!==b){toast('I due PIN non coincidono');return}
-  $('pinF').querySelector('button').textContent='Cifro i documenti…';await setPin(a);closeSh('P');render();toast('PIN impostato: i documenti sono cifrati')}}
-$('bgP').onclick=()=>closeSh('P');
+  $('pinF').querySelector('button').textContent='Un attimo…';await done(a)}}
+function showCode(code,first){$('pinTitle').textContent='Il tuo codice di recupero';
+  $('pinBody').innerHTML=`<p class="empty">Se dimentichi il PIN, con questo codice riapri i documenti e ne scegli uno nuovo. <b>Salvalo adesso</b>: per sicurezza non lo mostreremo più.</p>
+   <div class="codebox mono" id="codeTxt">${code}</div>
+   <button class="save" id="codeCopy" style="background:var(--pri-t);color:var(--pri-ink)">Copia il codice</button>
+   <p class="hint" style="margin-top:12px"><span>Puoi conservarlo nel gestore password di Google, scriverlo su un foglio da tenere in casa o salvarlo in un posto sicuro. Non tenerlo insieme ai documenti.</span></p>
+   ${first?'':'<p class="empty">Il codice precedente non funziona più.</p>'}
+   <label class="chk"><input type="checkbox" id="codeOk"> Ho salvato il codice in un posto sicuro</label>
+   <button class="save" id="codeDone" disabled>Fatto</button>`;
+  $('codeCopy').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(code).then(()=>toast('Codice copiato'),()=>toast('Copia non riuscita: scrivilo a mano'))};
+  $('codeOk').onchange=()=>$('codeDone').disabled=!$('codeOk').checked;
+  $('codeDone').onclick=()=>{closeSh('P');toast(first?'PIN impostato: i documenti sono cifrati':'Nuovo codice di recupero salvato')};
+  $('bgP').onclick=null;openSh('P')}
+function forgotSheet(){$('pinTitle').textContent='PIN dimenticato';
+  $('pinBody').innerHTML=`<p class="empty">Inserisci il <b>codice di recupero</b> che hai salvato quando hai impostato il PIN.</p>
+   <form id="recF" autocomplete="off"><input class="field mono" id="recCode" placeholder="XXXX-XXXX-XXXX-XXXX" autocapitalize="characters" style="text-align:center;font-size:18px;letter-spacing:.06em"><button class="save" type="submit">Riapri i documenti</button></form>
+   <button class="lnk" id="recNone" style="width:100%;color:var(--red)">Non ho il codice</button>`;
+  $('recF').onsubmit=async e=>{e.preventDefault();$('recF').querySelector('button').textContent='Verifico…';
+    if(await unlockRecovery($('recCode').value)){const raw=recRaw;recRaw=null;render();newPinForm(raw,true)}else{$('recF').querySelector('button').textContent='Riapri i documenti';toast('Codice non corretto')}};
+  $('recNone').onclick=()=>{closeSh('P');setTimeout(()=>ask('Senza PIN e senza codice','I documenti protetti non si possono aprire in nessun altro modo. Puoi solo cancellarli e ricominciare la sezione Documenti. Movimenti, scadenze e agenda restano.','Continua',()=>setTimeout(()=>ask('Ultima conferma','Verranno cancellati tutti i documenti e le loro foto, anche da Google Drive. Non si può annullare.','Sì, cancella i documenti',async()=>{await wipeDocs();toast('Documenti cancellati')},true),320),true),260)};
+  openSh('P')}
+function bgPclose(){closeSh('P')}$('bgP').onclick=bgPclose;
 // ---- sincronizzazione documenti su Drive (un file per documento)
 async function docSync(){if(!db.doc)db.doc=[];
   const q=encodeURIComponent("name contains 'doc-' and trashed=false");
   const l=await (await gf('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&pageSize=1000&fields=files(id,name,appProperties)&q='+q)).json();
-  const remote=new Map();for(const f of (l.files||[])){const id=f.name.replace(/^doc-|\.json$/g,'');const u=+((f.appProperties||{}).u||0);const prev=remote.get(id);
+  const remote=new Map();for(const f of (l.files||[])){if(!f.name||!/^doc-.+\.json$/.test(f.name))continue;const id=f.name.replace(/^doc-|\.json$/g,'');const u=+((f.appProperties||{}).u||0);const prev=remote.get(id);
     if(prev){if(prev.u>=u){await gf('https://www.googleapis.com/drive/v3/files/'+f.id,{method:'DELETE'});continue}await gf('https://www.googleapis.com/drive/v3/files/'+prev.fid,{method:'DELETE'})}
     remote.set(id,{fid:f.id,u})}
   const ids=new Set(db.doc.map(d=>d.id));const local=new Map((await vAll()).map(r=>[r.id,r]));let changed=false;
