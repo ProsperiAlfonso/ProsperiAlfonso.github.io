@@ -198,6 +198,14 @@ h3::first-letter{text-transform:uppercase}
 .meta span{display:inline-flex;align-items:center;gap:4px;color:var(--muted);font-size:13px}
 .tag{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:6px;margin-left:6px;vertical-align:2px}
 /* tabs */
+.instcard{position:fixed;left:12px;right:12px;bottom:calc(78px + env(safe-area-inset-bottom));z-index:7;background:var(--navy);color:#fff;border-radius:18px;padding:14px 14px 14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 12px 30px rgba(20,33,61,.35);max-width:520px;margin:0 auto}
+.instcard[hidden]{display:none}.instcard img{width:42px;height:42px;border-radius:11px;flex:none}
+.instcard p{margin:0;font-size:14px;line-height:1.35;flex:1}.instcard b{display:block;font-size:15px;margin-bottom:2px}
+.instcard .instgo{border:0;background:var(--cyan);color:#14213D;font-weight:700;font-size:14px;border-radius:999px;padding:10px 14px;cursor:pointer;flex:none}
+.instcard .instx{border:0;background:transparent;color:rgba(255,255,255,.75);font-size:22px;line-height:1;padding:4px;cursor:pointer;flex:none}
+.instcard .shr{display:inline-block;vertical-align:-3px}
+body.instOn .fab{bottom:calc(168px + env(safe-area-inset-bottom))}
+body.instOn .toast{bottom:calc(240px + env(safe-area-inset-bottom))}
 .tabs{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 0 calc(10px + env(safe-area-inset-bottom));z-index:5}
 .tabs button{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:var(--muted);cursor:pointer;flex:1}
 .tabs button svg{width:24px;height:24px}
@@ -358,6 +366,7 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   <button class="lnk" id="cNo" style="width:100%">Annulla</button>
 </div>
 <div class="snack" id="snack"><span id="snackTxt"></span><button class="cal" id="snackBtn">Aggiungi al calendario</button></div>
+<div class="instcard" id="instCard" hidden role="dialog" aria-label="Installa Casa in Ordine"><img src="icona-192.png" alt=""><p id="instTxt"></p><button class="instgo" id="instGo" hidden>Installa</button><button class="instx" id="instX" aria-label="Non ora">×</button></div>
 <button class="syncstrip" id="syncStrip" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-14.5 4.6M4 12A8 8 0 0 1 18.5 7.4"/><path d="M18 3v4.5h-4.5M6 21v-4.5h4.5"/></svg><span id="syncStripTxt">Tocca per sincronizzare con Google Drive</span></button>
 <div class="sheet-bg" id="bgD" style="z-index:30"></div>
 <div class="sheet" id="sheetD" style="z-index:31">
@@ -621,7 +630,7 @@ let hideAmt=false;try{hideAmt=localStorage.getItem('casainordine.nascondi')==='1
 function applyHide(){$('eye').hidden=view==='agenda'||view==='doc';$('eyeIc').innerHTML=hideAmt?'<path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.3 2 12 2 12s3.5 7 10 7c1.9 0 3.5-.6 4.9-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>':'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>';$('eye').setAttribute('aria-label',hideAmt?'Mostra gli importi':'Nascondi gli importi');$('eye').setAttribute('aria-pressed',hideAmt);
   if(!hideAmt)return;const dots='•••••• €';if(view!=='agenda'&&view!=='doc')$('saldo').textContent=dots;['kE','kU'].forEach(k=>$(k).textContent='•••• €');if(view==='rep')document.querySelectorAll('#repKpi strong').forEach(e=>e.textContent='•••• €')}
 $('eye').onclick=()=>{hideAmt=!hideAmt;try{localStorage.setItem('casainordine.nascondi',hideAmt?'1':'0')}catch(e){}render()};
-const _render=render;render=function(){if(!db.doc)db.doc=[];$('demoCard').hidden=!db.demo;$('syncCard').hidden=true;const needs=!!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));$('syncStrip').hidden=!needs;document.body.classList.toggle('strip',needs);if(needs)$('syncStripTxt').textContent=syncState==='perm'?'Manca il permesso su Google Drive: tocca per riprovare':'Tocca per sincronizzare con Google Drive';_render();renderAcct();if(view==='rep')renderRep();if(view==='doc'){$('saldoLbl').textContent='Documenti di famiglia';const n=db.doc.length;$('saldo').innerHTML=n+'<span>'+(n===1?'documento':'documenti')+'</span>';renderDoc()}applyHide()};
+const _render=render;render=function(){try{maybeInst()}catch(e){}if(!db.doc)db.doc=[];$('demoCard').hidden=!db.demo;$('syncCard').hidden=true;const needs=!!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));$('syncStrip').hidden=!needs;document.body.classList.toggle('strip',needs);if(needs)$('syncStripTxt').textContent=syncState==='perm'?'Manca il permesso su Google Drive: tocca per riprovare':'Tocca per sincronizzare con Google Drive';_render();renderAcct();if(view==='rep')renderRep();if(view==='doc'){$('saldoLbl').textContent='Documenti di famiglia';const n=db.doc.length;$('saldo').innerHTML=n+'<span>'+(n===1?'documento':'documenti')+'</span>';renderDoc()}applyHide()};
 function fresh(){const now=Date.now(),old=db.demo?[]:[...db.mov,...db.scad,...db.app,...(db.doc||[])].map(x=>({id:x.id,u:now}));db={mov:[],scad:[],app:[],doc:[],vault:{u:now,off:true},del:[...(db.demo?[]:db.del||[]),...old]};vKey=null;docCache.clear();vClear().catch(()=>{});store();cur=new Date();cur.setDate(1);sel=iso(new Date());go('home')}
 $('startBtn').onclick=()=>{prof=null;saveProf();db={mov:[],scad:[],app:[],del:[]};openWelcome(true)};
 const _save=$('save').onclick;$('save').onclick=()=>{if(db.demo){db={mov:[],scad:[],app:[],del:[]}}_save()};
@@ -646,11 +655,23 @@ $('mDel').onclick=()=>{closeMenu();const g=prof&&prof.mode==='google';
   },true),320),true)};
 // installazione
 let instEvt=null;
-addEventListener('beforeinstallprompt',e=>{e.preventDefault();instEvt=e;$('mInst').hidden=false});
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();instEvt=e;$('mInst').hidden=false;maybeInst()});
 $('mInst').onclick=async()=>{if(!instEvt)return;instEvt.prompt();await instEvt.userChoice;instEvt=null;$('mInst').hidden=true;closeMenu()};
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
 const iosWeb=(/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))&&!standalone;
 if(iosWeb){$('iosHint').hidden=false;$('iosWarn').hidden=false}
+// invito a installare: Android/Chrome con il tasto, iPhone con le istruzioni; "Non ora" lo nasconde per 14 giorni
+const INST_K='casainordine.invito-installa';
+function instLater(){try{localStorage.setItem(INST_K,String(Date.now()))}catch(e){}}
+function instSnoozed(){try{const t=+localStorage.getItem(INST_K)||0;return Date.now()-t<14*864e5}catch(e){return false}}
+function maybeInst(){const c=$('instCard');if(!c)return;const show=!standalone&&!!prof&&!instSnoozed()&&(!!instEvt||iosWeb);
+  if(show&&c.hidden){if(instEvt){$('instTxt').innerHTML='<b>Installa Casa in Ordine</b>Si apre come un\'app, dalla schermata Home.';$('instGo').hidden=false}
+    else{$('instTxt').innerHTML='<b>Mettila nella schermata Home</b>Tocca <svg class="shr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg> Condividi, poi "Aggiungi alla schermata Home".';$('instGo').hidden=true}}
+  c.hidden=!show;document.body.classList.toggle('instOn',show)}
+$('instX').onclick=()=>{instLater();maybeInst()};
+$('instGo').onclick=async()=>{if(!instEvt)return;const e=instEvt;e.prompt();const r=await e.userChoice.catch(()=>null);instEvt=null;$('mInst').hidden=true;if(!r||r.outcome!=='accepted')instLater();maybeInst()};
+addEventListener('appinstalled',()=>{instEvt=null;$('mInst').hidden=true;maybeInst()});
+
 // ===================== DOCUMENTI =====================
 // Metadati (tipo, intestatario, scadenza) in db.doc; numero, note e allegati nell'archivio IndexedDB "vault".
 // Con PIN: numero, note e allegati cifrati con AES-GCM, chiave derivata dal PIN (PBKDF2). Senza PIN: in chiaro.
