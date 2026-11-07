@@ -488,7 +488,7 @@ function closeAsk(){$('sheet4').classList.remove('on');setTimeout(()=>$('bg4').s
 $('cOk').onclick=()=>{closeAsk();const f=cCb;cCb=null;f&&f()};$('cNo').onclick=closeAsk;$('bg4').onclick=closeAsk;
 // dati di esempio, impostazioni, backup
 function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>el.classList.remove('on'),2200)}
-const _render=render;render=function(){$('demoCard').hidden=!db.demo;$('syncCard').hidden=!(prof&&prof.mode==='google'&&syncState==='auth');_render();renderAcct()};
+const _render=render;render=function(){$('demoCard').hidden=!db.demo;$('syncCard').hidden=!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));_render();renderAcct()};
 function fresh(){const now=Date.now(),old=db.demo?[]:[...db.mov,...db.scad,...db.app].map(x=>({id:x.id,u:now}));db={mov:[],scad:[],app:[],del:[...(db.demo?[]:db.del||[]),...old]};store();cur=new Date();cur.setDate(1);sel=iso(new Date());go('home')}
 $('startBtn').onclick=()=>{prof=null;saveProf();db={mov:[],scad:[],app:[],del:[]};openWelcome(true)};
 const _save=$('save').onclick;$('save').onclick=()=>{if(db.demo){db={mov:[],scad:[],app:[],del:[]}}_save()};
@@ -519,14 +519,14 @@ $('wDemo').onclick=()=>{prof={mode:'esempio'};saveProf();db=Object.assign(demo()
 $('wGoogle').onclick=()=>connectGoogle(true);
 // ---- Google Drive (cartella nascosta dell'app nel Drive dell'utente)
 const GCID='522180658723-nrt2sesr8tic25p4v9mbaa9gqh8l84bj.apps.googleusercontent.com'; // codice client OAuth di Google Cloud: si inserisce in fase di pubblicazione
-const SCOPE='https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/userinfo.email';
+const SCOPE='https://www.googleapis.com/auth/drive.appdata';
 const FN='casa-in-ordine.json';
 let tok=null,tokExp=0,syncState='',gisReady=null;
 function loadGIS(){return gisReady=gisReady||new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='https://accounts.google.com/gsi/client';sc.onload=ok;sc.onerror=ko;document.head.appendChild(sc)})}
 function askToken(select){return new Promise((ok,ko)=>{const c=google.accounts.oauth2.initTokenClient({client_id:GCID,scope:SCOPE,login_hint:(prof&&prof.email)||'',
-  callback:r=>{if(r.error)return ko(r);tok=r.access_token;tokExp=Date.now()+r.expires_in*1000;ok(tok)},error_callback:ko});c.requestAccessToken({prompt:select?'select_account':''})})}
+  callback:r=>{if(r.error)return ko(r);if(google.accounts.oauth2.hasGrantedAllScopes&&!google.accounts.oauth2.hasGrantedAllScopes(r,SCOPE)){tok=null;return ko('perm')}tok=r.access_token;tokExp=Date.now()+r.expires_in*1000;ok(tok)},error_callback:ko});c.requestAccessToken({prompt:select?'select_account':''})})}
 async function token(interactive){if(tok&&Date.now()<tokExp-60000)return tok;if(!interactive)throw 'auth';await loadGIS();return askToken(interactive==='select')}
-async function gf(url,opt,interactive){const t=await token(interactive);const r=await fetch(url,{...(opt||{}),headers:{Authorization:'Bearer '+t}});if(r.status===401){tok=null;throw 'auth'}if(!r.ok)throw 'drive';return r}
+async function gf(url,opt,interactive){const t=await token(interactive);const r=await fetch(url,{...(opt||{}),headers:{Authorization:'Bearer '+t}});if(r.status===401){tok=null;throw 'auth'}if(r.status===403){tok=null;throw 'perm'}if(!r.ok)throw 'drive';return r}
 function merge(a,b){const dl=new Map();[...(a.del||[]),...(b.del||[])].forEach(d=>dl.set(d.id,Math.max(dl.get(d.id)||0,d.u||0)));
   const o={del:[...dl].map(([id,u])=>({id,u}))};
   ['mov','scad','app'].forEach(k=>{const m=new Map();[...(a[k]||[]),...(b[k]||[])].forEach(x=>{const y=m.get(x.id);if(!y||(x.u||0)>(y.u||0))m.set(x.id,x)});o[k]=[...m.values()].filter(x=>!(dl.has(x.id)&&dl.get(x.id)>=(x.u||0)))});return o}
@@ -543,25 +543,25 @@ async function sync(interactive){
     fd.append('file',new Blob([JSON.stringify(db)],{type:'application/json'}));
     await gf('https://www.googleapis.com/upload/drive/v3/files'+(fid?'/'+fid:'')+'?uploadType=multipart',{method:fid?'PATCH':'POST',body:fd});
     prof.last=Date.now();saveProf();syncState='ok';
-  }catch(e){syncState=e==='auth'?'auth':'err'}
+  }catch(e){syncState=e==='auth'||e==='perm'?e:'err'}
   render();
 }
 async function connectGoogle(fromWelcome){
   if(!GCID){toast('Accesso Google: lo attiviamo alla pubblicazione');return}
   try{
     await token('select');
-    const me=await (await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+tok}})).json();
+    const me=((await (await gf('https://www.googleapis.com/drive/v3/about?fields=user(emailAddress)')).json()).user)||{};
     if(db.demo)db={mov:[],scad:[],app:[],del:[]};
-    prof={mode:'google',email:me.email||''};saveProf();localSave();
+    prof={mode:'google',email:me.emailAddress||''};saveProf();localSave();
     if(fromWelcome)closeWelcome();closeMenu();await sync(true);toast('Collegato a Google Drive');
-  }catch(e){toast('Accesso non completato')}
+  }catch(e){if(e==='perm'){closeMenu();ask('Serve il permesso su Google Drive','Casa in Ordine salva i tuoi dati in una cartella riservata del tuo Google Drive, separata dai tuoi file. Nella finestra di Google, se compare la casella su Google Drive, spuntala e poi premi Continua.','Riprova',()=>connectGoogle(fromWelcome))}else toast('Accesso non completato')}
 }
 function renderAcct(){
   const el=$('acct');if(!el)return;
   const ic=(bg,c,d)=>`<span class="ic" style="background:${bg};color:${c}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg></span>`;
   const user='<circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/>';
   if(prof&&prof.mode==='google'){
-    const st=syncState==='busy'?'Sincronizzazione in corso…':syncState==='auth'?'Tocca Sincronizza per riaccedere':syncState==='err'?'Ultimo tentativo non riuscito':prof.last?'Sincronizzato alle '+new Date(prof.last).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}):'Collegato';
+    const st=syncState==='busy'?'Sincronizzazione in corso…':syncState==='auth'?'Tocca Sincronizza per riaccedere':syncState==='perm'?'Manca il permesso su Drive: tocca Sincronizza':syncState==='err'?'Ultimo tentativo non riuscito':prof.last?'Sincronizzato alle '+new Date(prof.last).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}):'Collegato';
     el.innerHTML=ic('var(--pri-t)','var(--pri-ink)',user)+`<span class="t">${esc(prof.email)||'Account Google'}<small>${st}</small></span><button class="pill" id="aSync">Sincronizza</button>`;
     $('privTxt').textContent='I dati sono su questo dispositivo e nel tuo Google Drive, in una cartella riservata all\'app. Nessuno, oltre a te, li vede.';
     $('aSync').onclick=()=>sync('yes');
