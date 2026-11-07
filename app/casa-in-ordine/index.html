@@ -1,0 +1,1003 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Casa in Ordine</title>
+<meta name="description" content="Casa in Ordine: spese, scadenze e agenda di famiglia in una web app gratuita. I dati restano sul tuo telefono.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="canonical" href="https://prosperialfonso.com/app/casa-in-ordine/">
+<link rel="icon" href="icona.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icona-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Casa in Ordine">
+<meta name="theme-color" content="#14213D">
+<style>
+@font-face{font-family:'Barlow';font-weight:400;src:url(../../assets/fonts/barlow-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Barlow';font-weight:500;src:url(../../assets/fonts/barlow-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Barlow';font-weight:600;src:url(../../assets/fonts/barlow-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Barlow Condensed';font-weight:500;src:url(../../assets/fonts/barlow-condensed-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Barlow Condensed';font-weight:600;src:url(../../assets/fonts/barlow-condensed-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-weight:500;src:url(../../assets/fonts/ibm-plex-mono-latin-500-normal.woff2) format('woff2')}
+:root{--navy:#14213D;--hd1:#14213D;--hd2:#1C2E57;--hd3:#2A4580;--blue:#1C2E57;--on-pri:#fff;--pri-t:#E8ECF5;--pri-ink:#1C2E57;--pri-sh:rgba(28,46,87,.4);--cyan:#FCB72A;--acc-t:#FFF5DC;--bg:#F0F2F6;--card:#fff;--line:#DDE2EA;--muted:#5F6B80;--green:#1E9E6A;--red:#D9534F;--amber:#E0A030;--grey:#A9B6C7}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+:root{color-scheme:light}
+input,select,textarea{background-color:#fff;color:var(--navy)}
+html,body{background:var(--bg);color:var(--navy);font-family:Barlow,system-ui,sans-serif;font-size:16px;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+.top{background:linear-gradient(135deg,var(--hd1),var(--hd2) 70%,var(--hd3));color:#F2F6FB;padding:18px 18px 64px;position:relative;overflow:hidden}
+.top::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:28px 28px}
+.top>*{position:relative}
+.brand{display:flex;align-items:center;justify-content:space-between}
+.brand b{white-space:nowrap;font-family:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;font-weight:600;font-size:23px;letter-spacing:.01em}
+.brand b i{color:var(--cyan);font-style:normal}
+.hr{display:flex;align-items:center;gap:6px}
+.gear{width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.12);display:grid;place-items:center;cursor:pointer}
+.demo{display:flex;gap:12px;align-items:center;background:#FFF8E8;border:1.5px solid #F2D9A6}
+.demo p{flex:1;font-size:14px;line-height:1.35}
+.demo p b{display:block;font-size:15px}
+.btn2{border:0;border-radius:10px;background:var(--navy);color:#fff;font-weight:600;padding:10px 12px;cursor:pointer;white-space:nowrap;font-size:14px}
+.menu-it{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;padding:12px 0;border-top:1px solid var(--line);text-align:left;cursor:pointer}
+.menu-it:first-of-type{border-top:0}
+.menu-it .t{flex:1;line-height:1.25}
+.menu-it .t small{display:block;color:var(--muted);font-size:13px}
+.menu-it.danger{color:var(--red)}
+.privacy{display:flex;gap:10px;align-items:flex-start;background:var(--bg);border-radius:12px;padding:12px;font-size:13px;color:var(--muted);line-height:1.4;margin:6px 0 4px}
+.welcome{position:fixed;inset:0;z-index:30;background:var(--bg);display:flex;flex-direction:column;overflow:auto}
+.w-top{background:linear-gradient(160deg,var(--hd1),var(--hd2) 65%,var(--hd3));color:#F2F6FB;padding:calc(48px + env(safe-area-inset-top)) 26px 70px;position:relative;overflow:hidden}
+.w-top::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:28px 28px}
+.w-top>*{position:relative;max-width:480px;margin-left:auto;margin-right:auto}
+.w-logo{width:76px;height:76px;border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,.3);display:block;margin:0 0 18px}
+.w-top h1{font-family:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;font-weight:600;font-size:44px;line-height:1}
+.w-top h1 i{color:var(--cyan);font-style:normal}
+.w-top>p{font-size:17px;line-height:1.4;margin-top:10px;opacity:.9}
+.w-feat{list-style:none;margin-top:22px;display:flex;flex-direction:column;gap:12px}
+.w-feat li{display:flex;gap:12px;align-items:center;font-size:15px}
+.w-feat li span{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.12);display:grid;place-items:center;flex:0 0 34px;color:var(--cyan)}
+.w-bot{background:#fff;border-radius:24px 24px 0 0;margin-top:-28px;position:relative;padding:26px 22px calc(26px + env(safe-area-inset-bottom));flex:1;display:flex;flex-direction:column;gap:10px;box-shadow:0 -8px 24px rgba(0,0,0,.06)}
+.w-bot>*{width:100%;max-width:440px;margin-left:auto;margin-right:auto}
+.gbtn{display:flex;align-items:center;justify-content:center;gap:12px;border:1.5px solid #DADCE0;background:#fff;border-radius:14px;padding:14px;font-weight:600;font-size:17px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.w-note{font-size:13px;color:var(--muted);text-align:center;line-height:1.4;margin-bottom:6px}
+.obtn{border:1.5px solid var(--line);background:var(--bg);border-radius:14px;padding:14px;font-weight:600;font-size:17px;cursor:pointer}
+.lnk{border:0;background:none;color:var(--pri-ink);font-weight:600;font-size:15px;padding:10px;cursor:pointer}
+.warn{display:flex;gap:12px;background:#FFF6E5;border:1.5px solid #F3D59A;border-radius:14px;padding:14px;font-size:15px;line-height:1.4;margin-bottom:14px}
+.warn svg{flex:0 0 24px}
+.acct{display:flex;align-items:center;gap:12px;padding:4px 0 12px}
+.acct .t{flex:1;line-height:1.25}.acct .t small{display:block;color:var(--muted);font-size:13px}
+.pill{border:0;border-radius:999px;padding:8px 12px;font-weight:600;font-size:13px;cursor:pointer;background:var(--pri-t);color:var(--pri-ink);white-space:nowrap}
+.syncbar{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer}
+.syncbar p{flex:1}
+.hint{display:flex;gap:8px;font-size:13px;line-height:1.4;color:var(--muted);background:var(--bg);border-radius:10px;padding:10px 12px;margin:-2px 0 14px}
+.snack{position:fixed;left:12px;right:12px;bottom:calc(150px + env(safe-area-inset-bottom));max-width:536px;margin:0 auto;background:var(--navy);color:#fff;border-radius:16px;padding:12px 12px 12px 16px;display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.3;z-index:55;box-shadow:0 10px 30px rgba(0,0,0,.25);transform:translateY(20px);opacity:0;pointer-events:none;transition:.2s}
+.snack.on{transform:none;opacity:1;pointer-events:auto}
+.snack span{flex:1}
+.snack .cal{background:var(--cyan);border-color:var(--cyan);color:var(--navy)}
+body.strip .top{padding-top:calc(56px + env(safe-area-inset-top,0px))}
+.syncstrip{position:fixed;top:0;left:0;right:0;z-index:25;border:0;background:var(--cyan);color:#14213D;font-weight:600;font-size:14px;padding:calc(9px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 9px max(16px,env(safe-area-inset-left,0px));display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.replink{display:block;width:100%;margin-top:12px;border:0;border-top:1px solid var(--line);background:none;padding:12px 0 0;text-align:left;font-weight:600;font-size:15px;color:var(--pri-ink);cursor:pointer}
+.repcta{display:flex;align-items:center;gap:12px;width:100%;border:0;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.repcta .t{flex:1;line-height:1.25}.repcta .t small{display:block;color:var(--muted);font-size:13px}
+.repdates{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;color:var(--muted);letter-spacing:.03em}
+.mrow{display:grid;grid-template-columns:52px 1fr 148px;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line);cursor:pointer;width:100%;background:none;border-left:0;border-right:0;border-bottom:0;text-align:left;font:inherit;color:inherit}
+.mrow:first-child{border-top:0}
+.mrow .mm{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;text-transform:uppercase;color:var(--muted);line-height:1.2}
+.mrow .mb{display:flex;flex-direction:column;gap:3px}
+.mrow .mb i{display:block;height:7px;border-radius:4px;min-width:2px}
+.mrow .mv{text-align:right;font-size:13px;line-height:1.35;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mrow .mv b{display:block;font-size:15px}
+.mtot{display:grid;grid-template-columns:52px 1fr 148px;gap:10px;padding-top:10px;border-top:2px solid var(--navy);font-weight:600;font-variant-numeric:tabular-nums}
+.crow{display:grid;grid-template-columns:26px 1fr 96px;gap:10px;align-items:center;padding:8px 0}
+.crow .cb{height:6px;border-radius:3px;background:var(--bg);margin-top:5px;overflow:hidden}.crow .cb i{display:block;height:100%;border-radius:3px}
+.crow .cn{font-size:14px;line-height:1.2}.crow .cv{text-align:right;font-weight:600;font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}.crow .cv small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.kpi.wide{grid-column:1/-1}
+body.inrep .month{visibility:hidden}
+.doctools{display:flex;gap:8px;justify-content:flex-end;margin-bottom:10px;flex-wrap:wrap}
+.doctools .pill{display:inline-flex;align-items:center;gap:6px;background:#fff;box-shadow:0 2px 8px rgba(20,33,61,.08)}
+.docrow{width:100%;border:0;background:none;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.lockcard{display:flex;flex-direction:column;align-items:center;gap:10px;padding:26px 18px}.lockcard form{width:100%}
+.ic.big{width:56px;height:56px;border-radius:16px}
+.field.pin{text-align:center;font-size:24px;letter-spacing:.3em;font-family:'IBM Plex Mono',ui-monospace,monospace}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.warnline{display:flex;gap:10px;align-items:center;background:#FFF6E5;font-size:14px}.warnline p{flex:1}
+.lnkin{border:0;background:none;color:var(--pri-ink);font-weight:600;text-decoration:underline;cursor:pointer;padding:0;font:inherit}
+.attlist{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.att{position:relative;width:86px;height:64px;border-radius:10px;overflow:hidden;border:1.5px solid var(--line);background:var(--bg)}
+.att img{width:100%;height:100%;object-fit:cover;display:block}.attpdf{display:grid;place-items:center;height:100%;color:var(--muted)}
+.attx{position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(20,33,61,.75);color:#fff;font-size:16px;line-height:1;cursor:pointer}
+.attadd{width:120px;height:64px;border-radius:10px;border:1.5px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;color:var(--pri-ink);cursor:pointer;text-align:center;margin:0}
+.dvsub{color:var(--muted);margin:-8px 0 12px}
+.dvgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px}.dvval{font-size:17px;margin-bottom:8px}
+.thumbs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.thumb{border:1.5px solid var(--line);border-radius:12px;overflow:hidden;padding:0;background:var(--bg);cursor:pointer;aspect-ratio:1.55;display:block;width:100%}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb.pdf{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--pri-ink);text-decoration:none;font-size:13px;padding:8px;text-align:center;word-break:break-all}
+.viewer{position:fixed;inset:0;z-index:70;background:#0b1222;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom))}
+.viewer img{max-width:100%;max-height:calc(100% - 64px);object-fit:contain;touch-action:pinch-zoom}
+.viewbar{display:flex;gap:12px;margin-top:14px}.viewbar .pill{text-decoration:none}
+.codebox{font-size:22px;letter-spacing:.08em;text-align:center;background:var(--bg);border:1.5px dashed var(--line);border-radius:12px;padding:16px 8px;margin:6px 0 12px;user-select:all;color:var(--navy);font-weight:600}
+.chk{display:flex;gap:10px;align-items:center;font-size:15px;color:var(--navy);margin:14px 0 10px}.chk input{width:20px;height:20px}
+.save:disabled{opacity:.45;cursor:default}
+#dvShare{display:flex;align-items:center;justify-content:center;gap:8px}
+.toast{position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:999px;font-size:14px;z-index:60;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1}
+.month{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border-radius:999px;padding:4px 6px}
+.month button{background:none;border:0;width:26px;height:28px;border-radius:50%;color:#fff;font-size:18px;cursor:pointer}
+.month span{white-space:nowrap;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:.04em;text-transform:uppercase;min-width:84px;text-align:center}
+.saldo{margin-top:22px}
+.saldo small{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.1em;color:var(--cyan);text-transform:uppercase}
+.saldo-row{display:flex;align-items:center;gap:12px}
+.eye{flex:0 0 40px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;display:grid;place-items:center;cursor:pointer}
+.eye:focus-visible{outline:2px solid var(--cyan)}
+.saldo #saldo{font-family:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;font-weight:600;font-size:46px;line-height:1.05;min-width:0}
+.saldo div span{font-size:22px;font-weight:500;opacity:.8;margin-left:6px}
+.wrap{position:relative;z-index:1;padding:0 14px 110px;margin-top:-48px;max-width:560px;margin-left:auto;margin-right:auto}
+.top .in{max-width:532px;margin:0 auto}
+.card{background:var(--card);border-radius:16px;padding:16px;box-shadow:0 6px 20px rgba(14,59,67,.08);margin-bottom:14px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi{border-radius:12px;padding:12px;background:var(--bg)}
+.kpi small{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.kpi strong{display:block;font-family:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;font-size:26px;font-weight:600;margin-top:2px}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+h3{font-family:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;font-weight:600;font-size:21px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:baseline}
+h3 a{font-family:Barlow,system-ui,sans-serif;font-size:13px;font-weight:600;color:var(--pri-ink);text-decoration:none;cursor:pointer}
+h3::first-letter{text-transform:uppercase}
+.donut{display:flex;flex-direction:column;gap:14px;align-items:stretch}
+@media(min-width:520px){.donut{flex-direction:row;align-items:center}}
+.donut>svg{align-self:center;flex:0 0 170px;width:170px;height:170px}
+.legend{flex:1;display:flex;flex-direction:column;gap:7px;font-size:14px}
+.legend div{display:flex;align-items:center;gap:8px}
+.legend span:nth-child(2){flex:1}
+.lic{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:0 0 26px}
+.legend em{font-style:normal;font-weight:600}
+.legend .pc{color:var(--muted);font-size:12px;width:34px;text-align:right}
+.bars{display:flex;align-items:flex-end;gap:10px;height:120px;padding-top:6px}
+.bars .b{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.bars .pair{display:flex;gap:3px;align-items:flex-end;height:100%}
+.bars .pair i{width:10px;border-radius:4px 4px 0 0;display:block}
+.bars small{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;color:var(--muted);text-transform:uppercase}
+.alert{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.alert:first-child{border-top:0}
+.badge{min-width:48px;height:48px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;font-weight:600;line-height:1;flex:0 0 48px}
+.badge b{font-size:20px}.badge small{font-size:11px;font-family:Barlow,system-ui,sans-serif;font-weight:500}
+.badge.word b{font-size:15px;text-transform:uppercase;letter-spacing:.02em}
+.alert p{flex:1;font-size:15px;line-height:1.3;min-width:0}
+.alert p small{display:block;color:var(--muted);font-size:13px}
+.row{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex:0 0 38px}
+.row .t{flex:1;line-height:1.25;min-width:0}
+.row .t small{display:block;color:var(--muted);font-size:13px}
+.amt{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.amt.e{color:var(--green)}
+.day{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin:14px 2px 4px}
+.cal{background:none;border:1.5px solid var(--line);border-radius:999px;padding:6px 10px;font-size:13px;color:var(--pri-ink);font-weight:600;cursor:pointer;white-space:nowrap}
+/* agenda */
+.wd{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px}
+.wd span{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.06em;color:var(--muted);text-align:center;text-transform:uppercase}
+.wd span:nth-child(7){color:var(--red)}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.dc{border:0;background:var(--bg);border-radius:10px;height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;font-weight:600;font-size:15px;font-variant-numeric:tabular-nums;position:relative}
+.dc.blank{background:none;cursor:default}
+.dc.sun{color:var(--red)}
+.dc.past{color:#9AA8BB}
+.dc.today{box-shadow:inset 0 0 0 2px var(--cyan);background:var(--acc-t)}
+.dc.sel{background:var(--blue);color:var(--on-pri);box-shadow:0 4px 12px var(--pri-sh)}
+.pips{display:flex;gap:3px;height:6px}
+.pips i{width:6px;height:6px;border-radius:50%}
+.dc.sel .pips i{box-shadow:0 0 0 1.5px #fff}
+.dc.sel .pips i.a{background:var(--cyan)!important;box-shadow:none}
+.dc.sel .pips i.g{background:#fff!important;box-shadow:none}
+.key{display:flex;gap:14px;justify-content:center;margin-top:12px;font-size:12px;color:var(--muted)}
+.key span{display:flex;align-items:center;gap:5px}
+.key i{width:8px;height:8px;border-radius:50%}
+.addday{display:flex;align-items:center;gap:6px;background:var(--pri-t);border:0;border-radius:999px;padding:7px 12px;font-size:13px;font-weight:600;color:var(--pri-ink);cursor:pointer;font-family:Barlow}
+.meta{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:2px}
+.meta span{display:inline-flex;align-items:center;gap:4px;color:var(--muted);font-size:13px}
+.tag{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:6px;margin-left:6px;vertical-align:2px}
+/* tabs */
+.tabs{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 0 calc(10px + env(safe-area-inset-bottom));z-index:5}
+.tabs button{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:var(--muted);cursor:pointer;flex:1}
+.tabs button svg{width:24px;height:24px}
+.tabs button.on{color:var(--pri-ink);font-weight:600}
+.fab{position:fixed;right:18px;bottom:calc(78px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:50%;border:0;background:var(--blue);color:var(--on-pri);font-size:32px;box-shadow:0 10px 24px var(--pri-sh);cursor:pointer;z-index:6;display:grid;place-items:center}
+.sheet-bg{position:fixed;inset:0;background:rgba(10,18,36,.5);display:none;z-index:9}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:#fff;border-radius:22px 22px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom));z-index:10;transform:translateY(100%);transition:transform .25s;max-width:560px;margin:0 auto;max-height:92vh;overflow:auto}
+.sheet.on{transform:none}
+.sheet h4{font-family:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;font-size:24px;font-weight:600;margin-bottom:12px}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);background:var(--bg);border-radius:12px;padding:4px;margin-bottom:14px}
+.seg button{border:0;background:none;padding:9px 2px;border-radius:9px;font-weight:600;color:var(--muted);cursor:pointer;font-size:15px}
+.seg button.on{background:#fff;color:var(--navy);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.big{width:100%;border:0;background:transparent;border-radius:0;border-bottom:2px solid var(--line);font-family:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;font-size:40px;font-weight:600;padding:4px 0;margin-bottom:14px;outline:0}
+.big.txt{font-size:28px}
+.big:focus{border-color:var(--blue)}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.chips button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 11px;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.chips button.on{border-color:var(--blue);background:var(--pri-t);color:var(--pri-ink);font-weight:600}
+.field{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:12px;background:#fff;min-height:44px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.save{width:100%;border:0;border-radius:12px;background:var(--blue);color:var(--on-pri);font-weight:600;font-size:17px;padding:14px;cursor:pointer;margin-top:4px}
+.empty{color:var(--muted);font-size:14px;padding:8px 0}
+.note{font-size:12px;color:var(--muted);text-align:center;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="welcome" id="welcome" hidden>
+ <div class="w-top">
+  <img class="w-logo" src="icona.svg" alt="">
+  <h1>Casa <i>in Ordine</i></h1>
+  <p>Spese, scadenze e agenda di famiglia in un'unica app. Gratis e senza pubblicità.</p>
+  <ul class="w-feat">
+   <li><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 4v8l6 4"/></svg></span>Saldo del mese e grafici automatici</li>
+   <li><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9"/></svg></span>Scadenze con il conto alla rovescia</li>
+   <li><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span>Agenda con promemoria tramite calendario</li>
+  </ul>
+ </div>
+ <div class="w-bot">
+  <button class="gbtn" id="wGoogle"><svg width="22" height="22" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.9 6.2C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.2C.9 16.6 0 20.2 0 24s.9 7.4 2.6 10.8l7.9-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4.1-13.5-9.9l-7.9 6.2C6.6 42.6 14.6 48 24 48z"/></svg>Accedi con Google</button>
+  <p class="w-note">I dati si salvano nel tuo Google Drive: li ritrovi su telefono e PC.</p>
+  <button class="obtn" id="wGuest">Continua come ospite</button>
+  <button class="lnk" id="wDemo">Prima guarda un esempio</button>
+  <p class="w-note" style="margin-top:8px">Gratis, senza pubblicità · <a href="../../privacy.html#casa-in-ordine" style="color:var(--pri-ink);font-weight:600">Informativa sulla privacy</a><br>Un progetto di <a href="../../" style="color:inherit">prosperialfonso.com</a></p>
+ </div>
+</div>
+<header class="top"><div class="in">
+  <div class="brand"><b>Casa <i>in Ordine</i></b><div class="hr">
+    <div class="month"><button id="prev" aria-label="Mese precedente">‹</button><span id="mlabel"></span><button id="next" aria-label="Mese successivo">›</button></div><button class="gear" id="menu" aria-label="Impostazioni e backup"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>
+  </div>
+  <div class="saldo"><small id="saldoLbl">Saldo del mese</small><div class="saldo-row"><div id="saldo"></div><button class="eye" id="eye" aria-label="Nascondi gli importi" aria-pressed="false"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" id="eyeIc"></svg></button></div></div>
+</div></header>
+
+<main class="wrap">
+  <section id="v-home">
+    <div class="card syncbar" id="syncCard" hidden><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-14.5 4.6M4 12A8 8 0 0 1 18.5 7.4"/><path d="M18 3v4.5h-4.5M6 21v-4.5h4.5"/></svg></span><p><b>Sincronizza con Google Drive</b><br><small style="color:var(--muted)">Tocca per allineare i dati con gli altri dispositivi</small></p></div>
+    <div class="card demo" id="demoCard" hidden><p><b>Questi sono dati di esempio</b>Guardati intorno, poi parti con i tuoi conti.</p><button class="btn2" id="startBtn">Inizia da zero</button></div>
+    <div class="card duo">
+      <div class="kpi"><small><span class="dot" style="background:var(--green)"></span>Entrate</small><strong id="kE"></strong></div>
+      <div class="kpi"><small><span class="dot" style="background:var(--red)"></span>Uscite</small><strong id="kU"></strong></div>
+    </div>
+    <div class="card"><h3>In arrivo <a data-go="agenda">Agenda</a></h3><div id="alerts"></div></div>
+    <div class="card"><h3>Dove vanno i soldi</h3><div class="donut" id="donut"></div></div>
+    <div class="card"><h3>Ultimi 6 mesi <span style="font:500 12px Barlow,system-ui,sans-serif;color:var(--muted)"><span class="dot" style="background:var(--green)"></span> entrate &nbsp;<span class="dot" style="background:var(--red)"></span> uscite</span></h3><div class="bars" id="bars"></div><button class="replink" data-go="rep">Resoconto per periodo <span aria-hidden="true">›</span></button></div>
+  </section>
+  <section id="v-mov" hidden><button class="card repcta" data-go="rep"><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span class="t"><b>Resoconto per periodo</b><small>Entrate e uscite mese per mese, o in un intervallo a scelta</small></span><span aria-hidden="true" style="font-size:22px;color:var(--muted)">›</span></button><div id="movlist"></div></section>
+  <section id="v-doc" hidden><div class="doctools" id="docTools"></div><div id="docList"></div><p class="note">Numero, note e foto sono protetti dal PIN, se lo imposti. La scadenza finisce in Scadenze e Agenda.</p></section>
+  <section id="v-rep" hidden>
+    <div class="card">
+      <h3>Periodo</h3>
+      <div class="chips" id="repPer">
+        <button data-p="m1">Questo mese</button><button data-p="m3">Ultimi 3 mesi</button><button data-p="m12">Ultimi 12 mesi</button><button data-p="y0">Quest'anno</button><button data-p="y1">Anno scorso</button><button data-p="cus">Personalizzato</button>
+      </div>
+      <div class="two" id="repCus" hidden><div><label for="repDa">Dal</label><input class="field" type="date" id="repDa"></div><div><label for="repA">Al</label><input class="field" type="date" id="repA"></div></div>
+      <p class="repdates" id="repDates"></p>
+    </div>
+    <div class="card duo" id="repKpi"></div>
+    <div class="card"><h3>Mese per mese</h3><div id="repMesi"></div></div>
+    <div class="card"><h3>Uscite per categoria</h3><div id="repCatU"></div></div>
+    <div class="card"><h3>Entrate per categoria</h3><div id="repCatE"></div></div>
+  </section>
+  <section id="v-agenda" hidden>
+    <div class="card">
+      <div class="wd"><span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span>Sab</span><span>Dom</span></div>
+      <div class="grid" id="grid"></div>
+      <div class="key"><span><i style="background:var(--red)"></i>Scadenze</span><span><i style="background:#2B68B0"></i>Appuntamenti</span><span><i style="background:var(--grey)"></i>Spese</span></div>
+    </div>
+    <div class="card" id="dayCard"></div>
+    <div class="card"><h3>Prossimi impegni</h3><div id="next30"></div></div>
+  </section>
+  <section id="v-scad" hidden><div class="card" id="scadlist"></div><p class="note">I promemoria arrivano tramite il calendario del telefono: tocca "Calendario" su ogni scadenza.</p></section>
+</main>
+
+<button class="fab" id="fab" aria-label="Aggiungi"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+<nav class="tabs">
+  <button data-go="home" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 4v8l6 4"/></svg>Riepilogo</button>
+  <button data-go="mov"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Movimenti</button>
+  <button data-go="agenda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/><circle cx="9" cy="14.5" r=".9" fill="currentColor"/><circle cx="12" cy="14.5" r=".9" fill="currentColor"/><circle cx="15" cy="14.5" r=".9" fill="currentColor"/></svg>Agenda</button>
+  <button data-go="scad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9"/></svg>Scadenze</button>
+  <button data-go="doc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.5 1.7-2 3-2s2.4.5 3 2M14 10h4M14 13h3"/></svg>Documenti</button>
+</nav>
+
+<div class="sheet-bg" id="bg"></div>
+<div class="sheet" id="sheet">
+  <h4 id="shTitle">Nuovo movimento</h4>
+  <div class="seg" id="seg"><button data-t="U" class="on">Uscita</button><button data-t="E">Entrata</button><button data-t="S">Scadenza</button><button data-t="A">Impegno</button></div>
+  <div id="fMov">
+    <input class="big" id="fImp" inputmode="decimal" placeholder="0,00 €">
+    <label>Categoria</label><div class="chips" id="fCat"></div>
+    <div id="fSpecWrap" hidden><label for="fSpec">Specifica</label><input class="field" id="fSpec" list="specList" placeholder="es. Ricambi bici" autocomplete="off"><datalist id="specList"></datalist></div>
+    <div class="two"><div><label>Data</label><input class="field" type="date" id="fData"></div><div><label>Nota</label><input class="field" id="fNota" placeholder="facoltativa"></div></div>
+  </div>
+  <div id="fScad" hidden>
+    <label>Cosa scade</label><input class="field" id="sTit" placeholder="es. Carta d'identità">
+    <label>Tipo</label><div class="chips" id="sCat"></div>
+    <div class="two"><div><label>Scade il</label><input class="field" type="date" id="sData"></div><div><label>Promemoria tramite calendario</label><select class="field" id="sAnt"><option value="7">7 giorni prima</option><option value="30" selected>30 giorni prima</option><option value="60">60 giorni prima</option></select></div></div>
+    <p class="hint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span>L'avviso arriva tramite il calendario del telefono, non come notifica dell'app. Dopo il salvataggio tocca <b>Aggiungi al calendario</b>.</span></p>
+  </div>
+  <div id="fApp" hidden>
+    <input class="big txt" id="aTit" placeholder="Cosa devi fare?">
+    <div class="two"><div><label>Giorno</label><input class="field" type="date" id="aData"></div><div><label>Ora</label><input class="field" type="time" id="aOra"></div></div>
+    <label>Luogo</label><input class="field" id="aLuogo" placeholder="facoltativo">
+    <label>Nota</label><input class="field" id="aNota" placeholder="facoltativa">
+    <label>Promemoria tramite calendario</label><select class="field" id="aAnt"><option value="15">15 minuti prima</option><option value="60" selected>1 ora prima</option><option value="1440">1 giorno prima</option></select>
+    <p class="hint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span>L'avviso arriva tramite il calendario del telefono, non come notifica dell'app. Dopo il salvataggio tocca <b>Aggiungi al calendario</b>.</span></p>
+  </div>
+  <button class="save" id="save">Salva</button>
+</div>
+
+<div class="sheet-bg" id="bg2"></div>
+<div class="sheet" id="sheet2">
+  <h4>Casa in Ordine</h4>
+  <div class="acct" id="acct"></div>
+  <div class="privacy"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5F6B80" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 18px;margin-top:1px"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span><span id="privTxt">I tuoi dati restano solo su questo telefono: niente account, niente server. Fai ogni tanto un backup.</span></span></div>
+  <button class="menu-it" id="mInst" hidden><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M12 8v6M9 11.5l3 3 3-3"/></svg></span><span class="t">Installa sul telefono<small>Aggiunge l'icona alla schermata Home</small></span></button>
+  <button class="menu-it" id="mOut" hidden><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l-4-4 4-4M6 12h10"/></svg></span><span class="t">Scollega Google<small>Esci dall'account su questo dispositivo</small></span></button>
+  <button class="menu-it" id="mExp"><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M8 11l4 4 4-4"/><path d="M5 19h14"/></svg></span><span class="t">Esporta backup<small>Salva un file con tutti i dati</small></span></button>
+  <button class="menu-it" id="mImp"><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M5 19h14"/></svg></span><span class="t">Importa backup<small>Ripristina i dati da un file salvato</small></span></button>
+  <a class="menu-it" id="mHelp" href="mailto:casainordine.app@gmail.com?subject=Casa%20in%20Ordine%3A%20supporto" style="text-decoration:none;color:inherit"><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span><span class="t">Supporto<small>Dubbi, problemi o idee? Scrivimi a casainordine.app@gmail.com</small></span></a>
+  <button class="menu-it danger" id="mDel"><span class="ic" style="background:#FDECEC"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D9534F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13"/></svg></span><span class="t">Ricomincia da zero<small>Cancella tutti i dati e torna alla schermata iniziale</small></span></button>
+  <input type="file" id="impFile" accept=".json,application/json" hidden>
+  <p class="note" id="iosHint" hidden>Su iPhone installa l'app: tocca Condividi e poi "Aggiungi alla schermata Home". Usata solo da Safari, se non la apri per 7 giorni Safari può cancellarne i dati. L'app installata ha una memoria separata: per portare i dati, esporta il backup qui e importalo nell'app, oppure accedi con Google.</p>
+  <p class="note">Gratis, senza pubblicità · <a href="../../privacy.html#casa-in-ordine" style="color:inherit">Privacy</a></p>
+</div>
+<div class="sheet-bg" id="bg3" style="z-index:40"></div>
+<div class="sheet" id="sheet3" style="z-index:41">
+  <h4>Continui come ospite?</h4>
+  <div class="warn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B87A12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17.5v.5"/></svg><span>Senza account i dati restano <b>solo su questo dispositivo</b>. Non li vedi da altri telefoni o dal PC, e se cambi telefono o cancelli i dati del browser li perdi.<br><br>Puoi collegare Google quando vuoi dal menu, senza perdere niente.</span></div>
+  <p class="warn" id="iosWarn" hidden style="background:#FDECEC;border-color:#F3B8B6">Su iPhone, se usi l'app da Safari senza installarla, Safari può cancellare i dati dopo 7 giorni senza aperture. Installala sulla schermata Home oppure accedi con Google.</p>
+  <button class="save" id="gOk">Ho capito, continua come ospite</button>
+  <button class="lnk" id="gBack" style="width:100%">Torna indietro</button>
+</div>
+<div class="sheet-bg" id="bg4" style="z-index:42"></div>
+<div class="sheet" id="sheet4" style="z-index:43">
+  <h4 id="cTit"></h4>
+  <p id="cTxt" style="font-size:15px;line-height:1.45;color:var(--muted);margin-bottom:16px"></p>
+  <button class="save" id="cOk"></button>
+  <button class="lnk" id="cNo" style="width:100%">Annulla</button>
+</div>
+<div class="snack" id="snack"><span id="snackTxt"></span><button class="cal" id="snackBtn">Aggiungi al calendario</button></div>
+<button class="syncstrip" id="syncStrip" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-14.5 4.6M4 12A8 8 0 0 1 18.5 7.4"/><path d="M18 3v4.5h-4.5M6 21v-4.5h4.5"/></svg><span id="syncStripTxt">Tocca per sincronizzare con Google Drive</span></button>
+<div class="sheet-bg" id="bgD" style="z-index:30"></div>
+<div class="sheet" id="sheetD" style="z-index:31">
+  <h4 id="shDTitle">Nuovo documento</h4>
+  <label>Tipo</label><div class="chips" id="dTipo"></div>
+  <label for="dChi">Di chi è</label><input class="field" id="dChi" list="chiList" placeholder="es. Mario" autocomplete="off"><datalist id="chiList"></datalist>
+  <label for="dNum">Numero del documento</label><input class="field mono" id="dNum" autocomplete="off" placeholder="facoltativo">
+  <div class="two"><div><label for="dScad">Scadenza</label><input class="field" type="date" id="dScad"></div><div><label for="dAnt">Promemoria</label><select class="field" id="dAnt"><option value="30">30 giorni prima</option><option value="60" selected>60 giorni prima</option><option value="90">90 giorni prima</option></select></div></div>
+  <label>Foto fronte e retro, o PDF</label><div class="attlist" id="dAtt"></div><input type="file" id="dFile" accept="image/*,application/pdf" multiple hidden>
+  <label for="dNote">Note</label><input class="field" id="dNote" placeholder="es. rilasciata dal Comune di…">
+  <p class="hint" id="dPinHint"><span>Consiglio: proteggi i documenti con un PIN, dal tasto in alto nella sezione Documenti.</span></p>
+  <button class="save" id="dSave">Salva documento</button>
+</div>
+<div class="sheet-bg" id="bgD2" style="z-index:30"></div>
+<div class="sheet" id="sheetD2" style="z-index:31"><div id="dvBody"></div></div>
+<div class="sheet-bg" id="bgP" style="z-index:30"></div>
+<div class="sheet" id="sheetP" style="z-index:31"><h4 id="pinTitle">PIN</h4><div id="pinBody"></div></div>
+<div class="viewer" id="viewer" hidden><img id="viewImg" alt="Allegato del documento"><div class="viewbar"><a class="pill" id="viewDl" href="#">Salva</a><button class="pill" id="viewClose">Chiudi</button></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const P={
+ cart:'<path d="M3 4h2l2.4 10.2a1 1 0 0 0 1 .8h8.9a1 1 0 0 0 1-.8L20 7H6.2"/><circle cx="9" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/>',
+ bolt:'<path d="M13 3 5 14h6l-1 7 8-11h-6l1-7z"/>',
+ home:'<path d="M4 11 12 4l8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/>',
+ shield:'<path d="M12 3 5 6v5c0 4.5 3 8.3 7 10 4-1.7 7-5.5 7-10V6l-7-3z"/><path d="m9 12 2 2 4-4"/>',
+ car:'<path d="M5 16V12l2-5h10l2 5v4"/><path d="M3 16h18v2H3z"/><circle cx="7.5" cy="18.5" r="1.5"/><circle cx="16.5" cy="18.5" r="1.5"/><path d="M5 12h14"/>',
+ fuel:'<path d="M5 20V5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v15"/><path d="M4 20h11"/><path d="M7 8h5"/><path d="M14 10h2a1 1 0 0 1 1 1v5a1.5 1.5 0 0 0 3 0V9l-3-3"/>',
+ health:'<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/>',
+ school:'<path d="M3 9 12 5l9 4-9 4-9-4z"/><path d="M7 11v4c0 1.5 2.2 3 5 3s5-1.5 5-3v-4"/><path d="M21 9v5"/>',
+ ball:'<circle cx="12" cy="12" r="8"/><path d="m12 8 3 2.2-1.1 3.6h-3.8L9 10.2z"/><path d="M12 4v4M19.6 9.5 15 10.2M17 18.5l-3.1-4.7M7 18.5l3.1-4.7M4.4 9.5 9 10.2"/>',
+ fork:'<path d="M7 3v8a2 2 0 0 0 2 2v8"/><path d="M5 3v6M9 3v6"/><path d="M17 21V3c-2 1-3 4-3 7s1 3 3 3"/>',
+ shirt:'<path d="M8 4 4 6.5 5.5 10 7 9.5V20h10V9.5l1.5.5L20 6.5 16 4c-.5 1.5-2 2.5-4 2.5S8.5 5.5 8 4z"/>',
+ receipt:'<path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21V3z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+ dots:'<circle cx="6" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18" cy="12" r="1.4"/>',
+ wallet:'<path d="M4 7a2 2 0 0 1 2-2h11v4"/><rect x="4" y="7" width="16" height="12" rx="2"/><circle cx="16" cy="13" r="1.3"/>',
+ back:'<path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/>',
+ gift:'<rect x="4" y="9" width="16" height="11" rx="1"/><path d="M3 9h18M12 9v11"/><path d="M12 9c-2-4-6-4-6-1.5S10 9 12 9c2 0 6 .5 6-1.5S14 5 12 9z"/>',
+ id:'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.5 1.7-2 3-2s2.4.5 3 2M14 10h4M14 13h3"/>',
+ paw:'<circle cx="8" cy="9" r="1.6"/><circle cx="16" cy="9" r="1.6"/><circle cx="5.5" cy="13" r="1.4"/><circle cx="18.5" cy="13" r="1.4"/><path d="M12 13c-2.5 0-4.5 2.5-4.5 4.3 0 1.5 1.5 2 2.6 1.7.8-.2 1.3-.5 1.9-.5s1.1.3 1.9.5c1.1.3 2.6-.2 2.6-1.7 0-1.8-2-4.3-4.5-4.3z"/>',
+ clock:'<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
+ pin:'<path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/>',
+ event:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/><path d="m9 15 2 2 4-4"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>'
+};
+const ico=(k,c,sz)=>`<svg viewBox="0 0 24 24" width="${sz||20}" height="${sz||20}" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${P[k]}</svg>`;
+const CU={
+ spesa:['Spesa alimentare','cart','#1E9E6A'],bollette:['Bollette','bolt','#E0A030'],casa:['Casa e manutenzione','home','#2B68B0'],
+ assic:['Assicurazioni','shield','#5B6CD9'],auto:['Auto','car','#3A8FB7'],carb:['Carburante','fuel','#C9772B'],
+ salute:['Salute','health','#E36F8E'],figli:['Scuola e figli','school','#8E6CD8'],sport:['Sport e svago','ball','#2DB3A0'],
+ risto:['Ristoranti e bar','fork','#D9534F'],abbigl:['Abbigliamento','shirt','#B05FA8'],animali:['Animali','paw','#8D6E4E'],
+ tasse:['Tasse','receipt','#5F7089'],altro:['Altro','dots','#A9B6C7']};
+const CE={stip:['Stipendio','wallet','#1E9E6A'],rimb:['Rimborsi','back','#2B68B0'],regali:['Regali','gift','#B05FA8'],altroE:['Altro','dots','#A9B6C7']};
+const CS={doc:['Documento','id','#2B68B0'],auto:['Auto','car','#3A8FB7'],fisco:['Fisco e tasse','receipt','#5F7089'],assic:['Assicurazione','shield','#5B6CD9'],casa:['Casa','home','#E0A030'],altro:['Altro','dots','#A9B6C7']};
+function parseImp(t){t=String(t||'').replace(/[\s€]/g,'');if(!t)return 0;
+  if(t.includes(','))t=t.replace(/\./g,'').replace(',','.');else if(!/^\d+\.\d{1,2}$/.test(t))t=t.replace(/\./g,'');
+  const v=Math.round(parseFloat(t)*100)/100;return v>0&&isFinite(v)?v:0}
+const tint=c=>c+'1F';
+const cu=k=>CU[k]||CU.altro,ce=k=>CE[k]||CE.altroE,cs=k=>CS[k]||CS.altro;
+const K='casainordine.v1';
+const eur=n=>{const v=Math.abs(n).toFixed(2).split('.');return (n<0?'-':'')+v[0].replace(/\B(?=(\d{3})+(?!\d))/g,'.')+','+v[1]+' €'};
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const pd=s=>{const a=s.split('-');return new Date(+a[0],a[1]-1,+a[2])};
+const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const MESI=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const PK='casainordine.profilo';
+let prof=null; try{prof=JSON.parse(localStorage.getItem(PK))}catch(e){}
+function saveProf(){try{prof?localStorage.setItem(PK,JSON.stringify(prof)):localStorage.removeItem(PK)}catch(e){}}
+let db; try{db=JSON.parse(localStorage.getItem(K))}catch(e){}
+if(!db){db=(!prof||prof.mode==='esempio')?Object.assign(demo(),{demo:true}):{mov:[],scad:[],app:[]}}
+db.app=db.app||[];db.del=db.del||[];
+function localSave(){try{localStorage.setItem(K,JSON.stringify(db))}catch(e){}}
+function store(){if(db.demo)return;localSave();if(prof&&prof.mode==='google'){prof.dirty=true;saveProf();clearTimeout(store.t);store.t=setTimeout(()=>sync(false),1500)}}
+function demo(){
+  const m=[],now=new Date(),add=(off,day,t,imp,cat,nota)=>{if(off===0&&day>now.getDate())day=Math.max(1,day%now.getDate()||1);m.push({id:uid(),t,imp,cat,d:iso(new Date(now.getFullYear(),now.getMonth()-off,day)),n:nota||''})};
+  for(let o=0;o<6;o++){const f=1+((o*37)%10)/50;
+    add(o,1,'E',1650,'stip','Stipendio');add(o,3,'E',1720,'stip','Stipendio');
+    add(o,4,'U',Math.round(92*f),'bollette','Bolletta luce');add(o,9,'U',Math.round(160*f),'bollette','Gas riscaldamento');add(o,12,'U',Math.round(380*f),'spesa','Supermercato');
+    add(o,18,'U',Math.round(240*(2-f)),'spesa','Supermercato');add(o,6,'U',Math.round(130*f),'carb','Carburante');add(o,15,'U',Math.round(70*(2-f)),'carb','Carburante');
+    add(o,10,'U',Math.round(120*f),'figli','Materiale scolastico');add(o,20,'U',90,'sport','Piscina');add(o,22,'U',Math.round(45*f),'salute','Farmacia');add(o,25,'U',Math.round(60*(2-f)),'risto','Pizzeria');
+    if(o===1)add(o,16,'U',420,'assic','RC auto');if(o===3)add(o,14,'E',350,'rimb','Rimborso 730');if(o%2===0)add(o,27,'U',Math.round(80*f),'abbigl','Scarpe');if(o===0)add(o,8,'U',210,'casa','Idraulico');}
+  const rel=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
+  const s=[],ds=(days,tit,cat,ant)=>s.push({id:uid(),tit,cat,d:rel(days),ant});
+  ds(5,'Bollo auto','auto',7);ds(23,'Revisione auto','auto',30);ds(41,'ISEE da rinnovare','fisco',30);ds(70,"Carta d'identità",'doc',60);ds(118,'Assicurazione casa','assic',30);
+  const a=[],ap=(days,tit,ora,luogo,nota)=>a.push({id:uid(),tit,d:rel(days),ora,luogo,nota:nota||'',ant:60});
+  ap(-3,'Riunione di condominio','21:00','Sala condominiale');ap(0,'Dentista','17:30','Studio dentistico','Portare la tessera sanitaria');ap(1,'Gara di nuoto','09:00','Piscina comunale');
+  ap(4,'Colloquio con gli insegnanti','16:30','Scuola primaria');ap(6,'Tagliando auto','08:30','Officina','Lasciare le chiavi entro le 9');ap(12,'Cena con gli amici','20:30','Pizzeria in centro');ap(19,'Visita dal pediatra','10:15','Ambulatorio');
+  return {mov:m,scad:s,app:a};
+}
+let cur=new Date();cur.setDate(1);
+const today0=()=>{const t=new Date();t.setHours(0,0,0,0);return t};
+let sel=iso(new Date());
+const $=id=>document.getElementById(id);
+function inMonth(x,y,mo){const d=pd(x.d);return d.getFullYear()===y&&d.getMonth()===mo}
+const gg=s=>Math.round((pd(s)-today0())/864e5);
+const fd=d=>pd(d).toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'});
+function badge(g,kind){
+  if(g<0)return `<div class="badge word" style="background:#FDECEC;color:#D9534F"><b>Scad.</b><small>scaduta</small></div>`;
+  let c;if(kind==='A')c=g<=1?['#DCE9F7','#1F5796']:['#EDF3FA','#2B68B0'];else c=g<=7?['#FDECEC','#D9534F']:g<=30?['#FDF4E3','#B87A12']:['#EEF0F3','#5D6470'];
+  if(g===0)return `<div class="badge word" style="background:${c[0]};color:${c[1]}"><b>Oggi</b></div>`;
+  if(g===1)return `<div class="badge word" style="background:${c[0]};color:${c[1]}"><b>Dom.</b><small>domani</small></div>`;
+  return `<div class="badge" style="background:${c[0]};color:${c[1]}"><b>${g}</b><small>giorni</small></div>`;
+}
+const SCOL='#D9534F',ACOL='#2B68B0';
+function itemsOf(d){
+  return {
+    sc:db.scad.filter(s=>s.d===d),
+    ap:db.app.filter(a=>a.d===d).sort((a,b)=>(a.ora||'').localeCompare(b.ora||'')),
+    mv:db.mov.filter(m=>m.d===d)
+  };
+}
+function appRow(a,withDate){
+  const meta=[a.ora?`<span>${ico('clock','#5F7089',13)}${esc(a.ora)}</span>`:'',a.luogo?`<span>${ico('pin','#5F7089',13)}${esc(a.luogo)}</span>`:'',withDate?`<span>${fd(a.d)}</span>`:''].join('');
+  return `<div class="row"><div class="ic" style="background:${tint(ACOL)}">${ico('event',ACOL)}</div><div class="t">${esc(a.tit)}<div class="meta">${meta}</div>${a.nota?`<small>${esc(a.nota)}</small>`:''}</div><button class="cal" data-ics="${esc(a.id)}">Calendario</button></div>`;
+}
+function render(){
+  const y=cur.getFullYear(),mo=cur.getMonth();
+  $('mlabel').textContent=MESI[mo]+' '+y;
+  const ms=db.mov.filter(x=>inMonth(x,y,mo));
+  const E=ms.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0),U=ms.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0);
+  if(view==='agenda'){
+    const na=db.app.filter(x=>inMonth(x,y,mo)).length,ns=db.scad.filter(x=>inMonth(x,y,mo)).length;
+    $('saldoLbl').textContent='Agenda di '+MESI[mo];
+    $('saldo').innerHTML=`${na}<span>${na===1?'appuntamento':'appuntamenti'}</span> &nbsp;${ns}<span>${ns===1?'scadenza':'scadenze'}</span>`;
+  }else{$('saldoLbl').textContent='Saldo del mese';$('saldo').textContent=(E-U>=0?'+':'')+eur(E-U)}
+  $('kE').textContent=eur(E);$('kU').textContent=eur(U);
+  // torta
+  const by={};ms.filter(x=>x.t==='U').forEach(x=>by[x.cat]=(by[x.cat]||0)+x.imp);
+  const arr=Object.entries(by).sort((a,b)=>b[1]-a[1]);
+  let svg='<svg viewBox="0 0 42 42" width="150" height="150"><circle cx="21" cy="21" r="15.9" fill="none" stroke="#EEF3F3" stroke-width="6"/>',acc=0;
+  arr.forEach(([c,v])=>{const p=v/U*100,q=Math.max(p-.6,0);svg+=`<circle cx="21" cy="21" r="15.9" fill="none" stroke="${cu(c)[2]}" stroke-width="6" stroke-dasharray="${q} ${100-q}" stroke-dashoffset="${25-acc}"/>`;acc+=p});
+  svg+=`<text x="21" y="20" text-anchor="middle" font-family="Barlow Condensed" font-weight="600" font-size="6.2" fill="currentColor">${eur(U).replace(/,\d\d/,'')}</text><text x="21" y="26" text-anchor="middle" font-family="Barlow" font-size="3.2" fill="#5F6B80">uscite</text></svg>`;
+  $('donut').innerHTML=U?svg+'<div class="legend">'+arr.slice(0,7).map(([c,v])=>`<div><span class="lic" style="background:${tint(cu(c)[2])}">${ico(cu(c)[1],cu(c)[2],15)}</span><span>${cu(c)[0]}</span><em>${eur(v).replace(',00','')}</em><span class="pc">${Math.round(v/U*100)}%</span></div>`).join('')+'</div>':'<p class="empty">Nessuna uscita in questo mese.</p>';
+  // barre
+  const ser=[];for(let i=5;i>=0;i--){const d=new Date(y,mo-i,1),l=db.mov.filter(x=>inMonth(x,d.getFullYear(),d.getMonth()));ser.push({m:MESI[d.getMonth()].slice(0,3),e:l.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0),u:l.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0)})}
+  const mx=Math.max(1,...ser.map(s=>Math.max(s.e,s.u)));
+  $('bars').innerHTML=ser.map((s,i)=>`<div class="b"><div class="pair"><i style="height:${s.e/mx*100}%;background:var(--green);opacity:${i===5?1:.55}"></i><i style="height:${s.u/mx*100}%;background:var(--red);opacity:${i===5?1:.55}"></i></div><small>${s.m}</small></div>`).join('');
+  // scadenze + impegni futuri
+  const sc=db.scad.map(s=>({...s,g:gg(s.d)})).sort((a,b)=>a.g-b.g);
+  const ap=db.app.map(a=>({...a,g:gg(a.d)})).filter(a=>a.g>=0).sort((a,b)=>a.g-b.g||(a.ora||'').localeCompare(b.ora||''));
+  const up=[...sc.filter(s=>s.g>=0).map(s=>({...s,k:'S'})),...ap.map(a=>({...a,k:'A'}))].sort((a,b)=>a.g-b.g||(a.k==='S'?-1:1));
+  const upRow=x=>x.k==='S'
+    ?`<div class="alert">${badge(x.g,'S')}<p>${esc(x.tit)}<span class="tag" style="background:#FDECEC;color:#D9534F">scadenza</span><small>${cs(x.cat)[0]} · ${fd(x.d)}</small></p></div>`
+    :`<div class="alert">${badge(x.g,'A')}<p>${esc(x.tit)}<small>${x.ora?esc(x.ora)+' · ':''}${x.luogo?esc(x.luogo)+' · ':''}${pd(x.d).toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'short'})}</small></p></div>`;
+  const home=up.filter(x=>x.k==='S'?x.g<=Math.max(x.ant,30):x.g<=3).slice(0,4);
+  $('alerts').innerHTML=home.map(upRow).join('')||'<p class="empty">Niente in arrivo nei prossimi giorni.</p>';
+  $('next30').innerHTML=up.filter(x=>x.g<=30).slice(0,8).map(upRow).join('')||'<p class="empty">Nessun impegno nei prossimi 30 giorni.</p>';
+  $('scadlist').innerHTML=sc.map(s=>`<div class="alert">${badge(s.g,'S')}<p>${esc(s.tit)}<small>${fd(s.d)} · avviso ${+s.ant||0} gg prima</small></p><button class="cal" data-ics="${esc(s.id)}">Calendario</button></div>`).join('')||'<p class="empty">Aggiungi la prima scadenza con il tasto +.</p>';
+  // movimenti
+  const groups={};ms.slice().sort((a,b)=>b.d.localeCompare(a.d)).forEach(x=>(groups[x.d]=groups[x.d]||[]).push(x));
+  const movRow=x=>{const c=x.t==='E'?ce(x.cat):cu(x.cat);return `<div class="row"><div class="ic" style="background:${tint(c[2])}">${ico(c[1],c[2])}</div><div class="t">${esc(x.n)||esc(x.sp)||c[0]}<small>${c[0]}${x.sp&&x.n?' · '+esc(x.sp):''}</small></div><div class="amt ${x.t==='E'?'e':''}">${x.t==='E'?'+':'−'} ${eur(x.imp)}</div></div>`};
+  $('movlist').innerHTML=Object.entries(groups).map(([d,l])=>`<p class="day">${pd(d).toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'})}</p><div class="card" style="margin-bottom:6px;padding:4px 16px">`+l.map(movRow).join('')+'</div>').join('')||'<div class="card"><p class="empty">Nessun movimento in questo mese.</p></div>';
+  // agenda: griglia
+  const first=new Date(y,mo,1),lead=(first.getDay()+6)%7,nd=new Date(y,mo+1,0).getDate(),tIso=iso(new Date());
+  let g='';for(let i=0;i<lead;i++)g+='<div class="dc blank"></div>';
+  for(let d=1;d<=nd;d++){const di=iso(new Date(y,mo,d)),it=itemsOf(di),dow=(lead+d-1)%7;
+    const pips=(it.sc.length?`<i style="background:${SCOL}"></i>`:'')+(it.ap.length?`<i class="a" style="background:${ACOL}"></i>`:'')+(it.mv.some(m=>m.t==='U')?'<i class="g" style="background:var(--grey)"></i>':'');
+    const cls=['dc',dow===6?'sun':'',di<tIso?'past':'',di===tIso?'today':'',di===sel?'sel':''].join(' ');
+    g+=`<button class="${cls}" data-day="${di}" aria-label="${d} ${MESI[mo]}"><span>${d}</span><span class="pips">${pips}</span></button>`;}
+  $('grid').innerHTML=g;
+  // agenda: giorno scelto
+  const it=itemsOf(sel),dl=pd(sel).toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'}),gs=gg(sel);
+  const when=gs===0?'oggi':gs===1?'domani':gs===-1?'ieri':gs>1?'tra '+gs+' giorni':gs*-1+' giorni fa';
+  let body='';
+  body+=it.sc.map(s=>`<div class="row"><div class="ic" style="background:${tint(SCOL)}">${ico(cs(s.cat)[1],SCOL)}</div><div class="t">${esc(s.tit)}<small>Scadenza · ${cs(s.cat)[0]}</small></div><button class="cal" data-ics="${esc(s.id)}">Calendario</button></div>`).join('');
+  body+=it.ap.map(a=>appRow(a)).join('');
+  const out=it.mv.filter(m=>m.t==='U');
+  body+=it.mv.map(movRow).join('');
+  if(out.length>1)body+=`<div class="row"><div class="t"><small>Totale spese del giorno</small></div><div class="amt">− ${eur(out.reduce((a,b)=>a+b.imp,0))}</div></div>`;
+  $('dayCard').innerHTML=`<h3><span>${dl} <span style="font:500 13px Barlow,system-ui,sans-serif;color:var(--muted)">${when}</span></span><button class="addday" id="addDay">${ico('plus','currentColor',14)}Impegno</button></h3>`+(body||'<p class="empty">Niente in programma. Tocca "Impegno" per aggiungere un appuntamento.</p>');
+}
+// navigazione
+let view='home';
+document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)go(b.dataset.go)});
+function go(v){view=v;['home','mov','agenda','scad','rep','doc'].forEach(k=>$('v-'+k).hidden=k!==v);document.body.classList.toggle('inrep',v==='rep'||v==='doc');$('fab').hidden=false;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.go===v));render();scrollTo(0,0)}
+function shiftMonth(n){cur.setMonth(cur.getMonth()+n);const t=new Date();sel=(cur.getFullYear()===t.getFullYear()&&cur.getMonth()===t.getMonth())?iso(t):iso(cur);render()}
+$('prev').onclick=()=>shiftMonth(-1);$('next').onclick=()=>shiftMonth(1);
+$('grid').addEventListener('click',e=>{const b=e.target.closest('[data-day]');if(!b)return;sel=b.dataset.day;render()});
+// foglio aggiunta
+let tipo='U',cat='spesa',scat='doc';
+function chips(el,set,selk,cb){el.innerHTML=Object.entries(set).map(([k,v])=>`<button data-k="${k}" class="${k===selk?'on':''}">${ico(v[1],v[2],16)} ${v[0]}</button>`).join('');el.onclick=e=>{const b=e.target.closest('button');if(!b)return;el.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));cb(b.dataset.k)}}
+function setTipo(t){tipo=t;document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));$('fMov').hidden=!(t==='U'||t==='E');$('fScad').hidden=t!=='S';$('fApp').hidden=t!=='A';
+  $('shTitle').textContent=t==='S'?'Nuova scadenza':t==='A'?'Nuovo impegno':'Nuovo movimento';
+  if(t==='U'){cat='spesa';chips($('fCat'),CU,cat,k=>{cat=k;specToggle()})}if(t==='E'){cat='stip';chips($('fCat'),CE,cat,k=>{cat=k;specToggle()})}specToggle();if(t==='S')chips($('sCat'),CS,scat,k=>scat=k)}
+$('seg').onclick=e=>{const b=e.target.closest('button');if(b)setTipo(b.dataset.t)};
+function specToggle(){const on=(tipo==='U'||tipo==='E')&&(cat==='altro'||cat==='altroE');$('fSpecWrap').hidden=!on;if(on){const used=[...new Set(db.mov.filter(m=>m.t===tipo&&m.sp).map(m=>m.sp))].slice(-30);$('specList').innerHTML=used.map(v=>`<option value="${esc(v)}">`).join('');setTimeout(()=>$('fSpec').focus(),50)}}
+function openSheet(t){$('fSpec').value='';const d=view==='agenda'?sel:iso(new Date());$('fData').value=d;$('fImp').value='';$('fNota').value='';$('sTit').value='';$('sData').value=view==='agenda'?sel:'';
+  $('aTit').value='';$('aData').value=d;$('aOra').value='';$('aLuogo').value='';$('aNota').value='';
+  setTipo(t||(view==='scad'?'S':view==='agenda'?'A':'U'));$('bg').style.display='block';requestAnimationFrame(()=>$('sheet').classList.add('on'))}
+function closeSheet(){$('sheet').classList.remove('on');setTimeout(()=>$('bg').style.display='none',250)}
+$('fab').onclick=()=>view==='doc'?openDocForm():openSheet();$('bg').onclick=closeSheet;
+document.addEventListener('click',e=>{if(e.target.closest('#addDay'))openSheet('A')});
+$('save').onclick=()=>{
+  let nuovo=null;
+  if(tipo==='S'){if(!$('sTit').value||!$('sData').value)return;nuovo=uid();db.scad.push({id:nuovo,u:Date.now(),tit:$('sTit').value.trim(),cat:scat,d:$('sData').value,ant:+$('sAnt').value})}
+  else if(tipo==='A'){if(!$('aTit').value.trim()||!$('aData').value)return;nuovo=uid();db.app.push({id:nuovo,u:Date.now(),tit:$('aTit').value.trim(),d:$('aData').value,ora:$('aOra').value,luogo:$('aLuogo').value.trim(),nota:$('aNota').value.trim(),ant:+$('aAnt').value});sel=$('aData').value}
+  else{const v=parseImp($('fImp').value);if(!v){toast('Scrivi un importo valido, per esempio 12,50');return}const sp=(cat==='altro'||cat==='altroE')?$('fSpec').value.trim():'';db.mov.push({id:uid(),u:Date.now(),t:tipo,imp:v,cat,d:$('fData').value,n:$('fNota').value,sp})}
+  store();closeSheet();render();
+  if(nuovo)snack(tipo==='S'?'Scadenza salvata. Vuoi il promemoria?':'Impegno salvato. Vuoi il promemoria?',nuovo);
+};
+function snack(t,id){$('snackTxt').textContent=t;$('snackBtn').dataset.ics=id;$('snack').classList.add('on');clearTimeout(snack.h);snack.h=setTimeout(()=>$('snack').classList.remove('on'),9000)}
+$('snackBtn').addEventListener('click',()=>setTimeout(()=>$('snack').classList.remove('on'),300));
+// calendario (.ics con promemoria)
+function fold(l){const enc=new TextEncoder();let out='',cur='',n=0;for(const ch of l){const b=enc.encode(ch).length;if(n+b>74){out+=cur+'\r\n ';cur='';n=1}cur+=ch;n+=b}return out+cur}
+const icsTxt=s=>String(s||'').replace(/\\/g,'\\\\').replace(/([,;])/g,'\\$1').replace(/\n/g,'\\n');
+function alarm(trig,txt){return ['BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsTxt(txt),'TRIGGER:'+trig,'END:VALARM']}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-ics]');if(!b)return;
+  const s=db.scad.find(x=>x.id===b.dataset.ics),a=db.app.find(x=>x.id===b.dataset.ics);if(!s&&!a)return;
+  const stamp='DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').slice(0,15)+'Z';let ev;
+  if(s){const n=pd(s.d);n.setDate(n.getDate()+1);
+    ev=['UID:'+s.id+'@casainordine',stamp,'DTSTART;VALUE=DATE:'+s.d.replace(/-/g,''),'DTEND;VALUE=DATE:'+iso(n).replace(/-/g,''),'SUMMARY:'+icsTxt('Scadenza: '+s.tit),...alarm('-P'+s.ant+'D',s.tit),...alarm('-P1D',s.tit)];}
+  else{const d0=a.d.replace(/-/g,'');
+    if(a.ora){const [h,mi]=a.ora.split(':').map(Number),end=new Date(pd(a.d).setHours(h+1,mi));
+      ev=['DTSTART:'+d0+'T'+pad(h)+pad(mi)+'00','DTEND:'+iso(end).replace(/-/g,'')+'T'+pad(end.getHours())+pad(end.getMinutes())+'00'];}
+    else{const n=pd(a.d);n.setDate(n.getDate()+1);ev=['DTSTART;VALUE=DATE:'+d0,'DTEND;VALUE=DATE:'+iso(n).replace(/-/g,'')]}
+    ev=['UID:'+a.id+'@casainordine',stamp,...ev,'SUMMARY:'+icsTxt(a.tit)];if(a.luogo)ev.push('LOCATION:'+icsTxt(a.luogo));if(a.nota)ev.push('DESCRIPTION:'+icsTxt(a.nota));ev.push(...alarm('-PT'+(a.ant||60)+'M',a.tit));}
+  const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Casa in Ordine//IT','BEGIN:VEVENT',...ev,'END:VEVENT','END:VCALENDAR'].map(fold).join('\r\n');
+  const el=document.createElement('a');el.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));el.download=(s?'scadenza':'impegno')+'.ics';document.body.appendChild(el);el.click();el.remove();});
+// conferma in pagina
+let cCb=null;
+let cNoCb=null;
+function ask(tit,txt,ok,cb,danger,onNo){cNoCb=onNo||null;$('toast').classList.remove('on');$('cTit').textContent=tit;$('cTxt').textContent=txt;$('cOk').textContent=ok;$('cOk').style.background=danger?'var(--red)':'';$('cOk').style.color=danger?'#fff':'';cCb=cb;$('bg4').style.display='block';requestAnimationFrame(()=>$('sheet4').classList.add('on'))}
+function closeAsk(){$('sheet4').classList.remove('on');setTimeout(()=>$('bg4').style.display='none',250)}
+$('cOk').onclick=()=>{cNoCb=null;closeAsk();const f=cCb;cCb=null;f&&f()};
+const askNo=()=>{closeAsk();const f=cNoCb;cNoCb=null;cCb=null;f&&f()};$('cNo').onclick=askNo;$('bg4').onclick=askNo;
+// dati di esempio, impostazioni, backup
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>el.classList.remove('on'),2200)}
+let rep={p:'m12',da:'',a:''};
+function repRange(){const t=new Date(),y=t.getFullYear(),m=t.getMonth();
+  if(rep.p==='m1')return [new Date(y,m,1),new Date(y,m+1,0)];
+  if(rep.p==='m3')return [new Date(y,m-2,1),new Date(y,m+1,0)];
+  if(rep.p==='m12')return [new Date(y,m-11,1),new Date(y,m+1,0)];
+  if(rep.p==='y0')return [new Date(y,0,1),new Date(y,11,31)];
+  if(rep.p==='y1')return [new Date(y-1,0,1),new Date(y-1,11,31)];
+  let a=rep.da?pd(rep.da):new Date(y,m,1),b=rep.a?pd(rep.a):new Date(y,m+1,0);if(a>b)[a,b]=[b,a];return [a,b]}
+function renderRep(){
+  document.querySelectorAll('#repPer button').forEach(b=>b.classList.toggle('on',b.dataset.p===rep.p));$('repCus').hidden=rep.p!=='cus';
+  const [a,b]=repRange(),A=iso(a),B=iso(b);if(rep.p==='cus'){$('repDa').value=A;$('repA').value=B}
+  const ms=db.mov.filter(x=>x.d>=A&&x.d<=B);
+  const E=ms.filter(x=>x.t==='E').reduce((s,x)=>s+x.imp,0),U=ms.filter(x=>x.t==='U').reduce((s,x)=>s+x.imp,0);
+  const nm=(b.getFullYear()-a.getFullYear())*12+b.getMonth()-a.getMonth()+1;
+  const f=d=>d.toLocaleDateString('it-IT',{day:'numeric',month:'short',year:'numeric'});
+  $('repDates').textContent=f(a)+' → '+f(b)+' · '+ms.length+(ms.length===1?' movimento':' movimenti');
+  $('saldoLbl').textContent='Resoconto del periodo';$('saldo').textContent=(E-U>=0?'+':'')+eur(E-U);
+  $('repKpi').innerHTML=`<div class="kpi"><small><span class="dot" style="background:var(--green)"></span>Entrate</small><strong>${eur(E)}</strong></div><div class="kpi"><small><span class="dot" style="background:var(--red)"></span>Uscite</small><strong>${eur(U)}</strong></div>`+(nm>1?`<div class="kpi wide"><small>Media al mese</small><strong style="font-size:20px">${eur(E/nm)} <span style="color:var(--muted);font-weight:500">entrate</span> · ${eur(U/nm)} <span style="color:var(--muted);font-weight:500">uscite</span></strong></div>`:'');
+  const rows=[];for(let i=0;i<nm;i++){const d=new Date(a.getFullYear(),a.getMonth()+i,1),y=d.getFullYear(),mo=d.getMonth();
+    const l=ms.filter(x=>{const q=pd(x.d);return q.getFullYear()===y&&q.getMonth()===mo});
+    rows.push({y,mo,e:l.filter(x=>x.t==='E').reduce((s,x)=>s+x.imp,0),u:l.filter(x=>x.t==='U').reduce((s,x)=>s+x.imp,0)})}
+  const mx=Math.max(1,...rows.map(r=>Math.max(r.e,r.u)));
+  $('repMesi').innerHTML=rows.slice().reverse().map(r=>!(r.e||r.u)?`<div class="mrow" style="cursor:default"><span class="mm">${MESI[r.mo].slice(0,3)}<br>${r.y}</span><span class="mv" style="grid-column:2/4;text-align:left;color:var(--muted)">Nessun movimento</span></div>`:`<button class="mrow" data-ym="${r.y}-${r.mo}"><span class="mm">${MESI[r.mo].slice(0,3)}<br>${r.y}</span><span class="mb"><i style="width:${r.e/mx*100}%;background:var(--green)"></i><i style="width:${r.u/mx*100}%;background:var(--red)"></i></span><span class="mv"><b style="color:${r.e-r.u<0?'var(--red)':'var(--green)'}">${(r.e-r.u>=0?'+':'')+eur(r.e-r.u)}</b>+${eur(r.e)} · −${eur(r.u)}</span></button>`).join('')
+    +(nm>1?`<div class="mtot"><span>Totale</span><span></span><span style="text-align:right">${(E-U>=0?'+':'')+eur(E-U)}</span></div>`:'');
+  const cat=(t,set,get,tot,el)=>{const by={};ms.filter(x=>x.t===t).forEach(x=>by[x.cat]=(by[x.cat]||0)+x.imp);const arr=Object.entries(by).sort((p,q)=>q[1]-p[1]);
+    $(el).innerHTML=arr.map(([k,v])=>{const c=get(k);return `<div class="crow"><span class="lic" style="background:${tint(c[2])}">${ico(c[1],c[2],15)}</span><div><div class="cn">${c[0]}</div><div class="cb"><i style="width:${v/tot*100}%;background:${c[2]}"></i></div></div><div class="cv">${eur(v)}<small>${Math.round(v/tot*100)}%</small></div></div>`}).join('')||'<p class="empty">Nessun movimento nel periodo.</p>'};
+  cat('U',CU,cu,U||1,'repCatU');cat('E',CE,ce,E||1,'repCatE');
+}
+$('repPer').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;rep.p=b.dataset.p;if(rep.p==='cus'&&!rep.da){const [x,y]=[new Date(new Date().getFullYear(),new Date().getMonth()-2,1),new Date()];rep.da=iso(x);rep.a=iso(y)}renderRep()});
+$('repDa').addEventListener('change',()=>{rep.da=$('repDa').value;renderRep()});$('repA').addEventListener('change',()=>{rep.a=$('repA').value;renderRep()});
+$('repMesi').addEventListener('click',e=>{const b=e.target.closest('[data-ym]');if(!b)return;const [y,m]=b.dataset.ym.split('-').map(Number);cur=new Date(y,m,1);go('mov')});
+let hideAmt=false;try{hideAmt=localStorage.getItem('casainordine.nascondi')==='1'}catch(e){}
+function applyHide(){$('eye').hidden=view==='agenda'||view==='doc';$('eyeIc').innerHTML=hideAmt?'<path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.3 2 12 2 12s3.5 7 10 7c1.9 0 3.5-.6 4.9-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>':'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>';$('eye').setAttribute('aria-label',hideAmt?'Mostra gli importi':'Nascondi gli importi');$('eye').setAttribute('aria-pressed',hideAmt);
+  if(!hideAmt)return;const dots='•••••• €';if(view!=='agenda'&&view!=='doc')$('saldo').textContent=dots;['kE','kU'].forEach(k=>$(k).textContent='•••• €');if(view==='rep')document.querySelectorAll('#repKpi strong').forEach(e=>e.textContent='•••• €')}
+$('eye').onclick=()=>{hideAmt=!hideAmt;try{localStorage.setItem('casainordine.nascondi',hideAmt?'1':'0')}catch(e){}render()};
+const _render=render;render=function(){if(!db.doc)db.doc=[];$('demoCard').hidden=!db.demo;$('syncCard').hidden=true;const needs=!!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));$('syncStrip').hidden=!needs;document.body.classList.toggle('strip',needs);if(needs)$('syncStripTxt').textContent=syncState==='perm'?'Manca il permesso su Google Drive: tocca per riprovare':'Tocca per sincronizzare con Google Drive';_render();renderAcct();if(view==='rep')renderRep();if(view==='doc'){$('saldoLbl').textContent='Documenti di famiglia';const n=db.doc.length;$('saldo').innerHTML=n+'<span>'+(n===1?'documento':'documenti')+'</span>';renderDoc()}applyHide()};
+function fresh(){const now=Date.now(),old=db.demo?[]:[...db.mov,...db.scad,...db.app,...(db.doc||[])].map(x=>({id:x.id,u:now}));db={mov:[],scad:[],app:[],doc:[],vault:{u:now,off:true},del:[...(db.demo?[]:db.del||[]),...old]};vKey=null;docCache.clear();vClear().catch(()=>{});store();cur=new Date();cur.setDate(1);sel=iso(new Date());go('home')}
+$('startBtn').onclick=()=>{prof=null;saveProf();db={mov:[],scad:[],app:[],del:[]};openWelcome(true)};
+const _save=$('save').onclick;$('save').onclick=()=>{if(db.demo){db={mov:[],scad:[],app:[],del:[]}}_save()};
+function openMenu(){$('toast').classList.remove('on');loadGIS().catch(()=>{});$('bg2').style.display='block';requestAnimationFrame(()=>$('sheet2').classList.add('on'))}
+function closeMenu(){$('sheet2').classList.remove('on');setTimeout(()=>$('bg2').style.display='none',250)}
+$('menu').onclick=()=>{renderAcct();openMenu()};$('bg2').onclick=closeMenu;
+$('mExp').onclick=async()=>{let vr=[];try{vr=await vAll()}catch(e){}const data={app:'Casa in Ordine',versione:2,esportato:new Date().toISOString(),dati:{mov:db.mov,scad:db.scad,app:db.app,doc:db.doc,vault:pinOn()?db.vault:null,archivio:vr}};
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,1)],{type:'application/json'}));a.download='casa-in-ordine-backup-'+iso(new Date())+'.json';document.body.appendChild(a);a.click();a.remove();closeMenu();toast('Backup salvato nei download')};
+$('mImp').onclick=()=>$('impFile').click();
+$('impFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result),d=j.dati||j;
+  if(!Array.isArray(d.mov)||!Array.isArray(d.scad))throw 0;
+  closeMenu();ask('Ripristinare il backup?','I dati di questo dispositivo verranno sostituiti con quelli del file scelto.','Ripristina',async()=>{const n=Date.now();db={mov:d.mov,scad:d.scad,app:Array.isArray(d.app)?d.app:[],doc:Array.isArray(d.doc)?d.doc:[],del:[],vault:d.vault&&d.vault.salt?{...d.vault,u:n}:{u:n,off:true}};['mov','scad','app','doc'].forEach(k=>db[k].forEach(x=>x.u=n));
+    vKey=null;docCache.clear();try{await vClear();for(const r of (Array.isArray(d.archivio)?d.archivio:[]))if(r&&r.id)await vPut({...r,u:n})}catch(e){}store();go('home');toast('Backup ripristinato')})}
+  catch(_){toast('Questo file non è un backup valido')}$('impFile').value=''};r.readAsText(f)};
+$('mDel').onclick=()=>{closeMenu();const g=prof&&prof.mode==='google';
+  ask('Ricominciare da zero?','Verranno cancellati tutti i movimenti, le scadenze, gli impegni e i documenti'+(g?', anche dal tuo Google Drive e dagli altri dispositivi collegati':' su questo dispositivo')+'. Poi torni alla schermata iniziale e scegli di nuovo come usare l\'app.','Continua',()=>setTimeout(()=>
+  ask('Ultima conferma','Questa operazione non si può annullare. Se vuoi tenere una copia, prima tocca Annulla e usa Esporta backup dal menu.','Sì, cancella tutto',async()=>{
+    const wasDemo=db.demo;fresh();
+    if(g){clearTimeout(store.t);await sync('yes');if(syncState!=='ok'){ask('Cancellati solo qui','I dati sono stati cancellati da questo dispositivo, ma non è stato possibile aggiornare Google Drive. Riprova quando sei online con Sincronizza dal menu: finché non lo fai, l\'account resta collegato.','Ho capito',null);return}
+      try{tok&&google.accounts.oauth2.revoke(tok,()=>{})}catch(e){}tok=null;tokExp=0;keepTok()}
+    prof=null;saveProf();syncState='';db={mov:[],scad:[],app:[],del:[],doc:[]};localSave();render();openWelcome();toast('Dati cancellati, puoi ricominciare')
+  },true),320),true)};
+// installazione
+let instEvt=null;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();instEvt=e;$('mInst').hidden=false});
+$('mInst').onclick=async()=>{if(!instEvt)return;instEvt.prompt();await instEvt.userChoice;instEvt=null;$('mInst').hidden=true;closeMenu()};
+const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+const iosWeb=(/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))&&!standalone;
+if(iosWeb){$('iosHint').hidden=false;$('iosWarn').hidden=false}
+// ===================== DOCUMENTI =====================
+// Metadati (tipo, intestatario, scadenza) in db.doc; numero, note e allegati nell'archivio IndexedDB "vault".
+// Con PIN: numero, note e allegati cifrati con AES-GCM, chiave derivata dal PIN (PBKDF2). Senza PIN: in chiaro.
+const DT={ci:["Carta d'identità",'id'],pat:['Patente','car'],pas:['Passaporto','globe'],ts:['Tessera sanitaria','health'],cf:['Codice fiscale','receipt'],altro:['Altro documento','dots']};
+P.globe='<circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c2.5 2.5 2.5 13.5 0 16M12 4c-2.5 2.5-2.5 13.5 0 16"/>';
+P.share='<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.5M8.2 13.2l7.6 4.5"/>';
+P.finger='<path d="M12 11v3.5a4 4 0 0 1-1 2.6M8.5 9.5A3.5 3.5 0 0 1 15.5 10v4c0 2-.6 3.6-1.6 5M6 8a6.5 6.5 0 0 1 12 2.5V13M5.5 13.5V12M8.5 13v1.5c0 1.6-.5 3-1.3 4.2M18.3 16.5a12 12 0 0 1-1 3"/>';
+P.lock='<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>';
+P.clip='<path d="M20 11.5 12.5 19a5 5 0 0 1-7-7L13 4.5a3.3 3.3 0 0 1 4.7 4.7L10.2 16.7a1.7 1.7 0 0 1-2.4-2.4l7-7"/>';
+P.file='<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>';
+const DCOL='#2B68B0';
+db.doc=db.doc||[];
+const dt=k=>DT[k]||DT.altro;
+// ---- archivio locale (IndexedDB)
+let idbP=null;
+function idb(){return idbP=idbP||new Promise((ok,ko)=>{const r=indexedDB.open('casainordine-documenti',1);r.onupgradeneeded=()=>r.result.createObjectStore('vault',{keyPath:'id'});r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error)})}
+async function vTx(mode,fn){const d=await idb();return new Promise((ok,ko)=>{const t=d.transaction('vault',mode),s=t.objectStore('vault');let out;Promise.resolve(fn(s)).then(v=>out=v);t.oncomplete=()=>ok(out);t.onerror=()=>ko(t.error)})}
+const vGet=id=>vTx('readonly',s=>new Promise(ok=>{const r=s.get(id);r.onsuccess=()=>ok(r.result||null)}));
+const vAll=()=>vTx('readonly',s=>new Promise(ok=>{const r=s.getAll();r.onsuccess=()=>ok(r.result||[])}));
+const vPut=rec=>vTx('readwrite',s=>{s.put(rec)});
+const vDel=id=>vTx('readwrite',s=>{s.delete(id)});
+const vClear=()=>vTx('readwrite',s=>{s.clear()});
+// ---- cifratura
+const b64=buf=>{let s='';const a=new Uint8Array(buf);for(let i=0;i<a.length;i+=0x8000)s+=String.fromCharCode.apply(null,a.subarray(i,i+0x8000));return btoa(s)};
+const unb64=t=>Uint8Array.from(atob(t),c=>c.charCodeAt(0));
+async function deriveKey(pin,salt){const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt:unb64(salt),iterations:310000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function encObj(key,obj){const iv=crypto.getRandomValues(new Uint8Array(12));const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(obj)));return {iv:b64(iv),ct:b64(ct)}}
+async function decObj(key,e){const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(e.iv)},key,unb64(e.ct));return JSON.parse(new TextDecoder().decode(pt))}
+let vKey=null,vKid=null,vLockT=null;const docCache=new Map();
+// Chiave dei documenti (casuale) "avvolta" due volte: con il PIN e con il codice di recupero.
+const pinOn=()=>!!(db.vault&&!db.vault.off&&db.vault.wPin);
+const locked=()=>pinOn()&&!vKey;
+function lockNow(){vKey=null;vKid=null;docCache.forEach(c=>c.files.forEach(f=>f.url&&URL.revokeObjectURL(f.url)));docCache.clear();if(view==='doc')render()}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){clearTimeout(vLockT);vLockT=setTimeout(()=>{if(pinOn())lockNow()},60000)}else clearTimeout(vLockT)});
+const importDek=raw=>crypto.subtle.importKey('raw',raw,{name:'AES-GCM'},false,['encrypt','decrypt']);
+const normCode=c=>String(c||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+function newCode(){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r=crypto.getRandomValues(new Uint8Array(16));let c='';r.forEach((x,i)=>{c+=A[x%32];if(i%4===3&&i<15)c+='-'});return c}
+const newSalt=()=>b64(crypto.getRandomValues(new Uint8Array(16)));
+async function openWith(secret,salt,wrapped){try{const k=await deriveKey(secret,salt);const raw=unb64(await decObj(k,wrapped));return {raw,key:await importDek(raw)}}catch(e){return null}}
+async function useDek(o){vKey=o.key;vKid=db.vault.kid;await healVault()}
+async function unlock(pin){const o=await openWith(pin,db.vault.salt,db.vault.wPin);if(!o)return false;await useDek(o);return true}
+// ---- sblocco con impronta (passkey con estensione PRF): la chiave dei documenti viene avvolta anche con un segreto
+// che il telefono rilascia solo dopo impronta o volto. Vale solo su questo dispositivo; PIN e codice restano validi.
+const PKK='casainordine.impronta';
+const pkGet=()=>{try{const o=JSON.parse(localStorage.getItem(PKK));return o&&db.vault&&o.kid===db.vault.kid?o:null}catch(e){return null}};
+const pkSet=o=>{try{o?localStorage.setItem(PKK,JSON.stringify(o)):localStorage.removeItem(PKK)}catch(e){}};
+const pkOk=()=>!!(window.PublicKeyCredential&&navigator.credentials&&window.isSecureContext);
+const prfKey=out=>crypto.subtle.importKey('raw',new Uint8Array(out),{name:'AES-GCM'},false,['encrypt','decrypt']);
+function pkAssert(o){return navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),rpId:location.hostname,
+  allowCredentials:[{type:'public-key',id:unb64(o.cred)}],userVerification:'required',timeout:60000,extensions:{prf:{eval:{first:unb64(o.salt)}}}}})}
+function pkOut(cred){const r=cred&&cred.getClientExtensionResults&&cred.getClientExtensionResults();return r&&r.prf&&r.prf.results&&r.prf.results.first}
+// attivazione in due tocchi: prima si crea la passkey, poi (nuovo tocco, come vuole Safari) si legge il segreto
+function pkEnable(raw){const salt=crypto.getRandomValues(new Uint8Array(32));
+  navigator.credentials.create({publicKey:{rp:{name:'Casa in Ordine',id:location.hostname},user:{id:crypto.getRandomValues(new Uint8Array(16)),name:'Documenti Casa in Ordine',displayName:'Documenti Casa in Ordine'},
+    challenge:crypto.getRandomValues(new Uint8Array(32)),pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+    authenticatorSelection:{userVerification:'required',residentKey:'preferred'},timeout:60000,extensions:{prf:{eval:{first:salt}}}}})
+  .then(async cred=>{const ext=cred.getClientExtensionResults();if(!ext.prf||ext.prf.enabled===false){toast('Questo dispositivo non supporta lo sblocco con impronta');return}
+    const o={cred:b64(cred.rawId),salt:b64(salt),kid:db.vault.kid};const out=pkOut(cred);
+    if(out){o.w=await encObj(await prfKey(out),b64(raw));pkSet(o);closeSh('P');toast('Sblocco con impronta attivato');return}
+    $('pinTitle').textContent='Conferma l\'impronta';$('pinBody').innerHTML='<p class="empty">Ultimo passaggio: tocca il pulsante e conferma di nuovo con impronta o volto.</p><button class="save" id="pkConf">Conferma</button>';
+    $('pkConf').onclick=()=>{pkAssert(o).then(async c=>{const out2=pkOut(c);if(!out2)throw 0;o.w=await encObj(await prfKey(out2),b64(raw));pkSet(o);closeSh('P');toast('Sblocco con impronta attivato')}).catch(()=>toast('Attivazione non completata'))}})
+  .catch(e=>toast(e&&e.name==='NotAllowedError'?'Attivazione annullata':'Questo dispositivo non supporta lo sblocco con impronta'))}
+function pkUnlock(){const o=pkGet();if(!o)return;
+  pkAssert(o).then(async c=>{const out=pkOut(c);if(!out)throw 'prf';const raw=unb64(await decObj(await prfKey(out),o.w));await useDek({key:await importDek(raw)});render()})
+  .catch(e=>toast(e==='prf'?'Impronta non disponibile: usa il PIN':'Sblocco non riuscito: usa il PIN'))}
+let recRaw=null;
+async function unlockRecovery(code){const o=await openWith(normCode(code),db.vault.rsalt,db.vault.wRec);if(!o)return false;recRaw=o.raw;await useDek(o);return true}
+async function sealRec(id,data){const u=Date.now();if(pinOn()){if(!vKey)throw 'locked';return {id,u,enc:await encObj(vKey,data)}}return {id,u,plain:data}}
+async function openRec(rec){if(!rec)return {num:'',note:'',files:[]};if(rec.plain)return rec.plain;if(rec.enc){if(!vKey)throw 'locked';return decObj(vKey,rec.enc)}return {num:'',note:'',files:[]}}
+// porta tutti i record allo stato giusto (cifrati se c'è il PIN, in chiaro se non c'è)
+async function healVault(){const all=await vAll();let n=0;for(const r of all){
+  if(pinOn()&&r.plain&&vKey){await vPut(await sealRec(r.id,r.plain));n++}
+  else if(!pinOn()&&r.enc&&vKey){try{await vPut({id:r.id,u:Date.now(),plain:await decObj(vKey,r.enc)});n++}catch(e){}}}
+  if(!pinOn()){vKey=null;vKid=null}if(n){docCache.clear();markDirty()}}
+function markDirty(){if(prof&&prof.mode==='google'){prof.dirty=true;saveProf();clearTimeout(store.t);store.t=setTimeout(()=>sync(false),1500)}}
+// primo PIN: crea la chiave, cifra i documenti, restituisce il codice di recupero
+async function setPin(pin){const raw=crypto.getRandomValues(new Uint8Array(32)),code=newCode();
+  const recs=[];for(const r of await vAll())recs.push({id:r.id,data:await openRec(r)});
+  const salt=newSalt(),rsalt=newSalt();
+  db.vault={u:Date.now(),v:2,kid:b64(crypto.getRandomValues(new Uint8Array(9))),salt,wPin:await encObj(await deriveKey(pin,salt),b64(raw)),rsalt,wRec:await encObj(await deriveKey(normCode(code),rsalt),b64(raw))};
+  vKey=await importDek(raw);vKid=db.vault.kid;
+  for(const r of recs)await vPut(await sealRec(r.id,r.data));docCache.clear();store();return code}
+// cambio PIN: serve la chiave in chiaro, che si ottiene di nuovo con il PIN attuale o con il codice
+async function rewrapPin(raw,pin){const salt=newSalt();db.vault={...db.vault,u:Date.now(),salt,wPin:await encObj(await deriveKey(pin,salt),b64(raw))};store()}
+async function rewrapCode(raw){const code=newCode(),rsalt=newSalt();db.vault={...db.vault,u:Date.now(),rsalt,wRec:await encObj(await deriveKey(normCode(code),rsalt),b64(raw))};store();return code}
+async function removePin(){const recs=[];for(const r of await vAll())recs.push({id:r.id,data:await openRec(r)});
+  pkSet(null);db.vault={u:Date.now(),off:true};for(const r of recs)await vPut({id:r.id,u:Date.now(),plain:r.data});vKey=null;vKid=null;docCache.clear();store()}
+// ---- allegati
+function fileToData(f){return new Promise((ok,ko)=>{
+  if(f.type==='application/pdf'){if(f.size>3e6)return ko('grande');const r=new FileReader();r.onload=()=>ok({type:f.type,name:f.name,data:r.result.split(',')[1]});r.onerror=ko;r.readAsDataURL(f);return}
+  if(!/^image\//.test(f.type))return ko('tipo');
+  const img=new Image(),u=URL.createObjectURL(f);img.onload=()=>{const M=1600,s=Math.min(1,M/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);ok({type:'image/jpeg',name:(f.name||'foto').replace(/\.\w+$/,'')+'.jpg',data:c.toDataURL('image/jpeg',.82).split(',')[1]})};
+  img.onerror=()=>{URL.revokeObjectURL(u);ko('img')};img.src=u})}
+function blobUrl(f){return URL.createObjectURL(new Blob([unb64(f.data)],{type:f.type}))}
+async function getDoc(id){if(docCache.has(id))return docCache.get(id);const d=await openRec(await vGet(id));const c={num:d.num||'',note:d.note||'',files:(d.files||[]).map(f=>({...f,url:blobUrl(f)}))};docCache.set(id,c);return c}
+// ---- vista Documenti
+const maskNum=n=>!n?'':n.length<=4?n:'•••• '+n.slice(-4);
+async function renderDoc(){
+  const el=$('docList');if(!el)return;if(vKey&&pinOn()&&db.vault.kid!==vKid){vKey=null;vKid=null;docCache.clear()}
+  $('fab').hidden=locked();
+  $('docTools').innerHTML=locked()?'':pinOn()?`<button class="pill" id="dLock">${ico('lock','currentColor',14)} Blocca</button><button class="pill" id="dPin">PIN</button>`:`<button class="pill" id="dPin">${ico('lock','currentColor',14)} Imposta un PIN</button>`;
+  if(locked()){el.innerHTML=`<div class="card lockcard"><span class="ic big" style="background:var(--pri-t);color:var(--pri-ink)">${ico('lock','currentColor',26)}</span><h3 style="justify-content:center">Documenti protetti</h3>${pkGet()?`<button class="save" id="pkBtn" style="display:flex;align-items:center;justify-content:center;gap:8px">${ico('finger','currentColor',20)} Sblocca con impronta</button><p class="empty" style="text-align:center">oppure inserisci il PIN</p>`:'<p class="empty" style="text-align:center">Inserisci il PIN per vedere i tuoi documenti.</p>'}
+    <form id="unlockF" autocomplete="off"><input class="field pin" id="unlockPin" type="password" inputmode="numeric" placeholder="PIN" aria-label="PIN" maxlength="20"><button class="save" type="submit">Sblocca</button></form><button class="lnk" id="dForgot" style="width:100%">Ho dimenticato il PIN</button></div>`;
+    if($('pkBtn'))$('pkBtn').onclick=pkUnlock;
+    $('unlockF').onsubmit=async e=>{e.preventDefault();const p=$('unlockPin').value;if(!p)return;$('unlockF').querySelector('button').textContent='Verifico…';if(await unlock(p)){render()}else{$('unlockF').querySelector('button').textContent='Sblocca';$('unlockPin').value='';toast('PIN non corretto')}};
+    bindDocTools();return}
+  const list=db.doc.slice().sort((a,b)=>(a.chi||'').localeCompare(b.chi||'')||a.tipo.localeCompare(b.tipo));
+  let banner=!pinOn()&&list.length?`<div class="card warnline">${ico('lock','#B87A12',18)}<p>I documenti non sono protetti da PIN. <button class="lnkin" id="dPin2">Imposta un PIN</button></p></div>`:'';
+  if(!list.length){el.innerHTML=`<div class="card"><p class="empty">Nessun documento. Tocca <b>+</b> per aggiungere carta d'identità, patente, passaporto o tessera sanitaria, con le foto fronte e retro.</p><p class="empty">${pinOn()?'Sono protetti dal tuo PIN.':'Ti consigliamo di proteggerli con un PIN.'}</p></div>`;bindDocTools();return}
+  const groups={};list.forEach(d=>(groups[d.chi||'Senza intestatario']=groups[d.chi||'Senza intestatario']||[]).push(d));
+  const rows=[];for(const [chi,l] of Object.entries(groups)){let h=`<p class="day">${esc(chi)}</p><div class="card" style="padding:4px 16px;margin-bottom:6px">`;
+    for(const d of l){let c={num:'',files:[]};try{c=await getDoc(d.id)}catch(e){}const t=dt(d.tipo),g=d.scad?gg(d.scad):null;
+      h+=`<button class="row docrow" data-doc="${esc(d.id)}"><div class="ic" style="background:${tint(DCOL)}">${ico(t[1],DCOL)}</div><div class="t">${esc(t[0])}<small>${c.num?esc(maskNum(c.num))+' · ':''}${d.scad?'scade il '+fd(d.scad):'senza scadenza'}${c.files.length?' · '+c.files.length+' '+(c.files.length===1?'allegato':'allegati'):''}</small></div>${g!==null?badge(g,'S'):''}</button>`}
+    rows.push(h+'</div>')}
+  el.innerHTML=banner+rows.join('');bindDocTools();
+}
+function bindDocTools(){const pinBtn=()=>pinSheet();if($('dPin'))$('dPin').onclick=pinBtn;if($('dPin2'))$('dPin2').onclick=pinBtn;if($('dLock'))$('dLock').onclick=()=>{lockNow();toast('Documenti bloccati')};
+  if($('dForgot'))$('dForgot').onclick=forgotSheet}
+async function wipeDocs(){if(!db.doc)db.doc=[];const now=Date.now();db.del=[...(db.del||[]),...db.doc.map(d=>({id:d.id,u:now})),...db.scad.filter(s=>s.doc).map(s=>({id:s.id,u:now}))];
+  db.scad=db.scad.filter(s=>!s.doc);db.doc=[];db.vault={u:now,off:true};vKey=null;docCache.clear();await vClear();store();render()}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-doc]');if(b)openDocDetail(b.dataset.doc)});
+// ---- dettaglio
+async function openDocDetail(id){if(!db.doc)db.doc=[];const d=db.doc.find(x=>x.id===id);if(!d)return;let c;try{c=await getDoc(id)}catch(e){toast('Sblocca prima i documenti');return}
+  const t=dt(d.tipo);
+  $('dvBody').innerHTML=`<h4>${esc(t[0])}</h4><p class="dvsub">${esc(d.chi||'')}</p>
+   <div class="dvgrid"><div><label>Numero</label><p class="dvval mono">${c.num?esc(c.num):'—'}</p></div><div><label>Scadenza</label><p class="dvval">${d.scad?fd(d.scad):'nessuna'}</p></div></div>
+   ${c.num?`<button class="pill" id="dvCopy">Copia il numero</button>`:''}
+   ${c.note?`<label>Note</label><p class="dvval" style="white-space:pre-wrap">${esc(c.note)}</p>`:''}
+   <div class="thumbs">${c.files.map((f,i)=>f.type==='application/pdf'?`<a class="thumb pdf" href="${f.url}" target="_blank" rel="noopener">${ico('file','currentColor',28)}<span>${esc(f.name||'PDF')}</span></a>`:`<button class="thumb" data-view="${i}"><img src="${f.url}" alt="Allegato ${i+1}"></button>`).join('')}</div>
+   ${c.files.length?`<p class="note" style="text-align:left">Tocca una foto per ingrandirla.</p><button class="save" id="dvShare" style="margin-top:12px;background:var(--pri-t);color:var(--pri-ink)">${ico('share','currentColor',18)} Condividi${c.files.some(f=>f.type==='image/jpeg')?' in un unico PDF':''}</button>${pinOn()?'<p class="note" style="text-align:left">Il file condiviso non è protetto dal PIN: condividilo solo con chi ti fidi.</p>':''}`:''}
+   <div class="two" style="margin-top:14px"><button class="save" id="dvEdit">Modifica</button><button class="save" id="dvDel" style="background:#FDECEC;color:var(--red)">Elimina</button></div>`;
+  $('dvBody').querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{const f=c.files[+b.dataset.view];$('viewImg').src=f.url;$('viewDl').href=f.url;$('viewDl').download=f.name||'documento.jpg';$('viewer').hidden=false});
+  if($('dvShare'))$('dvShare').onclick=()=>shareDoc(d,c);
+  if($('dvCopy'))$('dvCopy').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(c.num).then(()=>toast('Numero copiato'),()=>toast('Copia non riuscita'))};
+  $('dvEdit').onclick=()=>{closeSh('D2');setTimeout(()=>openDocForm(id),260)};
+  $('dvDel').onclick=()=>{closeSh('D2');ask('Eliminare il documento?','Verranno cancellati il documento e le sue foto, anche dagli altri dispositivi collegati.','Elimina',()=>delDoc(id),true)};
+  openSh('D2')}
+function openSh(k){$('toast').classList.remove('on');if(k==='P'&&!$('codeDone'))$('bgP').onclick=bgPclose;$('bg'+k).style.display='block';requestAnimationFrame(()=>$('sheet'+k).classList.add('on'))}
+function closeSh(k){$('sheet'+k).classList.remove('on');setTimeout(()=>$('bg'+k).style.display='none',250)}
+$('viewClose').onclick=()=>{$('viewer').hidden=true;$('viewImg').removeAttribute('src')};
+async function delDoc(id){if(!db.doc)db.doc=[];const now=Date.now();db.doc=db.doc.filter(x=>x.id!==id);const sd=db.scad.filter(s=>s.doc===id);db.scad=db.scad.filter(s=>s.doc!==id);
+  db.del=[...(db.del||[]),{id,u:now},...sd.map(s=>({id:s.id,u:now}))];await vDel(id);docCache.delete(id);store();render();toast('Documento eliminato')}
+// ---- condivisione: fronte e retro in un unico PDF (costruito a mano, senza librerie)
+function jpgSize(u8){let i=2;while(i<u8.length){if(u8[i]!==0xFF){i++;continue}const m=u8[i+1],len=(u8[i+2]<<8)|u8[i+3];if(m>=0xC0&&m<=0xCF&&m!==0xC4&&m!==0xC8&&m!==0xCC)return {h:(u8[i+5]<<8)|u8[i+6],w:(u8[i+7]<<8)|u8[i+8]};i+=2+len}return {w:1000,h:630}}
+function buildPdf(imgs){const enc=new TextEncoder(),parts=[],offs=[];let pos=0;const add=x=>{const b=typeof x==='string'?enc.encode(x):x;parts.push(b);pos+=b.length};
+  const W=595,H=842,M=36,n=imgs.length,slot=(H-M*(n+1))/n;let content='';const objs=[];
+  imgs.forEach((im,i)=>{const sc=Math.min((W-2*M)/im.w,slot/im.h),w=im.w*sc,h=im.h*sc,x=(W-w)/2,y=H-M-(i*(slot+M))-(slot+h)/2;content+=`q ${w.toFixed(2)} 0 0 ${h.toFixed(2)} ${x.toFixed(2)} ${y.toFixed(2)} cm /Im${i} Do Q\n`});
+  add('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
+  const obj=(num,body)=>{offs[num]=pos;add(num+' 0 obj\n');body.forEach(add);add('\nendobj\n')};
+  const first=5;obj(1,['<< /Type /Catalog /Pages 2 0 R >>']);obj(2,['<< /Type /Pages /Kids [3 0 R] /Count 1 >>']);
+  obj(3,[`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /XObject << ${imgs.map((_,i)=>`/Im${i} ${first+i} 0 R`).join(' ')} >> >> /Contents 4 0 R >>`]);
+  obj(4,[`<< /Length ${content.length} >>\nstream\n${content}endstream`]);
+  imgs.forEach((im,i)=>obj(first+i,[`<< /Type /XObject /Subtype /Image /Width ${im.w} /Height ${im.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${im.bytes.length} >>\nstream\n`,im.bytes,'\nendstream']));
+  const total=first+imgs.length,xref=pos;let x=`xref\n0 ${total}\n0000000000 65535 f \n`;for(let k=1;k<total;k++)x+=String(offs[k]).padStart(10,'0')+' 00000 n \n';
+  add(x+`trailer\n<< /Size ${total} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);return new Blob(parts,{type:'application/pdf'})}
+const safeName=t=>t.replace(/[\\/:*?"<>|]+/g,'').replace(/\s+/g,' ').trim()||'documento';
+// tutto sincrono: Safari permette la condivisione solo se parte subito dal tocco
+function shareDoc(d,c){const t=dt(d.tipo)[0],base=safeName(t+(d.chi?' - '+d.chi:''));
+  const imgs=c.files.filter(f=>f.type==='image/jpeg').map(f=>{const bytes=unb64(f.data);return {bytes,...jpgSize(bytes)}});
+  const out=[];if(imgs.length)out.push(new File([buildPdf(imgs)],base+'.pdf',{type:'application/pdf'}));
+  c.files.filter(f=>f.type==='application/pdf').forEach((f,i)=>out.push(new File([unb64(f.data)],base+(i?' '+(i+1):'')+' allegato.pdf',{type:'application/pdf'})));
+  if(!out.length){toast('Questo documento non ha foto o PDF da condividere');return}
+  const data={files:out,title:base};
+  if(navigator.canShare&&navigator.canShare(data)){navigator.share(data).catch(e=>{if(e&&e.name!=='AbortError')toast('Condivisione non riuscita')});return}
+  out.forEach(f=>{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=f.name;document.body.appendChild(a);a.click();a.remove()});toast('Il PDF è stato salvato nei download')}
+// ---- modulo
+let dForm={id:null,tipo:'ci',files:[]};
+async function openDocForm(id){if(!db.doc)db.doc=[];if(locked()){toast('Sblocca prima i documenti');return}
+  const d=id?db.doc.find(x=>x.id===id):null;let c={num:'',note:'',files:[]};if(d){try{c=await getDoc(id)}catch(e){toast('Sblocca prima i documenti');return}}
+  dForm={id:d?d.id:null,tipo:d?d.tipo:'ci',files:c.files.map(f=>({type:f.type,name:f.name,data:f.data}))};
+  $('shDTitle').textContent=d?'Modifica documento':'Nuovo documento';
+  chips($('dTipo'),Object.fromEntries(Object.entries(DT).map(([k,v])=>[k,[v[0],v[1],DCOL]])),dForm.tipo,k=>dForm.tipo=k);
+  $('dChi').value=d?d.chi||'':'';$('dNum').value=c.num;$('dScad').value=d&&d.scad||'';$('dNote').value=c.note;
+  const ls=db.scad.find(s=>s.doc===dForm.id);$('dAnt').value=String(ls?ls.ant:60);
+  $('chiList').innerHTML=[...new Set(db.doc.map(x=>x.chi).filter(Boolean))].map(v=>`<option value="${esc(v)}">`).join('');
+  renderAtt();$('dPinHint').hidden=pinOn();openSh('D')}
+function renderAtt(){$('dAtt').innerHTML=dForm.files.map((f,i)=>`<div class="att">${f.type==='application/pdf'?`<span class="attpdf">${ico('file','currentColor',22)}</span>`:`<img src="data:${f.type};base64,${f.data}" alt="">`}<button class="attx" data-rm="${i}" aria-label="Togli allegato">×</button></div>`).join('')+(dForm.files.length<4?`<label class="attadd" for="dFile">${ico('clip','currentColor',20)}<span>Aggiungi foto o PDF</span></label>`:'');
+  $('dAtt').querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{dForm.files.splice(+b.dataset.rm,1);renderAtt()})}
+$('dFile').onchange=async e=>{const fs=[...e.target.files].slice(0,4-dForm.files.length);for(const f of fs){try{dForm.files.push(await fileToData(f))}catch(er){toast(er==='grande'?'PDF troppo grande (massimo 3 MB)':'File non supportato: usa una foto o un PDF')}}e.target.value='';renderAtt()};
+$('bgD').onclick=()=>closeSh('D');$('bgD2').onclick=()=>closeSh('D2');
+$('dSave').onclick=async()=>{if(!db.doc)db.doc=[];const chi=$('dChi').value.trim();if(!chi){toast('Scrivi di chi è il documento');$('dChi').focus();return}
+  if(locked()){toast('Sblocca prima i documenti');return}
+  if(db.demo){db={mov:[],scad:[],app:[],del:[],doc:[]};}
+  const id=dForm.id||uid(),now=Date.now(),scad=$('dScad').value,ant=+$('dAnt').value;
+  const payload={num:$('dNum').value.trim(),note:$('dNote').value.trim(),files:dForm.files};if(JSON.stringify(payload).length>4.3e6){toast('Allegati troppo pesanti: togli un file');return}
+  try{await vPut(await sealRec(id,payload))}catch(e){toast('Salvataggio non riuscito: memoria piena?');return}
+  docCache.delete(id);
+  const meta={id,u:now,tipo:dForm.tipo,chi,scad};db.doc=db.doc.filter(x=>x.id!==id).concat(meta);
+  const old=db.scad.find(s=>s.doc===id);db.scad=db.scad.filter(s=>s.doc!==id);
+  if(scad){db.scad.push({id:old?old.id:'sd-'+id,u:now,tit:dt(dForm.tipo)[0]+' di '+chi,cat:'doc',d:scad,ant,doc:id})}
+  else if(old){db.del=[...(db.del||[]),{id:old.id,u:now}]}
+  store();closeSh('D');render();toast(scad?'Documento salvato: la scadenza è in Scadenze e Agenda':'Documento salvato')};
+// ---- PIN
+const PINF=(btn)=>`<form id="pinF" autocomplete="off"><label for="pin1">Nuovo PIN</label><input class="field pin" id="pin1" type="password" inputmode="numeric" maxlength="20"><label for="pin2">Ripeti il PIN</label><input class="field pin" id="pin2" type="password" inputmode="numeric" maxlength="20"><button class="save" type="submit">${btn}</button></form>`;
+function pinSheet(){
+  if(locked()){toast('Sblocca prima i documenti');return}
+  const on=pinOn();$('pinTitle').textContent=on?'PIN dei documenti':'Imposta un PIN';
+  $('pinBody').innerHTML=on?`<p class="empty">I documenti sono cifrati con il tuo PIN, su questo dispositivo e su Google Drive.</p><button class="save" id="pinChange">Cambia PIN</button><button class="save" id="pinCode" style="background:var(--pri-t);color:var(--pri-ink);margin-top:10px">Nuovo codice di recupero</button>${pkOk()?(pkGet()?`<button class="save" id="pkOff" style="background:var(--pri-t);color:var(--pri-ink);margin-top:10px">Disattiva lo sblocco con impronta</button>`:`<button class="save" id="pkOn" style="background:var(--pri-t);color:var(--pri-ink);margin-top:10px">Sblocca con impronta su questo dispositivo</button>`):''}<button class="lnk" id="pinOff" style="width:100%;color:var(--red)">Togli il PIN</button>`
+   :`<div class="warn"><span>Con il PIN numero, note e foto dei documenti vengono <b>cifrati</b>: nessuno può leggerli senza PIN, nemmeno da Google Drive. Subito dopo ti diamo un <b>codice di recupero</b> da conservare: serve se dimentichi il PIN. Usa almeno 6 cifre.</span></div>`+PINF('Imposta il PIN');
+  if(on){$('pinChange').onclick=()=>{closeSh('P');setTimeout(()=>askPinFor('change'),260)};
+    $('pinCode').onclick=()=>{closeSh('P');setTimeout(()=>askPinFor('code'),260)};
+    if($('pkOn'))$('pkOn').onclick=()=>{closeSh('P');setTimeout(()=>askPinFor('pk'),260)};
+    if($('pkOff'))$('pkOff').onclick=()=>{pkSet(null);closeSh('P');toast('Sblocco con impronta disattivato')};
+    $('pinOff').onclick=()=>{closeSh('P');ask('Togliere il PIN?','I documenti non saranno più cifrati: chi usa questo dispositivo sbloccato potrà vederli. Anche il codice di recupero non servirà più.','Togli il PIN',async()=>{await removePin();render();toast('PIN tolto')},true)}}
+  else bindPinForm(async a=>{const code=await setPin(a);closeSh('P');render();setTimeout(()=>showCode(code,true),260)});
+  openSh('P')}
+// per cambiare PIN o codice chiediamo il PIN attuale (serve a riaprire la chiave)
+function askPinFor(what){$('pinTitle').textContent=what==='change'?'Cambia PIN':what==='pk'?'Sblocco con impronta':'Nuovo codice di recupero';
+  $('pinBody').innerHTML=`<form id="pinCur" autocomplete="off"><label for="pin0">PIN attuale</label><input class="field pin" id="pin0" type="password" inputmode="numeric" maxlength="20"><button class="save" type="submit">Continua</button></form>`;
+  $('pinCur').onsubmit=async e=>{e.preventDefault();const o=await openWith($('pin0').value,db.vault.salt,db.vault.wPin);if(!o){toast('PIN non corretto');$('pin0').value='';return}
+    if(what==='pk'){$('pinTitle').textContent='Sblocco con impronta';$('pinBody').innerHTML='<p class="empty">Tocca il pulsante e conferma con impronta o volto. Funzionerà solo su questo dispositivo; il PIN resta sempre valido.</p><button class="save" id="pkGo">Attiva</button>';$('pkGo').onclick=()=>pkEnable(o.raw);return}
+    if(what==='change')newPinForm(o.raw);else{const code=await rewrapCode(o.raw);closeSh('P');setTimeout(()=>showCode(code,false),260)}};
+  openSh('P')}
+function newPinForm(raw,afterRecovery){$('pinTitle').textContent=afterRecovery?'Scegli un nuovo PIN':'Nuovo PIN';$('pinBody').innerHTML=(afterRecovery?'<p class="empty">Codice di recupero corretto. Ora scegli un nuovo PIN.</p>':'')+PINF('Salva il PIN');
+  bindPinForm(async a=>{await rewrapPin(raw,a);closeSh('P');render();toast('Nuovo PIN salvato')});openSh('P')}
+function bindPinForm(done){$('pinF').onsubmit=async e=>{e.preventDefault();const a=$('pin1').value,b=$('pin2').value;
+  if(a.length<6){toast('Il PIN deve avere almeno 6 caratteri');return}if(a!==b){toast('I due PIN non coincidono');return}
+  $('pinF').querySelector('button').textContent='Un attimo…';await done(a)}}
+function showCode(code,first){$('pinTitle').textContent='Il tuo codice di recupero';
+  $('pinBody').innerHTML=`<p class="empty">Se dimentichi il PIN, con questo codice riapri i documenti e ne scegli uno nuovo. <b>Salvalo adesso</b>: per sicurezza non lo mostreremo più.</p>
+   <div class="codebox mono" id="codeTxt">${code}</div>
+   <button class="save" id="codeCopy" style="background:var(--pri-t);color:var(--pri-ink)">Copia il codice</button>
+   <p class="hint" style="margin-top:12px"><span>Puoi conservarlo nel gestore password di Google, scriverlo su un foglio da tenere in casa o salvarlo in un posto sicuro. Non tenerlo insieme ai documenti.</span></p>
+   ${first?'':'<p class="empty">Il codice precedente non funziona più.</p>'}
+   <label class="chk"><input type="checkbox" id="codeOk"> Ho salvato il codice in un posto sicuro</label>
+   <button class="save" id="codeDone" disabled>Fatto</button>`;
+  $('codeCopy').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(code).then(()=>toast('Codice copiato'),()=>toast('Copia non riuscita: scrivilo a mano'))};
+  $('codeOk').onchange=()=>$('codeDone').disabled=!$('codeOk').checked;
+  $('codeDone').onclick=()=>{closeSh('P');toast(first?'PIN impostato: i documenti sono cifrati':'Nuovo codice di recupero salvato')};
+  $('bgP').onclick=null;openSh('P')}
+function forgotSheet(){$('pinTitle').textContent='PIN dimenticato';
+  $('pinBody').innerHTML=`<p class="empty">Inserisci il <b>codice di recupero</b> che hai salvato quando hai impostato il PIN.</p>
+   <form id="recF" autocomplete="off"><input class="field mono" id="recCode" placeholder="XXXX-XXXX-XXXX-XXXX" autocapitalize="characters" style="text-align:center;font-size:18px;letter-spacing:.06em"><button class="save" type="submit">Riapri i documenti</button></form>
+   <button class="lnk" id="recNone" style="width:100%;color:var(--red)">Non ho il codice</button>`;
+  $('recF').onsubmit=async e=>{e.preventDefault();$('recF').querySelector('button').textContent='Verifico…';
+    if(await unlockRecovery($('recCode').value)){const raw=recRaw;recRaw=null;render();newPinForm(raw,true)}else{$('recF').querySelector('button').textContent='Riapri i documenti';toast('Codice non corretto')}};
+  $('recNone').onclick=()=>{closeSh('P');setTimeout(()=>ask('Senza PIN e senza codice','I documenti protetti non si possono aprire in nessun altro modo. Puoi solo cancellarli e ricominciare la sezione Documenti. Movimenti, scadenze e agenda restano.','Continua',()=>setTimeout(()=>ask('Ultima conferma','Verranno cancellati tutti i documenti e le loro foto, anche da Google Drive. Non si può annullare.','Sì, cancella i documenti',async()=>{await wipeDocs();toast('Documenti cancellati')},true),320),true),260)};
+  openSh('P')}
+function bgPclose(){closeSh('P')}$('bgP').onclick=bgPclose;
+// ---- sincronizzazione documenti su Drive (un file per documento)
+async function docSync(){if(!db.doc)db.doc=[];
+  const q=encodeURIComponent("name contains 'doc-' and trashed=false");
+  const l=await (await gf('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&pageSize=1000&fields=files(id,name,appProperties)&q='+q)).json();
+  const remote=new Map();for(const f of (l.files||[])){if(!f.name||!/^doc-.+\.json$/.test(f.name))continue;const id=f.name.replace(/^doc-|\.json$/g,'');const u=+((f.appProperties||{}).u||0);const prev=remote.get(id);
+    if(prev){if(prev.u>=u){await gf('https://www.googleapis.com/drive/v3/files/'+f.id,{method:'DELETE'});continue}await gf('https://www.googleapis.com/drive/v3/files/'+prev.fid,{method:'DELETE'})}
+    remote.set(id,{fid:f.id,u})}
+  const ids=new Set(db.doc.map(d=>d.id));const local=new Map((await vAll()).map(r=>[r.id,r]));let changed=false;
+  for(const [id,r] of remote){if(!ids.has(id)){await gf('https://www.googleapis.com/drive/v3/files/'+r.fid,{method:'DELETE'});continue}
+    const lr=local.get(id);if(!lr||r.u>lr.u){const rec=await (await gf('https://www.googleapis.com/drive/v3/files/'+r.fid+'?alt=media')).json();await vPut(rec);docCache.delete(id);changed=true}}
+  for(const [id,lr] of local){if(!ids.has(id)){await vDel(id);continue}const r=remote.get(id);if(r&&r.u>=lr.u)continue;
+    const fd=new FormData();fd.append('metadata',new Blob([JSON.stringify(r?{appProperties:{u:String(lr.u)}}:{name:'doc-'+id+'.json',parents:['appDataFolder'],appProperties:{u:String(lr.u)}})],{type:'application/json'}));
+    fd.append('file',new Blob([JSON.stringify(lr)],{type:'application/json'}));
+    await gf('https://www.googleapis.com/upload/drive/v3/files'+(r?'/'+r.fid:'')+'?uploadType=multipart',{method:r?'PATCH':'POST',body:fd})}
+  if(vKey&&pinOn())await healVault();
+  return changed}
+
+// ---- benvenuto: Google o ospite
+function openWelcome(noDemo){$('wDemo').hidden=!!noDemo;$('welcome').hidden=false;scrollTo(0,0)}
+function closeWelcome(){$('welcome').hidden=true;go('home')}
+function sheet3(on){if(on){$('bg3').style.display='block';requestAnimationFrame(()=>$('sheet3').classList.add('on'))}else{$('sheet3').classList.remove('on');setTimeout(()=>$('bg3').style.display='none',250)}}
+$('wGuest').onclick=()=>sheet3(true);$('gBack').onclick=()=>sheet3(false);$('bg3').onclick=()=>sheet3(false);
+$('gOk').onclick=()=>{prof={mode:'ospite'};saveProf();if(db.demo)db={mov:[],scad:[],app:[],del:[]};localSave();sheet3(false);closeWelcome();toast('Pronto: aggiungi la prima voce con +')};
+$('wDemo').onclick=()=>{prof={mode:'esempio'};saveProf();db=Object.assign(demo(),{demo:true});closeWelcome()};
+$('wGoogle').onclick=()=>connectGoogle(true);
+// ---- Google Drive (cartella nascosta dell'app nel Drive dell'utente)
+const GCID='522180658723-nrt2sesr8tic25p4v9mbaa9gqh8l84bj.apps.googleusercontent.com'; // codice client OAuth di Google Cloud: si inserisce in fase di pubblicazione
+const SCOPE='https://www.googleapis.com/auth/drive.appdata';
+const FN='casa-in-ordine.json';
+let tok=null,tokExp=0,syncState='',gisReady=null;
+try{const t=JSON.parse(localStorage.getItem('casainordine.accesso'));if(t&&t.exp>Date.now()+60000){tok=t.tok;tokExp=t.exp}}catch(e){}
+function keepTok(){try{tok?localStorage.setItem('casainordine.accesso',JSON.stringify({tok,exp:tokExp})):localStorage.removeItem('casainordine.accesso')}catch(e){}}
+function loadGIS(){if(gisOk())return Promise.resolve();return gisReady=gisReady||new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='https://accounts.google.com/gsi/client';sc.async=true;sc.onload=ok;sc.onerror=()=>{gisReady=null;ko('rete')};document.head.appendChild(sc)})}
+function askToken(select){return new Promise((ok,ko)=>{const c=google.accounts.oauth2.initTokenClient({client_id:GCID,scope:SCOPE,...(prof&&prof.email?{login_hint:prof.email}:{}),
+  callback:r=>{if(r.error)return ko(r);if(google.accounts.oauth2.hasGrantedAllScopes&&!google.accounts.oauth2.hasGrantedAllScopes(r,SCOPE)){tok=null;return ko('perm')}tok=r.access_token;tokExp=Date.now()+r.expires_in*1000;keepTok();ok(tok)},error_callback:ko});c.requestAccessToken({prompt:select?'select_account':''})})}
+function gisOk(){return !!(window.google&&google.accounts&&google.accounts.oauth2)}
+// La finestra di Google va aperta subito dentro il tocco: se si aspetta il caricamento, Safari la blocca come pop-up.
+function token(interactive){
+  if(tok&&Date.now()<tokExp-60000)return Promise.resolve(tok);
+  if(!interactive)return Promise.reject('auth');
+  if(gisOk())return askToken(interactive==='select');
+  return loadGIS().then(()=>new Promise((ok,ko)=>ask('Accesso con Google','Tocca Continua per aprire la finestra di Google.','Continua',()=>askToken(interactive==='select').then(ok,ko),false,()=>ko('annullato'))));
+}
+async function gf(url,opt,interactive){const t=await token(interactive);const r=await fetch(url,{...(opt||{}),headers:{Authorization:'Bearer '+t}});if(r.status===401){tok=null;keepTok();throw 'auth'}if(r.status===403){tok=null;keepTok();throw 'perm'}if(!r.ok)throw 'drive';return r}
+function merge(a,b){const dl=new Map();[...(a.del||[]),...(b.del||[])].forEach(d=>dl.set(d.id,Math.max(dl.get(d.id)||0,d.u||0)));
+  const lim=Date.now()-180*864e5;const o={del:[...dl].filter(([,u])=>u>lim).map(([id,u])=>({id,u}))};
+  o.vault=(a.vault&&b.vault)?((a.vault.u||0)>=(b.vault.u||0)?a.vault:b.vault):(a.vault||b.vault||null);
+  ['mov','scad','app','doc'].forEach(k=>{const m=new Map();[...(a[k]||[]),...(b[k]||[])].forEach(x=>{const y=m.get(x.id);if(!y||(x.u||0)>(y.u||0))m.set(x.id,x)});o[k]=[...m.values()].filter(x=>!(dl.has(x.id)&&dl.get(x.id)>=(x.u||0)))});return o}
+const sig=o=>['mov','scad','app','del','doc'].map(k=>(o[k]||[]).map(x=>x.id+':'+(x.u||0)).sort().join(',')).join('|')+'|v'+((o.vault&&o.vault.u)||0);
+async function sync(interactive){
+  if(!prof||prof.mode!=='google'||!navigator.onLine||syncState==='busy')return;
+  const prev=syncState;syncState='busy';if(interactive||prev!=='ok')renderAcct();
+  const guard=setTimeout(()=>{if(syncState==='busy'){syncState='err';render()}},90000);
+  try{
+    const q=encodeURIComponent("name='"+FN+"'");
+    const l=await (await gf('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&orderBy=createdTime&fields=files(id)&q='+q,null,interactive)).json();
+    const files=(l.files||[]).map(f=>f.id),fid=files[0];
+    let remote=fid?await (await gf('https://www.googleapis.com/drive/v3/files/'+fid+'?alt=media')).json():{};
+    for(const extra of files.slice(1)){remote=merge(remote,await (await gf('https://www.googleapis.com/drive/v3/files/'+extra+'?alt=media')).json());await gf('https://www.googleapis.com/drive/v3/files/'+extra,{method:'DELETE'})}
+    const before=sig(db);db=merge(db,remote);localSave();const changed=sig(db)!==before;
+    if(fid&&sig(db)===sig(remote)){const dc=await docSync();prof.last=Date.now();prof.dirty=false;saveProf();syncState='ok';if(changed||dc||interactive)render();else renderAcct();return}
+    const fd=new FormData();fd.append('metadata',new Blob([JSON.stringify(fid?{}:{name:FN,parents:['appDataFolder']})],{type:'application/json'}));
+    fd.append('file',new Blob([JSON.stringify(db)],{type:'application/json'}));
+    await gf('https://www.googleapis.com/upload/drive/v3/files'+(fid?'/'+fid:'')+'?uploadType=multipart',{method:fid?'PATCH':'POST',body:fd});
+    await docSync();
+    prof.last=Date.now();prof.dirty=false;saveProf();syncState='ok';
+  }catch(e){syncState=e==='perm'?'perm':(e==='auth'||e==='annullato')?'auth':'err'}
+  finally{clearTimeout(guard)}
+  render();
+}
+async function connectGoogle(fromWelcome){
+  if(!GCID){toast('Accesso Google: lo attiviamo alla pubblicazione');return}
+  try{
+    await token('select');
+    const me=((await (await gf('https://www.googleapis.com/drive/v3/about?fields=user(emailAddress)')).json()).user)||{};
+    if(db.demo)db={mov:[],scad:[],app:[],del:[]};
+    prof={mode:'google',email:me.emailAddress||''};saveProf();localSave();
+    if(fromWelcome)closeWelcome();closeMenu();await sync(true);toast('Collegato a Google Drive');
+  }catch(e){if(e==='perm'){closeMenu();ask('Serve il permesso su Google Drive','Casa in Ordine salva i tuoi dati in una cartella riservata del tuo Google Drive, separata dai tuoi file. Nella finestra di Google, se compare la casella su Google Drive, spuntala e poi premi Continua.','Riprova',()=>connectGoogle(fromWelcome))}else toast('Accesso non completato')}
+}
+function renderAcct(){
+  const el=$('acct');if(!el)return;$('mOut').hidden=!(prof&&prof.mode==='google');
+  const ic=(bg,c,d)=>`<span class="ic" style="background:${bg};color:${c}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg></span>`;
+  const user='<circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/>';
+  if(prof&&prof.mode==='google'){
+    const st=syncState==='busy'?'Sincronizzazione in corso…':syncState==='auth'?'Tocca Sincronizza per riaccedere':syncState==='perm'?'Manca il permesso su Drive: tocca Sincronizza':syncState==='err'?'Ultimo tentativo non riuscito':prof.last?'Sincronizzato alle '+new Date(prof.last).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}):'Collegato';
+    el.innerHTML=ic('var(--pri-t)','var(--pri-ink)',user)+`<span class="t">${esc(prof.email)||'Account Google'}<small>${st}</small></span><button class="pill" id="aSync">Sincronizza</button>`;
+    $('privTxt').textContent='I dati sono su questo dispositivo e nel tuo Google Drive, in una cartella riservata all\'app. Nessuno, oltre a te, li vede.';
+    $('aSync').onclick=()=>sync('yes');
+  }else{
+    el.innerHTML=ic('#FFF6E5','#B87A12',user)+`<span class="t">${prof&&prof.mode==='esempio'?'Dati di esempio':'Ospite'}<small>Dati solo su questo dispositivo</small></span><button class="pill" id="aConn">Collega Google</button>`;
+    $('privTxt').textContent='I tuoi dati restano solo su questo dispositivo: niente account, niente server. Fai ogni tanto un backup.';
+    $('aConn').onclick=()=>connectGoogle(false);
+  }
+}
+$('syncCard').onclick=()=>sync('yes');$('syncStrip').onclick=()=>sync('yes');
+setInterval(()=>{if(!document.hidden&&prof&&prof.mode==='google'&&syncState!=='auth'&&syncState!=='perm')sync(false)},60000);
+addEventListener('online',()=>sync(false));
+$('mOut').onclick=()=>{closeMenu();ask('Scollegare Google?',(prof&&prof.dirty?'Attenzione: alcune modifiche non sono ancora arrivate su Google Drive. Se vuoi, prima tocca Sincronizza nel menu. ':'')+'Su questo dispositivo torni ospite. I dati restano qui e nel tuo Google Drive: per rivederli altrove accedi di nuovo con lo stesso account.','Scollega',()=>{try{tok&&google.accounts.oauth2.revoke(tok,()=>{})}catch(e){}tok=null;tokExp=0;keepTok();prof={mode:'ospite'};saveProf();syncState='';render();toast('Account scollegato')})};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync(false)});
+if(!prof||prof.mode==='google'||prof.mode==='esempio')loadGIS().catch(()=>{});
+if(!prof)openWelcome();else if(prof.mode==='google')sync(false);
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){navigator.serviceWorker.register('sw.js');
+  // il vecchio indirizzo /app/ aveva un suo service worker: lo togliamo
+  navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>{if(new URL(r.scope).pathname==='/app/')r.unregister()})).catch(()=>{})}
+render();
+</script>
+</body>
+</html>
