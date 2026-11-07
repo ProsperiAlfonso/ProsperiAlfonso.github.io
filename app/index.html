@@ -499,7 +499,7 @@ const _render=render;render=function(){$('demoCard').hidden=!db.demo;$('syncCard
 function fresh(){const now=Date.now(),old=db.demo?[]:[...db.mov,...db.scad,...db.app].map(x=>({id:x.id,u:now}));db={mov:[],scad:[],app:[],del:[...(db.demo?[]:db.del||[]),...old]};store();cur=new Date();cur.setDate(1);sel=iso(new Date());go('home')}
 $('startBtn').onclick=()=>{prof=null;saveProf();db={mov:[],scad:[],app:[],del:[]};openWelcome(true)};
 const _save=$('save').onclick;$('save').onclick=()=>{if(db.demo){db={mov:[],scad:[],app:[],del:[]}}_save()};
-function openMenu(){$('bg2').style.display='block';requestAnimationFrame(()=>$('sheet2').classList.add('on'))}
+function openMenu(){loadGIS().catch(()=>{});$('bg2').style.display='block';requestAnimationFrame(()=>$('sheet2').classList.add('on'))}
 function closeMenu(){$('sheet2').classList.remove('on');setTimeout(()=>$('bg2').style.display='none',250)}
 $('menu').onclick=()=>{renderAcct();openMenu()};$('bg2').onclick=closeMenu;
 $('mExp').onclick=()=>{const data={app:'Casa in Ordine',versione:1,esportato:new Date().toISOString(),dati:{mov:db.mov,scad:db.scad,app:db.app}};
@@ -531,10 +531,17 @@ const FN='casa-in-ordine.json';
 let tok=null,tokExp=0,syncState='',gisReady=null;
 try{const t=JSON.parse(localStorage.getItem('casainordine.accesso'));if(t&&t.exp>Date.now()+60000){tok=t.tok;tokExp=t.exp}}catch(e){}
 function keepTok(){try{tok?localStorage.setItem('casainordine.accesso',JSON.stringify({tok,exp:tokExp})):localStorage.removeItem('casainordine.accesso')}catch(e){}}
-function loadGIS(){return gisReady=gisReady||new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='https://accounts.google.com/gsi/client';sc.onload=ok;sc.onerror=ko;document.head.appendChild(sc)})}
+function loadGIS(){if(gisOk())return Promise.resolve();return gisReady=gisReady||new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='https://accounts.google.com/gsi/client';sc.async=true;sc.onload=ok;sc.onerror=()=>{gisReady=null;ko('rete')};document.head.appendChild(sc)})}
 function askToken(select){return new Promise((ok,ko)=>{const c=google.accounts.oauth2.initTokenClient({client_id:GCID,scope:SCOPE,login_hint:(prof&&prof.email)||'',
   callback:r=>{if(r.error)return ko(r);if(google.accounts.oauth2.hasGrantedAllScopes&&!google.accounts.oauth2.hasGrantedAllScopes(r,SCOPE)){tok=null;return ko('perm')}tok=r.access_token;tokExp=Date.now()+r.expires_in*1000;keepTok();ok(tok)},error_callback:ko});c.requestAccessToken({prompt:select?'select_account':''})})}
-async function token(interactive){if(tok&&Date.now()<tokExp-60000)return tok;if(!interactive)throw 'auth';await loadGIS();return askToken(interactive==='select')}
+function gisOk(){return !!(window.google&&google.accounts&&google.accounts.oauth2)}
+// La finestra di Google va aperta subito dentro il tocco: se si aspetta il caricamento, Safari la blocca come pop-up.
+function token(interactive){
+  if(tok&&Date.now()<tokExp-60000)return Promise.resolve(tok);
+  if(!interactive)return Promise.reject('auth');
+  if(gisOk())return askToken(interactive==='select');
+  return loadGIS().then(()=>new Promise((ok,ko)=>ask('Accesso con Google','Tocca Continua per aprire la finestra di Google.','Continua',()=>askToken(interactive==='select').then(ok,ko))));
+}
 async function gf(url,opt,interactive){const t=await token(interactive);const r=await fetch(url,{...(opt||{}),headers:{Authorization:'Bearer '+t}});if(r.status===401){tok=null;keepTok();throw 'auth'}if(r.status===403){tok=null;keepTok();throw 'perm'}if(!r.ok)throw 'drive';return r}
 function merge(a,b){const dl=new Map();[...(a.del||[]),...(b.del||[])].forEach(d=>dl.set(d.id,Math.max(dl.get(d.id)||0,d.u||0)));
   const o={del:[...dl].map(([id,u])=>({id,u}))};
@@ -587,6 +594,7 @@ setInterval(()=>{if(!document.hidden&&prof&&prof.mode==='google'&&syncState!=='a
 addEventListener('online',()=>sync(false));
 $('mOut').onclick=()=>{closeMenu();ask('Scollegare Google?','Su questo dispositivo torni ospite. I dati restano qui e nel tuo Google Drive: per rivederli altrove accedi di nuovo con lo stesso account.','Scollega',()=>{try{tok&&google.accounts.oauth2.revoke(tok,()=>{})}catch(e){}tok=null;tokExp=0;keepTok();prof={mode:'ospite'};saveProf();syncState='';render();toast('Account scollegato')})};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync(false)});
+if(!prof||prof.mode==='google'||prof.mode==='esempio')loadGIS().catch(()=>{});
 if(!prof)openWelcome();else if(prof.mode==='google')sync(false);
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('sw.js');
 render();
