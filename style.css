@@ -294,3 +294,6 @@ a.project:hover h3::after { opacity: 1; transform: translate(.12em, -.27em); }
 .shot-app img { display: block; width: 100%; flex: 1; min-height: 0; object-fit: cover; object-position: top left; border-radius: 10px; box-shadow: 0 6px 18px rgba(11,42,85,.15); }
 .shot-app-green{background:#D7EFDD;color:#5DBB7A}
 .shot-img{display:block;width:100%;flex:1;min-height:0;object-fit:cover;object-position:top left;border-radius:10px;box-shadow:0 6px 18px rgba(11,42,85,.15)}
+.shot-app-gold{background:#FDE7B0;color:#C99A1E}
+.shot-app-gold img{object-position:center 35%}
+.badge-open{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;color:var(--navy);background:#FDE7B0;border-radius:999px;padding:4px 12px}
