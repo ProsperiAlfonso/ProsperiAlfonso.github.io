@@ -303,7 +303,7 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   <button class="menu-it" id="mOut" hidden><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l-4-4 4-4M6 12h10"/></svg></span><span class="t">Scollega Google<small>Esci dall'account su questo dispositivo</small></span></button>
   <button class="menu-it" id="mExp"><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M8 11l4 4 4-4"/><path d="M5 19h14"/></svg></span><span class="t">Esporta backup<small>Salva un file con tutti i dati</small></span></button>
   <button class="menu-it" id="mImp"><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M5 19h14"/></svg></span><span class="t">Importa backup<small>Ripristina i dati da un file salvato</small></span></button>
-  <button class="menu-it danger" id="mDel"><span class="ic" style="background:#FDECEC"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D9534F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13"/></svg></span><span class="t">Cancella tutti i dati<small>Riparti da zero su questo dispositivo</small></span></button>
+  <button class="menu-it danger" id="mDel"><span class="ic" style="background:#FDECEC"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D9534F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13"/></svg></span><span class="t">Ricomincia da zero<small>Cancella tutti i dati e torna alla schermata iniziale</small></span></button>
   <input type="file" id="impFile" accept=".json,application/json" hidden>
   <p class="note" id="iosHint" hidden>Su iPhone installa l'app: tocca Condividi e poi "Aggiungi alla schermata Home". Usata solo da Safari, se non la apri per 7 giorni Safari può cancellarne i dati. L'app installata ha una memoria separata: per portare i dati, esporta il backup qui e importalo nell'app, oppure accedi con Google.</p>
   <p class="note">Gratis, senza pubblicità · <a href="../privacy.html#casa-in-ordine" style="color:inherit">Privacy</a><br>Segnalazioni: casainordine.app@gmail.com</p>
@@ -529,7 +529,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-ics]');if(
 // conferma in pagina
 let cCb=null;
 let cNoCb=null;
-function ask(tit,txt,ok,cb,danger,onNo){cNoCb=onNo||null;$('cTit').textContent=tit;$('cTxt').textContent=txt;$('cOk').textContent=ok;$('cOk').style.background=danger?'var(--red)':'';$('cOk').style.color=danger?'#fff':'';cCb=cb;$('bg4').style.display='block';requestAnimationFrame(()=>$('sheet4').classList.add('on'))}
+function ask(tit,txt,ok,cb,danger,onNo){cNoCb=onNo||null;$('toast').classList.remove('on');$('cTit').textContent=tit;$('cTxt').textContent=txt;$('cOk').textContent=ok;$('cOk').style.background=danger?'var(--red)':'';$('cOk').style.color=danger?'#fff':'';cCb=cb;$('bg4').style.display='block';requestAnimationFrame(()=>$('sheet4').classList.add('on'))}
 function closeAsk(){$('sheet4').classList.remove('on');setTimeout(()=>$('bg4').style.display='none',250)}
 $('cOk').onclick=()=>{cNoCb=null;closeAsk();const f=cCb;cCb=null;f&&f()};
 const askNo=()=>{closeAsk();const f=cNoCb;cNoCb=null;cCb=null;f&&f()};$('cNo').onclick=askNo;$('bg4').onclick=askNo;
@@ -580,7 +580,14 @@ $('impFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new Fil
   if(!Array.isArray(d.mov)||!Array.isArray(d.scad))throw 0;
   closeMenu();ask('Ripristinare il backup?','I dati di questo dispositivo verranno sostituiti con quelli del file scelto.','Ripristina',()=>{db={mov:d.mov,scad:d.scad,app:Array.isArray(d.app)?d.app:[],del:[]};const n=Date.now();['mov','scad','app'].forEach(k=>db[k].forEach(x=>x.u=n));store();go('home');toast('Backup ripristinato')})}
   catch(_){toast('Questo file non è un backup valido')}$('impFile').value=''};r.readAsText(f)};
-$('mDel').onclick=()=>{closeMenu();ask('Cancellare tutti i dati?',prof&&prof.mode==='google'?'Spariscono da questo dispositivo, dal tuo Google Drive e dagli altri dispositivi collegati. Non si può annullare.':'Spariscono da questo dispositivo. Non si può annullare.','Cancella tutto',async()=>{fresh();if(prof&&prof.mode==='google'){clearTimeout(store.t);await sync('yes');if(syncState!=='ok'){ask('Cancellati solo qui','I dati sono stati cancellati da questo dispositivo, ma non è stato possibile aggiornare Google Drive. Riprova quando sei online con Sincronizza dal menu.','Ho capito',null);return}}toast('Dati cancellati')},true)};
+$('mDel').onclick=()=>{closeMenu();const g=prof&&prof.mode==='google';
+  ask('Ricominciare da zero?','Verranno cancellati tutti i movimenti, le scadenze e gli impegni'+(g?', anche dal tuo Google Drive e dagli altri dispositivi collegati':' su questo dispositivo')+'. Poi torni alla schermata iniziale e scegli di nuovo come usare l\'app.','Continua',()=>setTimeout(()=>
+  ask('Ultima conferma','Questa operazione non si può annullare. Se vuoi tenere una copia, prima tocca Annulla e usa Esporta backup dal menu.','Sì, cancella tutto',async()=>{
+    const wasDemo=db.demo;fresh();
+    if(g){clearTimeout(store.t);await sync('yes');if(syncState!=='ok'){ask('Cancellati solo qui','I dati sono stati cancellati da questo dispositivo, ma non è stato possibile aggiornare Google Drive. Riprova quando sei online con Sincronizza dal menu: finché non lo fai, l\'account resta collegato.','Ho capito',null);return}
+      try{tok&&google.accounts.oauth2.revoke(tok,()=>{})}catch(e){}tok=null;tokExp=0;keepTok()}
+    prof=null;saveProf();syncState='';db={mov:[],scad:[],app:[],del:[]};localSave();render();openWelcome();toast('Dati cancellati, puoi ricominciare')
+  },true),320),true)};
 // installazione
 let instEvt=null;
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();instEvt=e;$('mInst').hidden=false});
