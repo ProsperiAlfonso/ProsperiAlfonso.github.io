@@ -880,7 +880,7 @@ function askPinFor(what){$('pinTitle').textContent=what==='change'?'Cambia PIN':
 function newPinForm(raw,afterRecovery){$('pinTitle').textContent=afterRecovery?'Scegli un nuovo PIN':'Nuovo PIN';$('pinBody').innerHTML=(afterRecovery?'<p class="empty">Codice di recupero corretto. Ora scegli un nuovo PIN.</p>':'')+PINF('Salva il PIN');
   bindPinForm(async a=>{await rewrapPin(raw,a);closeSh('P');render();toast('Nuovo PIN salvato')});openSh('P')}
 function bindPinForm(done){$('pinF').onsubmit=async e=>{e.preventDefault();const a=$('pin1').value,b=$('pin2').value;
-  if(a.length<6){toast('Il PIN deve avere almeno 6 cifre');return}if(a!==b){toast('I due PIN non coincidono');return}
+  if(!/^\d{6,}$/.test(a)){toast('Il PIN deve avere almeno 6 cifre, solo numeri');return}if(a!==b){toast('I due PIN non coincidono');return}
   $('pinF').querySelector('button').textContent='Un attimo…';await done(a)}}
 function showCode(code,first){$('pinTitle').textContent='Il tuo codice di recupero';
   $('pinBody').innerHTML=`<p class="empty">Se dimentichi il PIN, con questo codice riapri i documenti e ne scegli uno nuovo. <b>Salvalo adesso</b>: per sicurezza non lo mostreremo più.</p>
