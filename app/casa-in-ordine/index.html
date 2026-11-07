@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Casa in Ordine</title>
-<meta name="description" content="Casa in Ordine: spese, scadenze e agenda di famiglia in una web app gratuita. I dati restano sul tuo telefono.">
+<meta name="description" content="Casa in Ordine: spese, scadenze, bollette e documenti di famiglia in una web app gratuita. I dati restano sul tuo telefono.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="canonical" href="https://prosperialfonso.com/app/casa-in-ordine/">
 <link rel="icon" href="icona.svg" type="image/svg+xml">
@@ -222,7 +222,7 @@ body.instOn .toast{bottom:calc(240px + env(safe-area-inset-bottom))}
 .sheet{position:fixed;left:0;right:0;bottom:0;background:#fff;border-radius:22px 22px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom));z-index:10;transform:translateY(100%);transition:transform .25s;max-width:560px;margin:0 auto;max-height:92vh;overflow:auto}
 .sheet.on{transform:none}
 .sheet h4{font-family:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;font-size:24px;font-weight:600;margin-bottom:12px}
-.seg{display:grid;grid-template-columns:repeat(4,1fr);background:var(--bg);border-radius:12px;padding:4px;margin-bottom:14px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--bg);border-radius:12px;padding:4px;margin-bottom:14px}
 .seg button{border:0;background:none;padding:9px 2px;border-radius:9px;font-weight:600;color:var(--muted);cursor:pointer;font-size:15px}
 .seg button.on{background:#fff;color:var(--navy);box-shadow:0 2px 6px rgba(0,0,0,.08)}
 .seg.st{grid-template-columns:1fr 1fr;margin:-2px 0 12px}
@@ -256,11 +256,11 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
  <div class="w-top">
   <img class="w-logo" src="icona.svg" alt="">
   <h1>Casa <i>in Ordine</i></h1>
-  <p>Spese, scadenze e agenda di famiglia in un'unica app. Gratis e senza pubblicità.</p>
+  <p>Spese, scadenze, bollette e documenti di famiglia in un'unica app. Gratis e senza pubblicità.</p>
   <ul class="w-feat">
    <li><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 4v8l6 4"/></svg></span>Saldo del mese e grafici automatici</li>
-   <li><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9"/></svg></span>Scadenze con il conto alla rovescia</li>
-   <li><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span>Agenda con promemoria tramite calendario</li>
+   <li><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9"/></svg></span>Scadenze e pagamenti con il conto alla rovescia</li>
+   <li><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span>Bollette e documenti sempre a portata di mano</li>
   </ul>
  </div>
  <div class="w-bot">
@@ -287,14 +287,14 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
       <div class="kpi"><small><span class="dot" style="background:var(--red)"></span>Uscite</small><strong id="kU"></strong></div>
     </div>
     <div class="card" id="dueCard" hidden><h3>Da pagare e da incassare <a data-go="scad">Scadenze</a></h3><div id="dueBody"></div></div>
-    <div class="card"><h3>In arrivo <a data-go="agenda">Agenda</a></h3><div id="alerts"></div></div>
+    <div class="card"><h3>Prossime scadenze <a data-go="scad">Scadenze</a></h3><div id="alerts"></div></div>
     <div class="card"><h3>Dove vanno i soldi</h3><div class="donut" id="donut"></div></div>
     <div class="card"><h3>Ultimi 6 mesi <span style="font:500 12px Barlow,system-ui,sans-serif;color:var(--muted)"><span class="dot" style="background:var(--green)"></span> entrate &nbsp;<span class="dot" style="background:var(--red)"></span> uscite</span></h3><div class="bars" id="bars"></div><button class="replink" data-go="rep">Resoconto per periodo <span aria-hidden="true">›</span></button></div>
   </section>
   <section id="v-mov" hidden><button class="card repcta" data-go="rep"><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span class="t"><b>Resoconto per periodo</b><small>Entrate e uscite mese per mese, o in un intervallo a scelta</small></span><span aria-hidden="true" style="font-size:22px;color:var(--muted)">›</span></button><div id="movlist"></div></section>
   <section id="v-doc" hidden><div class="seg st docseg" id="docSeg"><button data-k="doc" class="on">Documenti</button><button data-k="bol">Bollette</button></div>
-    <div id="docPane"><div class="doctools" id="docTools"></div><div id="docList"></div><p class="note">Numero, note e foto sono protetti dal PIN, se lo imposti. La scadenza finisce in Scadenze e Agenda.</p></div>
-    <div id="bolPane" hidden><div id="bolList"></div><p class="note">Le bollette non sono protette dal PIN. Se le aggiungi alle uscite, la scadenza finisce da sola in Scadenze e Agenda.</p></div></section>
+    <div id="docPane"><div class="doctools" id="docTools"></div><div id="docList"></div><p class="note">Numero, note e foto sono protetti dal PIN, se lo imposti. La scadenza finisce in Scadenze.</p></div>
+    <div id="bolPane" hidden><div id="bolList"></div><p class="note">Le bollette non sono protette dal PIN. Se le aggiungi alle uscite, la scadenza finisce da sola in Scadenze.</p></div></section>
   <section id="v-rep" hidden>
     <div class="card">
       <h3>Periodo</h3>
@@ -309,23 +309,20 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
     <div class="card"><h3>Uscite per categoria</h3><div id="repCatU"></div></div>
     <div class="card"><h3>Entrate per categoria</h3><div id="repCatE"></div></div>
   </section>
-  <section id="v-agenda" hidden>
-    <div class="card">
+  <section id="v-scad" hidden><div class="seg st docseg" id="scadSeg"><button data-k="list" class="on">Elenco</button><button data-k="cal">Calendario</button></div>
+    <div id="scadListPane"><div class="card" id="scadlist"></div><p class="note">I promemoria arrivano tramite il calendario del telefono: tocca "Calendario" su ogni scadenza.</p></div>
+    <div id="scadCalPane" hidden><div class="card">
       <div class="wd"><span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span>Sab</span><span>Dom</span></div>
       <div class="grid" id="grid"></div>
-      <div class="key"><span><i style="background:var(--red)"></i>Scadenze</span><span><i style="background:#2B68B0"></i>Appuntamenti</span><span><i style="background:var(--grey)"></i>Spese</span></div>
+      <div class="key"><span><i style="background:var(--red)"></i>Scadenze e da pagare</span><span><i style="background:var(--grey)"></i>Spese</span></div>
     </div>
-    <div class="card" id="dayCard"></div>
-    <div class="card"><h3>Prossimi impegni</h3><div id="next30"></div></div>
-  </section>
-  <section id="v-scad" hidden><div class="card" id="scadlist"></div><p class="note">I promemoria arrivano tramite il calendario del telefono: tocca "Calendario" su ogni scadenza.</p></section>
+    <div class="card" id="dayCard"></div></div></section>
 </main>
 
 <button class="fab" id="fab" aria-label="Aggiungi"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
 <nav class="tabs">
   <button data-go="home" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 4v8l6 4"/></svg>Riepilogo</button>
   <button data-go="mov"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Movimenti</button>
-  <button data-go="agenda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/><circle cx="9" cy="14.5" r=".9" fill="currentColor"/><circle cx="12" cy="14.5" r=".9" fill="currentColor"/><circle cx="15" cy="14.5" r=".9" fill="currentColor"/></svg>Agenda</button>
   <button data-go="scad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9"/></svg>Scadenze</button>
   <button data-go="doc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.5 1.7-2 3-2s2.4.5 3 2M14 10h4M14 13h3"/></svg>Documenti</button>
 </nav>
@@ -333,7 +330,7 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
 <div class="sheet-bg" id="bg"></div>
 <div class="sheet" id="sheet">
   <h4 id="shTitle">Nuovo movimento</h4>
-  <div class="seg" id="seg"><button data-t="U" class="on">Uscita</button><button data-t="E">Entrata</button><button data-t="S">Scadenza</button><button data-t="A">Impegno</button></div>
+  <div class="seg" id="seg"><button data-t="U" class="on">Uscita</button><button data-t="E">Entrata</button><button data-t="S">Scadenza</button></div>
   <div id="fMov">
     <input class="big" id="fImp" inputmode="decimal" placeholder="0,00 €">
     <div class="seg st" id="fStato"><button data-s="ok" class="on">Pagata</button><button data-s="p">Da pagare</button></div>
@@ -341,7 +338,7 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
     <div id="fSpecWrap" hidden><label for="fSpec">Specifica</label><input class="field" id="fSpec" list="specList" placeholder="es. Ricambi bici" autocomplete="off"><datalist id="specList"></datalist></div>
     <div class="two"><div><label id="fDataL">Data</label><input class="field" type="date" id="fData"></div><div><label>Nota</label><input class="field" id="fNota" placeholder="facoltativa"></div></div>
     <div id="fAntWrap" hidden><label for="fAnt">Promemoria tramite calendario</label><select class="field" id="fAnt"><option value="0">Nessun promemoria</option><option value="1">1 giorno prima</option><option value="3" selected>3 giorni prima</option><option value="7">7 giorni prima</option></select>
-    <p class="hint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span>La scadenza compare da sola in Scadenze e Agenda. Il promemoria è facoltativo: arriva tramite il calendario del telefono, non come notifica dell'app. Dopo il salvataggio tocca <b>Aggiungi al calendario</b>.</span></p></div>
+    <p class="hint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span>La scadenza compare da sola in Scadenze. Il promemoria è facoltativo: arriva tramite il calendario del telefono, non come notifica dell'app. Dopo il salvataggio tocca <b>Aggiungi al calendario</b>.</span></p></div>
   </div>
   <div id="fScad" hidden>
     <label>Cosa scade</label><input class="field" id="sTit" placeholder="es. Carta d'identità">
@@ -419,7 +416,7 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
     <div class="seg st" id="bStato"><button data-s="p" class="on">Da pagare</button><button data-s="ok">Già pagata</button></div>
     <div id="bPayWrap" hidden><label for="bPay">Pagata il</label><input class="field" type="date" id="bPay"></div>
     <div id="bAntWrap"><label for="bAnt">Promemoria tramite calendario</label><select class="field" id="bAnt"><option value="0">Nessun promemoria</option><option value="1">1 giorno prima</option><option value="3" selected>3 giorni prima</option><option value="7">7 giorni prima</option></select>
-    <p class="hint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span>La spesa compare in Scadenze e Agenda fino a quando la segni pagata. Il promemoria è facoltativo e arriva tramite il calendario del telefono, non come notifica dell'app.</span></p></div>
+    <p class="hint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span>La spesa compare in Scadenze fino a quando la segni pagata. Il promemoria è facoltativo e arriva tramite il calendario del telefono, non come notifica dell'app.</span></p></div>
   </div>
   <button class="save" id="bSave">Salva bolletta</button>
 </div>
@@ -497,17 +494,21 @@ function demo(){
   const rel=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
   const s=[],ds=(days,tit,cat,ant)=>s.push({id:uid(),tit,cat,d:rel(days),ant});
   ds(5,'Bollo auto','auto',7);ds(23,'Revisione auto','auto',30);ds(41,'ISEE da rinnovare','fisco',30);ds(70,"Carta d'identità",'doc',60);ds(118,'Assicurazione casa','assic',30);
-  const a=[],ap=(days,tit,ora,luogo,nota)=>a.push({id:uid(),tit,d:rel(days),ora,luogo,nota:nota||'',ant:60});
-  ap(-3,'Riunione di condominio','21:00','Sala condominiale');ap(0,'Dentista','17:30','Studio dentistico','Portare la tessera sanitaria');ap(1,'Gara di nuoto','09:00','Piscina comunale');
-  ap(4,'Colloquio con gli insegnanti','16:30','Scuola primaria');ap(6,'Tagliando auto','08:30','Officina','Lasciare le chiavi entro le 9');ap(12,'Cena con gli amici','20:30','Pizzeria in centro');ap(19,'Visita dal pediatra','10:15','Ambulatorio');
-  return {mov:m,scad:s,app:a};
+  // da pagare / da incassare e bollette di esempio
+  const pl=(days,imp,cat,n,t)=>{const id=uid();m.push({id,t:t||'U',imp,cat,d:rel(days),n,sp:'',st:'p',ant:3});return id};
+  const bl=[],b=(c,imp,per,n,mv,scad,paidOff)=>{bl.push({id:uid(),c,imp,per,n,scad,mv,f:0})};
+  const lu=pl(6,94.6,'bollette','Luce set-ott'),ga=pl(13,138.2,'bollette','Gas set-ott');pl(20,85,'casa','Rata condominio');pl(9,350,'rimb','Rimborso 730','E');
+  b('luce',94.6,'set-ott','Fornitore luce',lu,rel(6));b('gas',138.2,'set-ott','Fornitore gas',ga,rel(13));
+  b('luce',88.3,'lug-ago','Fornitore luce',null,rel(-55));b('acqua',62,'2° semestre','Acquedotto',null,rel(-20));b('tel',29.9,'ottobre','Fibra di casa',null,rel(-12));
+  return {mov:m,scad:s,app:[],bol:bl,cart:[]};
 }
 let cur=new Date();cur.setDate(1);
 const today0=()=>{const t=new Date();t.setHours(0,0,0,0);return t};
 let sel=iso(new Date());
 const $=id=>document.getElementById(id);
 const paid=m=>m.st!=='p';
-let dueOpen=false;
+let dueOpen=false,scadTab='list';
+
 const mvName=x=>{const c=x.t==='E'?ce(x.cat):cu(x.cat);return x.n||x.sp||c[0]};
 function inMonth(x,y,mo){const d=pd(x.d);return d.getFullYear()===y&&d.getMonth()===mo}
 const gg=s=>Math.round((pd(s)-today0())/864e5);
@@ -537,10 +538,11 @@ function render(){
   $('mlabel').textContent=MESI[mo]+' '+y;
   const msAll=db.mov.filter(x=>inMonth(x,y,mo)),ms=msAll.filter(paid);
   const E=ms.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0),U=ms.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0);
-  if(view==='agenda'){
-    const na=db.app.filter(x=>inMonth(x,y,mo)).length,ns=db.scad.filter(x=>inMonth(x,y,mo)).length;
-    $('saldoLbl').textContent='Agenda di '+MESI[mo];
-    $('saldo').innerHTML=`${na}<span>${na===1?'appuntamento':'appuntamenti'}</span> &nbsp;${ns}<span>${ns===1?'scadenza':'scadenze'}</span>`;
+  if(view==='scad'){
+    const ns=db.scad.filter(x=>inMonth(x,y,mo)).length+db.mov.filter(x=>!paid(x)&&inMonth(x,y,mo)).length;
+    $('saldoLbl').textContent='Scadenze di '+MESI[mo];
+    $('saldo').innerHTML=`${ns}<span>${ns===1?'scadenza':'scadenze'}</span>`;
+    document.querySelectorAll('#scadSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===scadTab));$('scadListPane').hidden=scadTab!=='list';$('scadCalPane').hidden=scadTab!=='cal';
   }else{$('saldoLbl').textContent='Saldo del mese';$('saldo').textContent=(E-U>=0?'+':'')+eur(E-U)}
   // previsto a fine mese: saldo + entrate da incassare - uscite da pagare del mese (nel mese in corso anche quelle già scadute)
   {const t=new Date(),isCur=y===t.getFullYear()&&mo===t.getMonth(),m0=iso(new Date(y,mo,1));
@@ -572,13 +574,12 @@ function render(){
   const sc=db.scad.map(s=>({...s,g:gg(s.d)})).sort((a,b)=>a.g-b.g);
   const pm=db.mov.filter(x=>!paid(x)).map(x=>({...x,g:gg(x.d)}));
   const ap=db.app.map(a=>({...a,g:gg(a.d)})).filter(a=>a.g>=0).sort((a,b)=>a.g-b.g||(a.ora||'').localeCompare(b.ora||''));
-  const up=[...sc.filter(s=>s.g>=0).map(s=>({...s,k:'S'})),...pm.filter(m=>m.g>=0).map(m=>({...m,k:'M',ant:m.ant!=null?m.ant:3})),...ap.map(a=>({...a,k:'A'}))].sort((a,b)=>a.g-b.g||(a.k==='A'?1:-1));
+  const up=[...sc.filter(s=>s.g>=0).map(s=>({...s,k:'S'})),...pm.filter(m=>m.g>=0).map(m=>({...m,k:'M',ant:m.ant!=null?m.ant:3}))].sort((a,b)=>a.g-b.g||(a.k==='A'?1:-1));
   const upRow=x=>x.k==='M'?dueRow(x):x.k==='S'
     ?`<div class="alert" data-sc="${esc(x.id)}">${badge(x.g,'S')}<p>${esc(x.tit)}<span class="tag" style="background:#FDECEC;color:#D9534F">scadenza</span><small>${cs(x.cat)[0]} · ${fd(x.d)}</small></p></div>`
     :`<div class="alert" data-ap="${esc(x.id)}">${badge(x.g,'A')}<p>${esc(x.tit)}<small>${x.ora?esc(x.ora)+' · ':''}${x.luogo?esc(x.luogo)+' · ':''}${pd(x.d).toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'short'})}</small></p></div>`;
-  const home=up.filter(x=>x.k!=='M').filter(x=>x.k==='S'?x.g<=Math.max(x.ant,30):x.g<=3).slice(0,4);
-  $('alerts').innerHTML=home.map(upRow).join('')||'<p class="empty">Niente in arrivo nei prossimi giorni.</p>';
-  $('next30').innerHTML=up.filter(x=>x.g<=30).slice(0,8).map(upRow).join('')||'<p class="empty">Nessun impegno nei prossimi 30 giorni.</p>';
+  const home=up.filter(x=>x.k==='S'&&x.g<=Math.max(x.ant,30)).slice(0,4);
+  $('alerts').innerHTML=home.map(upRow).join('')||'<p class="empty">Nessuna scadenza nei prossimi 30 giorni.</p>';
   $('scadlist').innerHTML=[...sc.map(s=>({...s,k:'S'})),...pm.map(m=>({...m,k:'M'}))].sort((a,b)=>a.g-b.g).map(s=>s.k==='M'?dueRow(s,true):`<div class="alert" data-sc="${esc(s.id)}">${badge(s.g,'S')}<p>${esc(s.tit)}<small>${fd(s.d)} · avviso ${+s.ant||0} gg prima</small></p><button class="cal" data-ics="${esc(s.id)}">Calendario</button></div>`).join('')||'<p class="empty">Aggiungi la prima scadenza con il tasto +.</p>';
   // movimenti
   const groups={};msAll.slice().sort((a,b)=>b.d.localeCompare(a.d)).forEach(x=>(groups[x.d]=groups[x.d]||[]).push(x));
@@ -588,7 +589,7 @@ function render(){
   const first=new Date(y,mo,1),lead=(first.getDay()+6)%7,nd=new Date(y,mo+1,0).getDate(),tIso=iso(new Date());
   let g='';for(let i=0;i<lead;i++)g+='<div class="dc blank"></div>';
   for(let d=1;d<=nd;d++){const di=iso(new Date(y,mo,d)),it=itemsOf(di),dow=(lead+d-1)%7;
-    const pips=(it.sc.length||it.mv.some(m=>!paid(m))?`<i style="background:${SCOL}"></i>`:'')+(it.ap.length?`<i class="a" style="background:${ACOL}"></i>`:'')+(it.mv.some(m=>m.t==='U'&&paid(m))?'<i class="g" style="background:var(--grey)"></i>':'');
+    const pips=(it.sc.length||it.mv.some(m=>!paid(m))?`<i style="background:${SCOL}"></i>`:'')+(it.mv.some(m=>m.t==='U'&&paid(m))?'<i class="g" style="background:var(--grey)"></i>':'');
     const cls=['dc',dow===6?'sun':'',di<tIso?'past':'',di===tIso?'today':'',di===sel?'sel':''].join(' ');
     g+=`<button class="${cls}" data-day="${di}" aria-label="${d} ${MESI[mo]}"><span>${d}</span><span class="pips">${pips}</span></button>`;}
   $('grid').innerHTML=g;
@@ -597,16 +598,16 @@ function render(){
   const when=gs===0?'oggi':gs===1?'domani':gs===-1?'ieri':gs>1?'tra '+gs+' giorni':gs*-1+' giorni fa';
   let body='';
   body+=it.sc.map(s=>`<div class="row" data-sc="${esc(s.id)}"><div class="ic" style="background:${tint(SCOL)}">${ico(cs(s.cat)[1],SCOL)}</div><div class="t">${esc(s.tit)}<small>Scadenza · ${cs(s.cat)[0]}</small></div><button class="cal" data-ics="${esc(s.id)}">Calendario</button></div>`).join('');
-  body+=it.ap.map(a=>appRow(a)).join('');
   const out=it.mv.filter(m=>m.t==='U'&&paid(m));
   body+=it.mv.map(movRow).join('');
   if(out.length>1)body+=`<div class="row"><div class="t"><small>Totale spese del giorno</small></div><div class="amt">− ${eur(out.reduce((a,b)=>a+b.imp,0))}</div></div>`;
-  $('dayCard').innerHTML=`<h3><span>${dl} <span style="font:500 13px Barlow,system-ui,sans-serif;color:var(--muted)">${when}</span></span><button class="addday" id="addDay">${ico('plus','currentColor',14)}Impegno</button></h3>`+(body||'<p class="empty">Niente in programma. Tocca "Impegno" per aggiungere un appuntamento.</p>');
+  $('dayCard').innerHTML=`<h3><span>${dl} <span style="font:500 13px Barlow,system-ui,sans-serif;color:var(--muted)">${when}</span></span><button class="addday" id="addDay">${ico('plus','currentColor',14)}Scadenza</button></h3>`+(body||'<p class="empty">Niente in questo giorno.</p>');
 }
 // navigazione
+$('scadSeg').onclick=e=>{const b=e.target.closest('button');if(!b||b.dataset.k===scadTab)return;scadTab=b.dataset.k;render()};
 let view='home';
 document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)go(b.dataset.go)});
-function go(v){view=v;['home','mov','agenda','scad','rep','doc'].forEach(k=>$('v-'+k).hidden=k!==v);document.body.classList.toggle('inrep',v==='rep'||v==='doc');$('fab').hidden=false;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.go===v));render();scrollTo(0,0)}
+function go(v){view=v;['home','mov','scad','rep','doc'].forEach(k=>$('v-'+k).hidden=k!==v);document.body.classList.toggle('inrep',v==='rep'||v==='doc');$('fab').hidden=false;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.go===v));render();scrollTo(0,0)}
 function shiftMonth(n){cur.setMonth(cur.getMonth()+n);const t=new Date();sel=(cur.getFullYear()===t.getFullYear()&&cur.getMonth()===t.getMonth())?iso(t):iso(cur);render()}
 $('prev').onclick=()=>shiftMonth(-1);$('next').onclick=()=>shiftMonth(1);
 $('grid').addEventListener('click',e=>{const b=e.target.closest('[data-day]');if(!b)return;sel=b.dataset.day;render()});
@@ -622,9 +623,9 @@ function setTipo(t){tipo=t;document.querySelectorAll('#seg button').forEach(b=>b
   if(t==='U'||t==='E'){const b=$('fStato').querySelectorAll('button');b[0].textContent=t==='E'?'Incassata':'Pagata';b[1].textContent=t==='E'?'Da incassare':'Da pagare';setStato(stato)}if(t==='S')chips($('sCat'),CS,scat,k=>scat=k)}
 $('seg').onclick=e=>{const b=e.target.closest('button');if(b)setTipo(b.dataset.t)};
 function specToggle(){const on=(tipo==='U'||tipo==='E')&&(cat==='altro'||cat==='altroE');$('fSpecWrap').hidden=!on;if(on){const used=[...new Set(db.mov.filter(m=>m.t===tipo&&m.sp).map(m=>m.sp))].slice(-30);$('specList').innerHTML=used.map(v=>`<option value="${esc(v)}">`).join('');setTimeout(()=>$('fSpec').focus(),50)}}
-function openSheet(t){$('snack').classList.remove('on');editId=null;$('seg').hidden=false;stato='ok';$('fAnt').value='3';$('fSpec').value='';const d=view==='agenda'?sel:iso(new Date());$('fData').value=d;$('fImp').value='';$('fNota').value='';$('sTit').value='';$('sData').value=view==='agenda'?sel:'';
+function openSheet(t){$('snack').classList.remove('on');editId=null;$('seg').hidden=false;stato='ok';$('fAnt').value='3';$('fSpec').value='';const calOn=view==='scad'&&scadTab==='cal',d=calOn?sel:iso(new Date());$('fData').value=d;$('fImp').value='';$('fNota').value='';$('sTit').value='';$('sData').value=calOn?sel:'';
   $('aTit').value='';$('aData').value=d;$('aOra').value='';$('aLuogo').value='';$('aNota').value='';
-  setTipo(t||(view==='scad'?'S':view==='agenda'?'A':'U'));$('bg').style.display='block';requestAnimationFrame(()=>$('sheet').classList.add('on'))}
+  setTipo(t||(view==='scad'?'S':'U'));$('bg').style.display='block';requestAnimationFrame(()=>$('sheet').classList.add('on'))}
 // modifica: riapre il modulo con i dati dell'elemento
 function editItem(k,id){
   if(k==='mv'){const m=db.mov.find(x=>x.id===id);if(!m)return;openSheet(m.t);editId=id;stato=paid(m)?'ok':'p';setTipo(m.t);cat=m.cat;chips($('fCat'),m.t==='E'?CE:CU,cat,k=>{cat=k;specToggle()});specToggle();
@@ -634,7 +635,7 @@ function editItem(k,id){
   $('seg').hidden=true}
 function closeSheet(){$('sheet').classList.remove('on');setTimeout(()=>$('bg').style.display='none',250)}
 $('fab').onclick=()=>view==='doc'?(docTab==='bol'?openBolForm(null,bolFolder):openDocForm()):openSheet();$('bg').onclick=closeSheet;
-document.addEventListener('click',e=>{if(e.target.closest('#addDay'))openSheet('A')});
+document.addEventListener('click',e=>{if(e.target.closest('#addDay'))openSheet('S')});
 // sostituisce (modifica) o aggiunge
 function put(arr,o){const i=editId?arr.findIndex(x=>x.id===editId):-1;if(i>=0){const old=arr[i];arr[i]={...old,...o,id:old.id,u:Date.now()};return null}const id=uid();arr.push({...o,id,u:Date.now()});return id}
 $('save').onclick=()=>{
@@ -734,15 +735,15 @@ $('repPer').addEventListener('click',e=>{const b=e.target.closest('button');if(!
 $('repDa').addEventListener('change',()=>{rep.da=$('repDa').value;renderRep()});$('repA').addEventListener('change',()=>{rep.a=$('repA').value;renderRep()});
 $('repMesi').addEventListener('click',e=>{const b=e.target.closest('[data-ym]');if(!b)return;const [y,m]=b.dataset.ym.split('-').map(Number);cur=new Date(y,m,1);go('mov')});
 let hideAmt=false;try{hideAmt=localStorage.getItem('casainordine.nascondi')==='1'}catch(e){}
-function applyHide(){$('eye').hidden=view==='agenda'||view==='doc';$('eyeIc').innerHTML=hideAmt?'<path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.3 2 12 2 12s3.5 7 10 7c1.9 0 3.5-.6 4.9-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>':'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>';$('eye').setAttribute('aria-label',hideAmt?'Mostra gli importi':'Nascondi gli importi');$('eye').setAttribute('aria-pressed',hideAmt);
-  if(!hideAmt)return;const dots='•••••• €';if(view!=='agenda'&&view!=='doc')$('saldo').textContent=dots;['kE','kU'].forEach(k=>$(k).textContent='•••• €');document.querySelectorAll('#saldoPrev .pv,#dueBody .dk').forEach(e=>e.textContent='•••• €');if(view==='rep')document.querySelectorAll('#repKpi strong').forEach(e=>e.textContent='•••• €')}
+function applyHide(){$('eye').hidden=view==='scad'||view==='doc';$('eyeIc').innerHTML=hideAmt?'<path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.3 2 12 2 12s3.5 7 10 7c1.9 0 3.5-.6 4.9-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>':'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>';$('eye').setAttribute('aria-label',hideAmt?'Mostra gli importi':'Nascondi gli importi');$('eye').setAttribute('aria-pressed',hideAmt);
+  if(!hideAmt)return;const dots='•••••• €';if(view!=='scad'&&view!=='doc')$('saldo').textContent=dots;['kE','kU'].forEach(k=>$(k).textContent='•••• €');document.querySelectorAll('#saldoPrev .pv,#dueBody .dk').forEach(e=>e.textContent='•••• €');if(view==='rep')document.querySelectorAll('#repKpi strong').forEach(e=>e.textContent='•••• €')}
 $('eye').onclick=()=>{hideAmt=!hideAmt;try{localStorage.setItem('casainordine.nascondi',hideAmt?'1':'0')}catch(e){}render()};
 const _render=render;render=function(){try{maybeInst()}catch(e){}if(!db.doc)db.doc=[];$('demoCard').hidden=!db.demo;$('syncCard').hidden=true;const needs=!!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));$('syncStrip').hidden=!needs;document.body.classList.toggle('strip',needs);if(needs)$('syncStripTxt').textContent=syncState==='perm'?'Manca il permesso su Google Drive: tocca per riprovare':'Tocca per sincronizzare con Google Drive';_render();renderAcct();if(view==='rep')renderRep();if(view==='doc'){if(!db.bol)db.bol=[];if(!db.cart)db.cart=[];document.querySelectorAll('#docSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===docTab));$('docPane').hidden=docTab!=='doc';$('bolPane').hidden=docTab!=='bol';
   if(docTab==='bol'){$('saldoLbl').textContent='Bollette di casa';const n=db.bol.length;$('saldo').innerHTML=n+'<span>'+(n===1?'bolletta':'bollette')+'</span>';$('fab').hidden=false;renderBol()}
   else{$('saldoLbl').textContent='Documenti di famiglia';const n=db.doc.length;$('saldo').innerHTML=n+'<span>'+(n===1?'documento':'documenti')+'</span>';renderDoc()}}applyHide()};
 function fresh(){const now=Date.now(),old=db.demo?[]:[...db.mov,...db.scad,...db.app,...(db.doc||[]),...(db.bol||[]),...(db.cart||[])].map(x=>({id:x.id,u:now}));bClear().catch(()=>{});bolFolder=null;db={mov:[],scad:[],app:[],doc:[],bol:[],cart:[],vault:{u:now,off:true},del:[...(db.demo?[]:db.del||[]),...old]};vKey=null;docCache.clear();vClear().catch(()=>{});store();cur=new Date();cur.setDate(1);sel=iso(new Date());go('home')}
-$('startBtn').onclick=()=>{prof=null;saveProf();db={mov:[],scad:[],app:[],del:[]};openWelcome(true)};
-const _save=$('save').onclick;$('save').onclick=()=>{if(db.demo){db={mov:[],scad:[],app:[],del:[]}}_save()};
+$('startBtn').onclick=()=>{prof=null;saveProf();db={mov:[],scad:[],app:[],del:[],doc:[],bol:[],cart:[]};openWelcome(true)};
+const _save=$('save').onclick;$('save').onclick=()=>{if(db.demo){db={mov:[],scad:[],app:[],del:[],doc:[],bol:[],cart:[]}}_save()};
 function openMenu(){$('toast').classList.remove('on');loadGIS().catch(()=>{});$('bg2').style.display='block';requestAnimationFrame(()=>$('sheet2').classList.add('on'))}
 function closeMenu(){$('sheet2').classList.remove('on');setTimeout(()=>$('bg2').style.display='none',250)}
 $('menu').onclick=()=>{renderAcct();openMenu()};$('bg2').onclick=closeMenu;
@@ -978,7 +979,7 @@ $('dFile').onchange=async e=>{const fs=[...e.target.files].slice(0,4-dForm.files
 $('bgD').onclick=()=>closeSh('D');$('bgD2').onclick=()=>closeSh('D2');
 $('dSave').onclick=async()=>{if(!db.doc)db.doc=[];const chi=$('dChi').value.trim();if(!chi){toast('Scrivi di chi è il documento');$('dChi').focus();return}
   if(locked()){toast('Sblocca prima i documenti');return}
-  if(db.demo){db={mov:[],scad:[],app:[],del:[],doc:[]};}
+  if(db.demo){db={mov:[],scad:[],app:[],del:[],doc:[],bol:[],cart:[]};}
   const id=dForm.id||uid(),now=Date.now(),scad=$('dScad').value,ant=+$('dAnt').value;
   const payload={num:$('dNum').value.trim(),note:$('dNote').value.trim(),files:dForm.files};let rec;
   try{rec=await sealRec(id,payload)}catch(e){toast('Sblocca prima i documenti');return}
@@ -989,7 +990,7 @@ $('dSave').onclick=async()=>{if(!db.doc)db.doc=[];const chi=$('dChi').value.trim
   const old=db.scad.find(s=>s.doc===id);db.scad=db.scad.filter(s=>s.doc!==id);
   if(scad){db.scad.push({id:old?old.id:'sd-'+id,u:now,tit:dt(dForm.tipo)[0]+' di '+chi,cat:'doc',d:scad,ant,doc:id})}
   else if(old){db.del=[...(db.del||[]),{id:old.id,u:now}]}
-  store();closeSh('D');render();toast(scad?'Documento salvato: la scadenza è in Scadenze e Agenda':'Documento salvato');
+  store();closeSh('D');render();toast(scad?'Documento salvato: la scadenza è in Scadenze':'Documento salvato');
   if(primo)setTimeout(()=>ask('Proteggere i documenti con un PIN?','Il PIN è facoltativo ma consigliato: numero, note e foto vengono cifrati, qui e su Google Drive. Puoi farlo anche più tardi dal tasto in alto.','Imposta il PIN',()=>setTimeout(pinSheet,260),false,null,'Più tardi'),700)};
 // ---- PIN
 const PINF=(btn)=>`<form id="pinF" autocomplete="off"><label for="pin1">Nuovo PIN</label><input class="field pin" id="pin1" type="password" inputmode="numeric" maxlength="20" autocomplete="off"><label for="pin2">Ripeti il PIN</label><input class="field pin" id="pin2" type="password" inputmode="numeric" maxlength="20" autocomplete="off"><button class="save" type="submit">${btn}</button></form>`;
