@@ -655,6 +655,7 @@ if(iosWeb){$('iosHint').hidden=false;$('iosWarn').hidden=false}
 const DT={ci:["Carta d'identità",'id'],pat:['Patente','car'],pas:['Passaporto','globe'],ts:['Tessera sanitaria','health'],cf:['Codice fiscale','receipt'],altro:['Altro documento','dots']};
 P.globe='<circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c2.5 2.5 2.5 13.5 0 16M12 4c-2.5 2.5-2.5 13.5 0 16"/>';
 P.share='<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.5M8.2 13.2l7.6 4.5"/>';
+P.finger='<path d="M12 11v3.5a4 4 0 0 1-1 2.6M8.5 9.5A3.5 3.5 0 0 1 15.5 10v4c0 2-.6 3.6-1.6 5M6 8a6.5 6.5 0 0 1 12 2.5V13M5.5 13.5V12M8.5 13v1.5c0 1.6-.5 3-1.3 4.2M18.3 16.5a12 12 0 0 1-1 3"/>';
 P.lock='<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>';
 P.clip='<path d="M20 11.5 12.5 19a5 5 0 0 1-7-7L13 4.5a3.3 3.3 0 0 1 4.7 4.7L10.2 16.7a1.7 1.7 0 0 1-2.4-2.4l7-7"/>';
 P.file='<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>';
@@ -690,6 +691,30 @@ const newSalt=()=>b64(crypto.getRandomValues(new Uint8Array(16)));
 async function openWith(secret,salt,wrapped){try{const k=await deriveKey(secret,salt);const raw=unb64(await decObj(k,wrapped));return {raw,key:await importDek(raw)}}catch(e){return null}}
 async function useDek(o){vKey=o.key;vKid=db.vault.kid;await healVault()}
 async function unlock(pin){const o=await openWith(pin,db.vault.salt,db.vault.wPin);if(!o)return false;await useDek(o);return true}
+// ---- sblocco con impronta (passkey con estensione PRF): la chiave dei documenti viene avvolta anche con un segreto
+// che il telefono rilascia solo dopo impronta o volto. Vale solo su questo dispositivo; PIN e codice restano validi.
+const PKK='casainordine.impronta';
+const pkGet=()=>{try{const o=JSON.parse(localStorage.getItem(PKK));return o&&db.vault&&o.kid===db.vault.kid?o:null}catch(e){return null}};
+const pkSet=o=>{try{o?localStorage.setItem(PKK,JSON.stringify(o)):localStorage.removeItem(PKK)}catch(e){}};
+const pkOk=()=>!!(window.PublicKeyCredential&&navigator.credentials&&window.isSecureContext);
+const prfKey=out=>crypto.subtle.importKey('raw',new Uint8Array(out),{name:'AES-GCM'},false,['encrypt','decrypt']);
+function pkAssert(o){return navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),rpId:location.hostname,
+  allowCredentials:[{type:'public-key',id:unb64(o.cred)}],userVerification:'required',timeout:60000,extensions:{prf:{eval:{first:unb64(o.salt)}}}}})}
+function pkOut(cred){const r=cred&&cred.getClientExtensionResults&&cred.getClientExtensionResults();return r&&r.prf&&r.prf.results&&r.prf.results.first}
+// attivazione in due tocchi: prima si crea la passkey, poi (nuovo tocco, come vuole Safari) si legge il segreto
+function pkEnable(raw){const salt=crypto.getRandomValues(new Uint8Array(32));
+  navigator.credentials.create({publicKey:{rp:{name:'Casa in Ordine',id:location.hostname},user:{id:crypto.getRandomValues(new Uint8Array(16)),name:'Documenti Casa in Ordine',displayName:'Documenti Casa in Ordine'},
+    challenge:crypto.getRandomValues(new Uint8Array(32)),pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+    authenticatorSelection:{userVerification:'required',residentKey:'preferred'},timeout:60000,extensions:{prf:{eval:{first:salt}}}}})
+  .then(async cred=>{const ext=cred.getClientExtensionResults();if(!ext.prf||ext.prf.enabled===false){toast('Questo dispositivo non supporta lo sblocco con impronta');return}
+    const o={cred:b64(cred.rawId),salt:b64(salt),kid:db.vault.kid};const out=pkOut(cred);
+    if(out){o.w=await encObj(await prfKey(out),b64(raw));pkSet(o);closeSh('P');toast('Sblocco con impronta attivato');return}
+    $('pinTitle').textContent='Conferma l\'impronta';$('pinBody').innerHTML='<p class="empty">Ultimo passaggio: tocca il pulsante e conferma di nuovo con impronta o volto.</p><button class="save" id="pkConf">Conferma</button>';
+    $('pkConf').onclick=()=>{pkAssert(o).then(async c=>{const out2=pkOut(c);if(!out2)throw 0;o.w=await encObj(await prfKey(out2),b64(raw));pkSet(o);closeSh('P');toast('Sblocco con impronta attivato')}).catch(()=>toast('Attivazione non completata'))}})
+  .catch(e=>toast(e&&e.name==='NotAllowedError'?'Attivazione annullata':'Questo dispositivo non supporta lo sblocco con impronta'))}
+function pkUnlock(){const o=pkGet();if(!o)return;
+  pkAssert(o).then(async c=>{const out=pkOut(c);if(!out)throw 'prf';const raw=unb64(await decObj(await prfKey(out),o.w));await useDek({key:await importDek(raw)});render()})
+  .catch(e=>toast(e==='prf'?'Impronta non disponibile: usa il PIN':'Sblocco non riuscito: usa il PIN'))}
 let recRaw=null;
 async function unlockRecovery(code){const o=await openWith(normCode(code),db.vault.rsalt,db.vault.wRec);if(!o)return false;recRaw=o.raw;await useDek(o);return true}
 async function sealRec(id,data){const u=Date.now();if(pinOn()){if(!vKey)throw 'locked';return {id,u,enc:await encObj(vKey,data)}}return {id,u,plain:data}}
@@ -711,7 +736,7 @@ async function setPin(pin){const raw=crypto.getRandomValues(new Uint8Array(32)),
 async function rewrapPin(raw,pin){const salt=newSalt();db.vault={...db.vault,u:Date.now(),salt,wPin:await encObj(await deriveKey(pin,salt),b64(raw))};store()}
 async function rewrapCode(raw){const code=newCode(),rsalt=newSalt();db.vault={...db.vault,u:Date.now(),rsalt,wRec:await encObj(await deriveKey(normCode(code),rsalt),b64(raw))};store();return code}
 async function removePin(){const recs=[];for(const r of await vAll())recs.push({id:r.id,data:await openRec(r)});
-  db.vault={u:Date.now(),off:true};for(const r of recs)await vPut({id:r.id,u:Date.now(),plain:r.data});vKey=null;vKid=null;docCache.clear();store()}
+  pkSet(null);db.vault={u:Date.now(),off:true};for(const r of recs)await vPut({id:r.id,u:Date.now(),plain:r.data});vKey=null;vKid=null;docCache.clear();store()}
 // ---- allegati
 function fileToData(f){return new Promise((ok,ko)=>{
   if(f.type==='application/pdf'){if(f.size>3e6)return ko('grande');const r=new FileReader();r.onload=()=>ok({type:f.type,name:f.name,data:r.result.split(',')[1]});r.onerror=ko;r.readAsDataURL(f);return}
@@ -727,8 +752,9 @@ async function renderDoc(){
   const el=$('docList');if(!el)return;if(vKey&&pinOn()&&db.vault.kid!==vKid){vKey=null;vKid=null;docCache.clear()}
   $('fab').hidden=locked();
   $('docTools').innerHTML=locked()?'':pinOn()?`<button class="pill" id="dLock">${ico('lock','currentColor',14)} Blocca</button><button class="pill" id="dPin">PIN</button>`:`<button class="pill" id="dPin">${ico('lock','currentColor',14)} Imposta un PIN</button>`;
-  if(locked()){el.innerHTML=`<div class="card lockcard"><span class="ic big" style="background:var(--pri-t);color:var(--pri-ink)">${ico('lock','currentColor',26)}</span><h3 style="justify-content:center">Documenti protetti</h3><p class="empty" style="text-align:center">Inserisci il PIN per vedere i tuoi documenti.</p>
+  if(locked()){el.innerHTML=`<div class="card lockcard"><span class="ic big" style="background:var(--pri-t);color:var(--pri-ink)">${ico('lock','currentColor',26)}</span><h3 style="justify-content:center">Documenti protetti</h3>${pkGet()?`<button class="save" id="pkBtn" style="display:flex;align-items:center;justify-content:center;gap:8px">${ico('finger','currentColor',20)} Sblocca con impronta</button><p class="empty" style="text-align:center">oppure inserisci il PIN</p>`:'<p class="empty" style="text-align:center">Inserisci il PIN per vedere i tuoi documenti.</p>'}
     <form id="unlockF" autocomplete="off"><input class="field pin" id="unlockPin" type="password" inputmode="numeric" placeholder="PIN" aria-label="PIN" maxlength="20"><button class="save" type="submit">Sblocca</button></form><button class="lnk" id="dForgot" style="width:100%">Ho dimenticato il PIN</button></div>`;
+    if($('pkBtn'))$('pkBtn').onclick=pkUnlock;
     $('unlockF').onsubmit=async e=>{e.preventDefault();const p=$('unlockPin').value;if(!p)return;$('unlockF').querySelector('button').textContent='Verifico…';if(await unlock(p)){render()}else{$('unlockF').querySelector('button').textContent='Sblocca';$('unlockPin').value='';toast('PIN non corretto')}};
     bindDocTools();return}
   const list=db.doc.slice().sort((a,b)=>(a.chi||'').localeCompare(b.chi||'')||a.tipo.localeCompare(b.tipo));
@@ -822,17 +848,20 @@ const PINF=(btn)=>`<form id="pinF" autocomplete="off"><label for="pin1">Nuovo PI
 function pinSheet(){
   if(locked()){toast('Sblocca prima i documenti');return}
   const on=pinOn();$('pinTitle').textContent=on?'PIN dei documenti':'Imposta un PIN';
-  $('pinBody').innerHTML=on?`<p class="empty">I documenti sono cifrati con il tuo PIN, su questo dispositivo e su Google Drive.</p><button class="save" id="pinChange">Cambia PIN</button><button class="save" id="pinCode" style="background:var(--pri-t);color:var(--pri-ink);margin-top:10px">Nuovo codice di recupero</button><button class="lnk" id="pinOff" style="width:100%;color:var(--red)">Togli il PIN</button>`
+  $('pinBody').innerHTML=on?`<p class="empty">I documenti sono cifrati con il tuo PIN, su questo dispositivo e su Google Drive.</p><button class="save" id="pinChange">Cambia PIN</button><button class="save" id="pinCode" style="background:var(--pri-t);color:var(--pri-ink);margin-top:10px">Nuovo codice di recupero</button>${pkOk()?(pkGet()?`<button class="save" id="pkOff" style="background:var(--pri-t);color:var(--pri-ink);margin-top:10px">Disattiva lo sblocco con impronta</button>`:`<button class="save" id="pkOn" style="background:var(--pri-t);color:var(--pri-ink);margin-top:10px">Sblocca con impronta su questo dispositivo</button>`):''}<button class="lnk" id="pinOff" style="width:100%;color:var(--red)">Togli il PIN</button>`
    :`<div class="warn"><span>Con il PIN numero, note e foto dei documenti vengono <b>cifrati</b>: nessuno può leggerli senza PIN, nemmeno da Google Drive. Subito dopo ti diamo un <b>codice di recupero</b> da conservare: serve se dimentichi il PIN. Usa almeno 6 cifre.</span></div>`+PINF('Imposta il PIN');
   if(on){$('pinChange').onclick=()=>{closeSh('P');setTimeout(()=>askPinFor('change'),260)};
     $('pinCode').onclick=()=>{closeSh('P');setTimeout(()=>askPinFor('code'),260)};
+    if($('pkOn'))$('pkOn').onclick=()=>{closeSh('P');setTimeout(()=>askPinFor('pk'),260)};
+    if($('pkOff'))$('pkOff').onclick=()=>{pkSet(null);closeSh('P');toast('Sblocco con impronta disattivato')};
     $('pinOff').onclick=()=>{closeSh('P');ask('Togliere il PIN?','I documenti non saranno più cifrati: chi usa questo dispositivo sbloccato potrà vederli. Anche il codice di recupero non servirà più.','Togli il PIN',async()=>{await removePin();render();toast('PIN tolto')},true)}}
   else bindPinForm(async a=>{const code=await setPin(a);closeSh('P');render();setTimeout(()=>showCode(code,true),260)});
   openSh('P')}
 // per cambiare PIN o codice chiediamo il PIN attuale (serve a riaprire la chiave)
-function askPinFor(what){$('pinTitle').textContent=what==='change'?'Cambia PIN':'Nuovo codice di recupero';
+function askPinFor(what){$('pinTitle').textContent=what==='change'?'Cambia PIN':what==='pk'?'Sblocco con impronta':'Nuovo codice di recupero';
   $('pinBody').innerHTML=`<form id="pinCur" autocomplete="off"><label for="pin0">PIN attuale</label><input class="field pin" id="pin0" type="password" inputmode="numeric" maxlength="20"><button class="save" type="submit">Continua</button></form>`;
   $('pinCur').onsubmit=async e=>{e.preventDefault();const o=await openWith($('pin0').value,db.vault.salt,db.vault.wPin);if(!o){toast('PIN non corretto');$('pin0').value='';return}
+    if(what==='pk'){$('pinTitle').textContent='Sblocco con impronta';$('pinBody').innerHTML='<p class="empty">Tocca il pulsante e conferma con impronta o volto. Funzionerà solo su questo dispositivo; il PIN resta sempre valido.</p><button class="save" id="pkGo">Attiva</button>';$('pkGo').onclick=()=>pkEnable(o.raw);return}
     if(what==='change')newPinForm(o.raw);else{const code=await rewrapCode(o.raw);closeSh('P');setTimeout(()=>showCode(code,false),260)}};
   openSh('P')}
 function newPinForm(raw,afterRecovery){$('pinTitle').textContent=afterRecovery?'Scegli un nuovo PIN':'Nuovo PIN';$('pinBody').innerHTML=(afterRecovery?'<p class="empty">Codice di recupero corretto. Ora scegli un nuovo PIN.</p>':'')+PINF('Salva il PIN');
