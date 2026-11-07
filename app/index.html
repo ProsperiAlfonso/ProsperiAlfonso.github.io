@@ -274,13 +274,14 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   <button class="menu-it" id="mImp"><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M5 19h14"/></svg></span><span class="t">Importa backup<small>Ripristina i dati da un file salvato</small></span></button>
   <button class="menu-it danger" id="mDel"><span class="ic" style="background:#FDECEC"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D9534F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13"/></svg></span><span class="t">Cancella tutti i dati<small>Riparti da zero su questo dispositivo</small></span></button>
   <input type="file" id="impFile" accept=".json,application/json" hidden>
-  <p class="note" id="iosHint" hidden>Su iPhone: tocca Condividi e poi "Aggiungi alla schermata Home".</p>
+  <p class="note" id="iosHint" hidden>Su iPhone installa l'app: tocca Condividi e poi "Aggiungi alla schermata Home". Usata solo da Safari, se non la apri per 7 giorni Safari può cancellarne i dati. L'app installata ha una memoria separata: per portare i dati, esporta il backup qui e importalo nell'app, oppure accedi con Google.</p>
   <p class="note">Gratis, senza pubblicità · <a href="../privacy.html#casa-in-ordine" style="color:inherit">Privacy</a><br>Segnalazioni: casainordine.app@gmail.com</p>
 </div>
 <div class="sheet-bg" id="bg3" style="z-index:40"></div>
 <div class="sheet" id="sheet3" style="z-index:41">
   <h4>Continui come ospite?</h4>
   <div class="warn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B87A12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17.5v.5"/></svg><span>Senza account i dati restano <b>solo su questo dispositivo</b>. Non li vedi da altri telefoni o dal PC, e se cambi telefono o cancelli i dati del browser li perdi.<br><br>Puoi collegare Google quando vuoi dal menu, senza perdere niente.</span></div>
+  <p class="warn" id="iosWarn" hidden style="background:#FDECEC;border-color:#F3B8B6">Su iPhone, se usi l'app da Safari senza installarla, Safari può cancellare i dati dopo 7 giorni senza aperture. Installala sulla schermata Home oppure accedi con Google.</p>
   <button class="save" id="gOk">Ho capito, continua come ospite</button>
   <button class="lnk" id="gBack" style="width:100%">Torna indietro</button>
 </div>
@@ -328,7 +329,11 @@ const CU={
  tasse:['Tasse','receipt','#5F7089'],altro:['Altro','dots','#A9B6C7']};
 const CE={stip:['Stipendio','wallet','#1E9E6A'],rimb:['Rimborsi','back','#2B68B0'],regali:['Regali','gift','#B05FA8'],altroE:['Altro','dots','#A9B6C7']};
 const CS={doc:['Documento','id','#2B68B0'],auto:['Auto','car','#3A8FB7'],fisco:['Fisco e tasse','receipt','#5F7089'],assic:['Assicurazione','shield','#5B6CD9'],casa:['Casa','home','#E0A030'],altro:['Altro','dots','#A9B6C7']};
+function parseImp(t){t=String(t||'').replace(/[\s€]/g,'');if(!t)return 0;
+  if(t.includes(','))t=t.replace(/\./g,'').replace(',','.');else if(!/^\d+\.\d{1,2}$/.test(t))t=t.replace(/\./g,'');
+  const v=Math.round(parseFloat(t)*100)/100;return v>0&&isFinite(v)?v:0}
 const tint=c=>c+'1F';
+const cu=k=>CU[k]||CU.altro,ce=k=>CE[k]||CE.altroE,cs=k=>CS[k]||CS.altro;
 const K='casainordine.v1';
 const eur=n=>{const v=Math.abs(n).toFixed(2).split('.');return (n<0?'-':'')+v[0].replace(/\B(?=(\d{3})+(?!\d))/g,'.')+','+v[1]+' €'};
 const pad=n=>String(n).padStart(2,'0');
@@ -344,7 +349,7 @@ let db; try{db=JSON.parse(localStorage.getItem(K))}catch(e){}
 if(!db){db=(!prof||prof.mode==='esempio')?Object.assign(demo(),{demo:true}):{mov:[],scad:[],app:[]}}
 db.app=db.app||[];db.del=db.del||[];
 function localSave(){try{localStorage.setItem(K,JSON.stringify(db))}catch(e){}}
-function store(){if(db.demo)return;localSave();if(prof&&prof.mode==='google'){clearTimeout(store.t);store.t=setTimeout(()=>sync(false),1500)}}
+function store(){if(db.demo)return;localSave();if(prof&&prof.mode==='google'){prof.dirty=true;saveProf();clearTimeout(store.t);store.t=setTimeout(()=>sync(false),1500)}}
 function demo(){
   const m=[],now=new Date(),add=(off,day,t,imp,cat,nota)=>{if(off===0&&day>now.getDate())day=Math.max(1,day%now.getDate()||1);m.push({id:uid(),t,imp,cat,d:iso(new Date(now.getFullYear(),now.getMonth()-off,day)),n:nota||''})};
   for(let o=0;o<6;o++){const f=1+((o*37)%10)/50;
@@ -369,6 +374,7 @@ function inMonth(x,y,mo){const d=pd(x.d);return d.getFullYear()===y&&d.getMonth(
 const gg=s=>Math.round((pd(s)-today0())/864e5);
 const fd=d=>pd(d).toLocaleDateString('it-IT',{day:'numeric',month:'long',year:'numeric'});
 function badge(g,kind){
+  if(g<0)return `<div class="badge word" style="background:#FDECEC;color:#D9534F"><b>Scad.</b><small>scaduta</small></div>`;
   let c;if(kind==='A')c=g<=1?['#DCE9F7','#1F5796']:['#EDF3FA','#2B68B0'];else c=g<=7?['#FDECEC','#D9534F']:g<=30?['#FDF4E3','#B87A12']:['#EEF0F3','#5D6470'];
   if(g===0)return `<div class="badge word" style="background:${c[0]};color:${c[1]}"><b>Oggi</b></div>`;
   if(g===1)return `<div class="badge word" style="background:${c[0]};color:${c[1]}"><b>Dom.</b><small>domani</small></div>`;
@@ -383,8 +389,8 @@ function itemsOf(d){
   };
 }
 function appRow(a,withDate){
-  const meta=[a.ora?`<span>${ico('clock','#5F7089',13)}${a.ora}</span>`:'',a.luogo?`<span>${ico('pin','#5F7089',13)}${esc(a.luogo)}</span>`:'',withDate?`<span>${fd(a.d)}</span>`:''].join('');
-  return `<div class="row"><div class="ic" style="background:${tint(ACOL)}">${ico('event',ACOL)}</div><div class="t">${esc(a.tit)}<div class="meta">${meta}</div>${a.nota?`<small>${esc(a.nota)}</small>`:''}</div><button class="cal" data-ics="${a.id}">Calendario</button></div>`;
+  const meta=[a.ora?`<span>${ico('clock','#5F7089',13)}${esc(a.ora)}</span>`:'',a.luogo?`<span>${ico('pin','#5F7089',13)}${esc(a.luogo)}</span>`:'',withDate?`<span>${fd(a.d)}</span>`:''].join('');
+  return `<div class="row"><div class="ic" style="background:${tint(ACOL)}">${ico('event',ACOL)}</div><div class="t">${esc(a.tit)}<div class="meta">${meta}</div>${a.nota?`<small>${esc(a.nota)}</small>`:''}</div><button class="cal" data-ics="${esc(a.id)}">Calendario</button></div>`;
 }
 function render(){
   const y=cur.getFullYear(),mo=cur.getMonth();
@@ -401,9 +407,9 @@ function render(){
   const by={};ms.filter(x=>x.t==='U').forEach(x=>by[x.cat]=(by[x.cat]||0)+x.imp);
   const arr=Object.entries(by).sort((a,b)=>b[1]-a[1]);
   let svg='<svg viewBox="0 0 42 42" width="150" height="150"><circle cx="21" cy="21" r="15.9" fill="none" stroke="#EEF3F3" stroke-width="6"/>',acc=0;
-  arr.forEach(([c,v])=>{const p=v/U*100,q=Math.max(p-.6,0);svg+=`<circle cx="21" cy="21" r="15.9" fill="none" stroke="${CU[c][2]}" stroke-width="6" stroke-dasharray="${q} ${100-q}" stroke-dashoffset="${25-acc}"/>`;acc+=p});
+  arr.forEach(([c,v])=>{const p=v/U*100,q=Math.max(p-.6,0);svg+=`<circle cx="21" cy="21" r="15.9" fill="none" stroke="${cu(c)[2]}" stroke-width="6" stroke-dasharray="${q} ${100-q}" stroke-dashoffset="${25-acc}"/>`;acc+=p});
   svg+=`<text x="21" y="20" text-anchor="middle" font-family="Barlow Condensed" font-weight="600" font-size="6.2" fill="currentColor">${eur(U).replace(/,\d\d/,'')}</text><text x="21" y="26" text-anchor="middle" font-family="Barlow" font-size="3.2" fill="#5F6B80">uscite</text></svg>`;
-  $('donut').innerHTML=U?svg+'<div class="legend">'+arr.slice(0,7).map(([c,v])=>`<div><span class="lic" style="background:${tint(CU[c][2])}">${ico(CU[c][1],CU[c][2],15)}</span><span>${CU[c][0]}</span><em>${eur(v).replace(',00','')}</em><span class="pc">${Math.round(v/U*100)}%</span></div>`).join('')+'</div>':'<p class="empty">Nessuna uscita in questo mese.</p>';
+  $('donut').innerHTML=U?svg+'<div class="legend">'+arr.slice(0,7).map(([c,v])=>`<div><span class="lic" style="background:${tint(cu(c)[2])}">${ico(cu(c)[1],cu(c)[2],15)}</span><span>${cu(c)[0]}</span><em>${eur(v).replace(',00','')}</em><span class="pc">${Math.round(v/U*100)}%</span></div>`).join('')+'</div>':'<p class="empty">Nessuna uscita in questo mese.</p>';
   // barre
   const ser=[];for(let i=5;i>=0;i--){const d=new Date(y,mo-i,1),l=db.mov.filter(x=>inMonth(x,d.getFullYear(),d.getMonth()));ser.push({m:MESI[d.getMonth()].slice(0,3),e:l.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0),u:l.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0)})}
   const mx=Math.max(1,...ser.map(s=>Math.max(s.e,s.u)));
@@ -413,15 +419,15 @@ function render(){
   const ap=db.app.map(a=>({...a,g:gg(a.d)})).filter(a=>a.g>=0).sort((a,b)=>a.g-b.g||(a.ora||'').localeCompare(b.ora||''));
   const up=[...sc.filter(s=>s.g>=0).map(s=>({...s,k:'S'})),...ap.map(a=>({...a,k:'A'}))].sort((a,b)=>a.g-b.g||(a.k==='S'?-1:1));
   const upRow=x=>x.k==='S'
-    ?`<div class="alert">${badge(x.g,'S')}<p>${esc(x.tit)}<span class="tag" style="background:#FDECEC;color:#D9534F">scadenza</span><small>${CS[x.cat][0]} · ${fd(x.d)}</small></p></div>`
-    :`<div class="alert">${badge(x.g,'A')}<p>${esc(x.tit)}<small>${x.ora?x.ora+' · ':''}${x.luogo?esc(x.luogo)+' · ':''}${pd(x.d).toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'short'})}</small></p></div>`;
+    ?`<div class="alert">${badge(x.g,'S')}<p>${esc(x.tit)}<span class="tag" style="background:#FDECEC;color:#D9534F">scadenza</span><small>${cs(x.cat)[0]} · ${fd(x.d)}</small></p></div>`
+    :`<div class="alert">${badge(x.g,'A')}<p>${esc(x.tit)}<small>${x.ora?esc(x.ora)+' · ':''}${x.luogo?esc(x.luogo)+' · ':''}${pd(x.d).toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'short'})}</small></p></div>`;
   const home=up.filter(x=>x.k==='S'?x.g<=Math.max(x.ant,30):x.g<=3).slice(0,4);
   $('alerts').innerHTML=home.map(upRow).join('')||'<p class="empty">Niente in arrivo nei prossimi giorni.</p>';
   $('next30').innerHTML=up.filter(x=>x.g<=30).slice(0,8).map(upRow).join('')||'<p class="empty">Nessun impegno nei prossimi 30 giorni.</p>';
-  $('scadlist').innerHTML=sc.map(s=>`<div class="alert">${badge(Math.max(s.g,0),'S')}<p>${esc(s.tit)}<small>${fd(s.d)} · avviso ${s.ant} gg prima</small></p><button class="cal" data-ics="${s.id}">Calendario</button></div>`).join('')||'<p class="empty">Aggiungi la prima scadenza con il tasto +.</p>';
+  $('scadlist').innerHTML=sc.map(s=>`<div class="alert">${badge(s.g,'S')}<p>${esc(s.tit)}<small>${fd(s.d)} · avviso ${+s.ant||0} gg prima</small></p><button class="cal" data-ics="${esc(s.id)}">Calendario</button></div>`).join('')||'<p class="empty">Aggiungi la prima scadenza con il tasto +.</p>';
   // movimenti
   const groups={};ms.slice().sort((a,b)=>b.d.localeCompare(a.d)).forEach(x=>(groups[x.d]=groups[x.d]||[]).push(x));
-  const movRow=x=>{const c=x.t==='E'?CE[x.cat]:CU[x.cat];return `<div class="row"><div class="ic" style="background:${tint(c[2])}">${ico(c[1],c[2])}</div><div class="t">${esc(x.n)||esc(x.sp)||c[0]}<small>${c[0]}${x.sp&&x.n?' · '+esc(x.sp):''}</small></div><div class="amt ${x.t==='E'?'e':''}">${x.t==='E'?'+':'−'} ${eur(x.imp)}</div></div>`};
+  const movRow=x=>{const c=x.t==='E'?ce(x.cat):cu(x.cat);return `<div class="row"><div class="ic" style="background:${tint(c[2])}">${ico(c[1],c[2])}</div><div class="t">${esc(x.n)||esc(x.sp)||c[0]}<small>${c[0]}${x.sp&&x.n?' · '+esc(x.sp):''}</small></div><div class="amt ${x.t==='E'?'e':''}">${x.t==='E'?'+':'−'} ${eur(x.imp)}</div></div>`};
   $('movlist').innerHTML=Object.entries(groups).map(([d,l])=>`<p class="day">${pd(d).toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'})}</p><div class="card" style="margin-bottom:6px;padding:4px 16px">`+l.map(movRow).join('')+'</div>').join('')||'<div class="card"><p class="empty">Nessun movimento in questo mese.</p></div>';
   // agenda: griglia
   const first=new Date(y,mo,1),lead=(first.getDay()+6)%7,nd=new Date(y,mo+1,0).getDate(),tIso=iso(new Date());
@@ -435,7 +441,7 @@ function render(){
   const it=itemsOf(sel),dl=pd(sel).toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'}),gs=gg(sel);
   const when=gs===0?'oggi':gs===1?'domani':gs===-1?'ieri':gs>1?'tra '+gs+' giorni':gs*-1+' giorni fa';
   let body='';
-  body+=it.sc.map(s=>`<div class="row"><div class="ic" style="background:${tint(SCOL)}">${ico(CS[s.cat][1],SCOL)}</div><div class="t">${esc(s.tit)}<small>Scadenza · ${CS[s.cat][0]}</small></div><button class="cal" data-ics="${s.id}">Calendario</button></div>`).join('');
+  body+=it.sc.map(s=>`<div class="row"><div class="ic" style="background:${tint(SCOL)}">${ico(cs(s.cat)[1],SCOL)}</div><div class="t">${esc(s.tit)}<small>Scadenza · ${cs(s.cat)[0]}</small></div><button class="cal" data-ics="${esc(s.id)}">Calendario</button></div>`).join('');
   body+=it.ap.map(a=>appRow(a)).join('');
   const out=it.mv.filter(m=>m.t==='U');
   body+=it.mv.map(movRow).join('');
@@ -467,13 +473,14 @@ $('save').onclick=()=>{
   let nuovo=null;
   if(tipo==='S'){if(!$('sTit').value||!$('sData').value)return;nuovo=uid();db.scad.push({id:nuovo,u:Date.now(),tit:$('sTit').value.trim(),cat:scat,d:$('sData').value,ant:+$('sAnt').value})}
   else if(tipo==='A'){if(!$('aTit').value.trim()||!$('aData').value)return;nuovo=uid();db.app.push({id:nuovo,u:Date.now(),tit:$('aTit').value.trim(),d:$('aData').value,ora:$('aOra').value,luogo:$('aLuogo').value.trim(),nota:$('aNota').value.trim(),ant:+$('aAnt').value});sel=$('aData').value}
-  else{const v=parseFloat($('fImp').value.replace(/\./g,'').replace(',','.'));if(!v)return;const sp=(cat==='altro'||cat==='altroE')?$('fSpec').value.trim():'';db.mov.push({id:uid(),u:Date.now(),t:tipo,imp:v,cat,d:$('fData').value,n:$('fNota').value,sp})}
+  else{const v=parseImp($('fImp').value);if(!v){toast('Scrivi un importo valido, per esempio 12,50');return}const sp=(cat==='altro'||cat==='altroE')?$('fSpec').value.trim():'';db.mov.push({id:uid(),u:Date.now(),t:tipo,imp:v,cat,d:$('fData').value,n:$('fNota').value,sp})}
   store();closeSheet();render();
   if(nuovo)snack(tipo==='S'?'Scadenza salvata. Vuoi il promemoria?':'Impegno salvato. Vuoi il promemoria?',nuovo);
 };
 function snack(t,id){$('snackTxt').textContent=t;$('snackBtn').dataset.ics=id;$('snack').classList.add('on');clearTimeout(snack.h);snack.h=setTimeout(()=>$('snack').classList.remove('on'),9000)}
 $('snackBtn').addEventListener('click',()=>setTimeout(()=>$('snack').classList.remove('on'),300));
 // calendario (.ics con promemoria)
+function fold(l){const enc=new TextEncoder();let out='',cur='',n=0;for(const ch of l){const b=enc.encode(ch).length;if(n+b>74){out+=cur+'\r\n ';cur='';n=1}cur+=ch;n+=b}return out+cur}
 const icsTxt=s=>String(s||'').replace(/\\/g,'\\\\').replace(/([,;])/g,'\\$1').replace(/\n/g,'\\n');
 function alarm(trig,txt){return ['BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsTxt(txt),'TRIGGER:'+trig,'END:VALARM']}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ics]');if(!b)return;
@@ -486,13 +493,15 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-ics]');if(
       ev=['DTSTART:'+d0+'T'+pad(h)+pad(mi)+'00','DTEND:'+iso(end).replace(/-/g,'')+'T'+pad(end.getHours())+pad(end.getMinutes())+'00'];}
     else{const n=pd(a.d);n.setDate(n.getDate()+1);ev=['DTSTART;VALUE=DATE:'+d0,'DTEND;VALUE=DATE:'+iso(n).replace(/-/g,'')]}
     ev=['UID:'+a.id+'@casainordine',stamp,...ev,'SUMMARY:'+icsTxt(a.tit)];if(a.luogo)ev.push('LOCATION:'+icsTxt(a.luogo));if(a.nota)ev.push('DESCRIPTION:'+icsTxt(a.nota));ev.push(...alarm('-PT'+(a.ant||60)+'M',a.tit));}
-  const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Casa in Ordine//IT','BEGIN:VEVENT',...ev,'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Casa in Ordine//IT','BEGIN:VEVENT',...ev,'END:VEVENT','END:VCALENDAR'].map(fold).join('\r\n');
   const el=document.createElement('a');el.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));el.download=(s?'scadenza':'impegno')+'.ics';document.body.appendChild(el);el.click();el.remove();});
 // conferma in pagina
 let cCb=null;
-function ask(tit,txt,ok,cb,danger){$('cTit').textContent=tit;$('cTxt').textContent=txt;$('cOk').textContent=ok;$('cOk').style.background=danger?'var(--red)':'';$('cOk').style.color=danger?'#fff':'';cCb=cb;$('bg4').style.display='block';requestAnimationFrame(()=>$('sheet4').classList.add('on'))}
+let cNoCb=null;
+function ask(tit,txt,ok,cb,danger,onNo){cNoCb=onNo||null;$('cTit').textContent=tit;$('cTxt').textContent=txt;$('cOk').textContent=ok;$('cOk').style.background=danger?'var(--red)':'';$('cOk').style.color=danger?'#fff':'';cCb=cb;$('bg4').style.display='block';requestAnimationFrame(()=>$('sheet4').classList.add('on'))}
 function closeAsk(){$('sheet4').classList.remove('on');setTimeout(()=>$('bg4').style.display='none',250)}
-$('cOk').onclick=()=>{closeAsk();const f=cCb;cCb=null;f&&f()};$('cNo').onclick=closeAsk;$('bg4').onclick=closeAsk;
+$('cOk').onclick=()=>{cNoCb=null;closeAsk();const f=cCb;cCb=null;f&&f()};
+const askNo=()=>{closeAsk();const f=cNoCb;cNoCb=null;cCb=null;f&&f()};$('cNo').onclick=askNo;$('bg4').onclick=askNo;
 // dati di esempio, impostazioni, backup
 function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>el.classList.remove('on'),2200)}
 const _render=render;render=function(){$('demoCard').hidden=!db.demo;$('syncCard').hidden=true;const needs=!!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));$('syncStrip').hidden=!needs;document.body.classList.toggle('strip',needs);if(needs)$('syncStripTxt').textContent=syncState==='perm'?'Manca il permesso su Google Drive: tocca per riprovare':'Tocca per sincronizzare con Google Drive';_render();renderAcct()};
@@ -507,15 +516,16 @@ $('mExp').onclick=()=>{const data={app:'Casa in Ordine',versione:1,esportato:new
 $('mImp').onclick=()=>$('impFile').click();
 $('impFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result),d=j.dati||j;
   if(!Array.isArray(d.mov)||!Array.isArray(d.scad))throw 0;
-  closeMenu();ask('Ripristinare il backup?','I dati di questo dispositivo verranno sostituiti con quelli del file scelto.','Ripristina',()=>{db={mov:d.mov,scad:d.scad,app:Array.isArray(d.app)?d.app:[],del:[]};const n=Date.now();['mov','scad','app'].forEach(k=>db[k].forEach(x=>x.u=x.u||n));store();go('home');toast('Backup ripristinato')})}
+  closeMenu();ask('Ripristinare il backup?','I dati di questo dispositivo verranno sostituiti con quelli del file scelto.','Ripristina',()=>{db={mov:d.mov,scad:d.scad,app:Array.isArray(d.app)?d.app:[],del:[]};const n=Date.now();['mov','scad','app'].forEach(k=>db[k].forEach(x=>x.u=n));store();go('home');toast('Backup ripristinato')})}
   catch(_){toast('Questo file non è un backup valido')}$('impFile').value=''};r.readAsText(f)};
-$('mDel').onclick=()=>{closeMenu();ask('Cancellare tutti i dati?',prof&&prof.mode==='google'?'Spariscono da questo dispositivo, dal tuo Google Drive e dagli altri dispositivi collegati. Non si può annullare.':'Spariscono da questo dispositivo. Non si può annullare.','Cancella tutto',()=>{fresh();toast('Dati cancellati')},true)};
+$('mDel').onclick=()=>{closeMenu();ask('Cancellare tutti i dati?',prof&&prof.mode==='google'?'Spariscono da questo dispositivo, dal tuo Google Drive e dagli altri dispositivi collegati. Non si può annullare.':'Spariscono da questo dispositivo. Non si può annullare.','Cancella tutto',async()=>{fresh();if(prof&&prof.mode==='google'){clearTimeout(store.t);await sync('yes');if(syncState!=='ok'){ask('Cancellati solo qui','I dati sono stati cancellati da questo dispositivo, ma non è stato possibile aggiornare Google Drive. Riprova quando sei online con Sincronizza dal menu.','Ho capito',null);return}}toast('Dati cancellati')},true)};
 // installazione
 let instEvt=null;
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();instEvt=e;$('mInst').hidden=false});
 $('mInst').onclick=async()=>{if(!instEvt)return;instEvt.prompt();await instEvt.userChoice;instEvt=null;$('mInst').hidden=true;closeMenu()};
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
-if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!standalone)$('iosHint').hidden=false;
+const iosWeb=(/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))&&!standalone;
+if(iosWeb){$('iosHint').hidden=false;$('iosWarn').hidden=false}
 // ---- benvenuto: Google o ospite
 function openWelcome(noDemo){$('wDemo').hidden=!!noDemo;$('welcome').hidden=false;scrollTo(0,0)}
 function closeWelcome(){$('welcome').hidden=true;go('home')}
@@ -532,7 +542,7 @@ let tok=null,tokExp=0,syncState='',gisReady=null;
 try{const t=JSON.parse(localStorage.getItem('casainordine.accesso'));if(t&&t.exp>Date.now()+60000){tok=t.tok;tokExp=t.exp}}catch(e){}
 function keepTok(){try{tok?localStorage.setItem('casainordine.accesso',JSON.stringify({tok,exp:tokExp})):localStorage.removeItem('casainordine.accesso')}catch(e){}}
 function loadGIS(){if(gisOk())return Promise.resolve();return gisReady=gisReady||new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='https://accounts.google.com/gsi/client';sc.async=true;sc.onload=ok;sc.onerror=()=>{gisReady=null;ko('rete')};document.head.appendChild(sc)})}
-function askToken(select){return new Promise((ok,ko)=>{const c=google.accounts.oauth2.initTokenClient({client_id:GCID,scope:SCOPE,login_hint:(prof&&prof.email)||'',
+function askToken(select){return new Promise((ok,ko)=>{const c=google.accounts.oauth2.initTokenClient({client_id:GCID,scope:SCOPE,...(prof&&prof.email?{login_hint:prof.email}:{}),
   callback:r=>{if(r.error)return ko(r);if(google.accounts.oauth2.hasGrantedAllScopes&&!google.accounts.oauth2.hasGrantedAllScopes(r,SCOPE)){tok=null;return ko('perm')}tok=r.access_token;tokExp=Date.now()+r.expires_in*1000;keepTok();ok(tok)},error_callback:ko});c.requestAccessToken({prompt:select?'select_account':''})})}
 function gisOk(){return !!(window.google&&google.accounts&&google.accounts.oauth2)}
 // La finestra di Google va aperta subito dentro il tocco: se si aspetta il caricamento, Safari la blocca come pop-up.
@@ -540,28 +550,31 @@ function token(interactive){
   if(tok&&Date.now()<tokExp-60000)return Promise.resolve(tok);
   if(!interactive)return Promise.reject('auth');
   if(gisOk())return askToken(interactive==='select');
-  return loadGIS().then(()=>new Promise((ok,ko)=>ask('Accesso con Google','Tocca Continua per aprire la finestra di Google.','Continua',()=>askToken(interactive==='select').then(ok,ko))));
+  return loadGIS().then(()=>new Promise((ok,ko)=>ask('Accesso con Google','Tocca Continua per aprire la finestra di Google.','Continua',()=>askToken(interactive==='select').then(ok,ko),false,()=>ko('annullato'))));
 }
 async function gf(url,opt,interactive){const t=await token(interactive);const r=await fetch(url,{...(opt||{}),headers:{Authorization:'Bearer '+t}});if(r.status===401){tok=null;keepTok();throw 'auth'}if(r.status===403){tok=null;keepTok();throw 'perm'}if(!r.ok)throw 'drive';return r}
 function merge(a,b){const dl=new Map();[...(a.del||[]),...(b.del||[])].forEach(d=>dl.set(d.id,Math.max(dl.get(d.id)||0,d.u||0)));
-  const o={del:[...dl].map(([id,u])=>({id,u}))};
+  const lim=Date.now()-180*864e5;const o={del:[...dl].filter(([,u])=>u>lim).map(([id,u])=>({id,u}))};
   ['mov','scad','app'].forEach(k=>{const m=new Map();[...(a[k]||[]),...(b[k]||[])].forEach(x=>{const y=m.get(x.id);if(!y||(x.u||0)>(y.u||0))m.set(x.id,x)});o[k]=[...m.values()].filter(x=>!(dl.has(x.id)&&dl.get(x.id)>=(x.u||0)))});return o}
 const sig=o=>['mov','scad','app','del'].map(k=>(o[k]||[]).map(x=>x.id+':'+(x.u||0)).sort().join(',')).join('|');
 async function sync(interactive){
   if(!prof||prof.mode!=='google'||!navigator.onLine||syncState==='busy')return;
   const prev=syncState;syncState='busy';if(interactive||prev!=='ok')renderAcct();
+  const guard=setTimeout(()=>{if(syncState==='busy'){syncState='err';render()}},90000);
   try{
     const q=encodeURIComponent("name='"+FN+"'");
-    const l=await (await gf('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&fields=files(id)&q='+q,null,interactive)).json();
-    const fid=l.files&&l.files[0]&&l.files[0].id;
-    const remote=fid?await (await gf('https://www.googleapis.com/drive/v3/files/'+fid+'?alt=media')).json():{};
+    const l=await (await gf('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&orderBy=createdTime&fields=files(id)&q='+q,null,interactive)).json();
+    const files=(l.files||[]).map(f=>f.id),fid=files[0];
+    let remote=fid?await (await gf('https://www.googleapis.com/drive/v3/files/'+fid+'?alt=media')).json():{};
+    for(const extra of files.slice(1)){remote=merge(remote,await (await gf('https://www.googleapis.com/drive/v3/files/'+extra+'?alt=media')).json());await gf('https://www.googleapis.com/drive/v3/files/'+extra,{method:'DELETE'})}
     const before=sig(db);db=merge(db,remote);localSave();const changed=sig(db)!==before;
-    if(fid&&sig(db)===sig(remote)){prof.last=Date.now();saveProf();syncState='ok';if(changed||interactive)render();else renderAcct();return}
+    if(fid&&sig(db)===sig(remote)){prof.last=Date.now();prof.dirty=false;saveProf();syncState='ok';if(changed||interactive)render();else renderAcct();return}
     const fd=new FormData();fd.append('metadata',new Blob([JSON.stringify(fid?{}:{name:FN,parents:['appDataFolder']})],{type:'application/json'}));
     fd.append('file',new Blob([JSON.stringify(db)],{type:'application/json'}));
     await gf('https://www.googleapis.com/upload/drive/v3/files'+(fid?'/'+fid:'')+'?uploadType=multipart',{method:fid?'PATCH':'POST',body:fd});
-    prof.last=Date.now();saveProf();syncState='ok';
-  }catch(e){syncState=e==='auth'||e==='perm'?e:'err'}
+    prof.last=Date.now();prof.dirty=false;saveProf();syncState='ok';
+  }catch(e){syncState=e==='perm'?'perm':(e==='auth'||e==='annullato')?'auth':'err'}
+  finally{clearTimeout(guard)}
   render();
 }
 async function connectGoogle(fromWelcome){
@@ -592,7 +605,7 @@ function renderAcct(){
 $('syncCard').onclick=()=>sync('yes');$('syncStrip').onclick=()=>sync('yes');
 setInterval(()=>{if(!document.hidden&&prof&&prof.mode==='google'&&syncState!=='auth'&&syncState!=='perm')sync(false)},60000);
 addEventListener('online',()=>sync(false));
-$('mOut').onclick=()=>{closeMenu();ask('Scollegare Google?','Su questo dispositivo torni ospite. I dati restano qui e nel tuo Google Drive: per rivederli altrove accedi di nuovo con lo stesso account.','Scollega',()=>{try{tok&&google.accounts.oauth2.revoke(tok,()=>{})}catch(e){}tok=null;tokExp=0;keepTok();prof={mode:'ospite'};saveProf();syncState='';render();toast('Account scollegato')})};
+$('mOut').onclick=()=>{closeMenu();ask('Scollegare Google?',(prof&&prof.dirty?'Attenzione: alcune modifiche non sono ancora arrivate su Google Drive. Se vuoi, prima tocca Sincronizza nel menu. ':'')+'Su questo dispositivo torni ospite. I dati restano qui e nel tuo Google Drive: per rivederli altrove accedi di nuovo con lo stesso account.','Scollega',()=>{try{tok&&google.accounts.oauth2.revoke(tok,()=>{})}catch(e){}tok=null;tokExp=0;keepTok();prof={mode:'ospite'};saveProf();syncState='';render();toast('Account scollegato')})};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync(false)});
 if(!prof||prof.mode==='google'||prof.mode==='esempio')loadGIS().catch(()=>{});
 if(!prof)openWelcome();else if(prof.mode==='google')sync(false);
