@@ -74,6 +74,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .snack.on{transform:none;opacity:1;pointer-events:auto}
 .snack span{flex:1}
 .snack .cal{background:var(--cyan);border-color:var(--cyan);color:var(--navy)}
+body.strip .top{padding-top:calc(56px + env(safe-area-inset-top,0px))}
+.syncstrip{position:fixed;top:0;left:0;right:0;z-index:25;border:0;background:var(--cyan);color:#14213D;font-weight:600;font-size:14px;padding:calc(9px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 9px max(16px,env(safe-area-inset-left,0px));display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18)}
 .toast{position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:999px;font-size:14px;z-index:60;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
 .toast.on{opacity:1}
 .month{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border-radius:999px;padding:4px 6px}
@@ -240,6 +242,7 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   <div id="fMov">
     <input class="big" id="fImp" inputmode="decimal" placeholder="0,00 €">
     <label>Categoria</label><div class="chips" id="fCat"></div>
+    <div id="fSpecWrap" hidden><label for="fSpec">Specifica</label><input class="field" id="fSpec" list="specList" placeholder="es. Ricambi bici" autocomplete="off"><datalist id="specList"></datalist></div>
     <div class="two"><div><label>Data</label><input class="field" type="date" id="fData"></div><div><label>Nota</label><input class="field" id="fNota" placeholder="facoltativa"></div></div>
   </div>
   <div id="fScad" hidden>
@@ -265,6 +268,7 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   <div class="acct" id="acct"></div>
   <div class="privacy"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5F6B80" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 18px;margin-top:1px"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span><span id="privTxt">I tuoi dati restano solo su questo telefono: niente account, niente server. Fai ogni tanto un backup.</span></span></div>
   <button class="menu-it" id="mInst" hidden><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M12 8v6M9 11.5l3 3 3-3"/></svg></span><span class="t">Installa sul telefono<small>Aggiunge l'icona alla schermata Home</small></span></button>
+  <button class="menu-it" id="mOut" hidden><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l-4-4 4-4M6 12h10"/></svg></span><span class="t">Scollega Google<small>Esci dall'account su questo dispositivo</small></span></button>
   <button class="menu-it" id="mExp"><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M8 11l4 4 4-4"/><path d="M5 19h14"/></svg></span><span class="t">Esporta backup<small>Salva un file con tutti i dati</small></span></button>
   <button class="menu-it" id="mImp"><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M5 19h14"/></svg></span><span class="t">Importa backup<small>Ripristina i dati da un file salvato</small></span></button>
   <button class="menu-it danger" id="mDel"><span class="ic" style="background:#FDECEC"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D9534F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13"/></svg></span><span class="t">Cancella tutti i dati<small>Riparti da zero su questo dispositivo</small></span></button>
@@ -287,6 +291,7 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   <button class="lnk" id="cNo" style="width:100%">Annulla</button>
 </div>
 <div class="snack" id="snack"><span id="snackTxt"></span><button class="cal" id="snackBtn">Aggiungi al calendario</button></div>
+<button class="syncstrip" id="syncStrip" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-14.5 4.6M4 12A8 8 0 0 1 18.5 7.4"/><path d="M18 3v4.5h-4.5M6 21v-4.5h4.5"/></svg><span id="syncStripTxt">Tocca per sincronizzare con Google Drive</span></button>
 <div class="toast" id="toast"></div>
 <script>
 const P={
@@ -415,7 +420,7 @@ function render(){
   $('scadlist').innerHTML=sc.map(s=>`<div class="alert">${badge(Math.max(s.g,0),'S')}<p>${esc(s.tit)}<small>${fd(s.d)} · avviso ${s.ant} gg prima</small></p><button class="cal" data-ics="${s.id}">Calendario</button></div>`).join('')||'<p class="empty">Aggiungi la prima scadenza con il tasto +.</p>';
   // movimenti
   const groups={};ms.slice().sort((a,b)=>b.d.localeCompare(a.d)).forEach(x=>(groups[x.d]=groups[x.d]||[]).push(x));
-  const movRow=x=>{const c=x.t==='E'?CE[x.cat]:CU[x.cat];return `<div class="row"><div class="ic" style="background:${tint(c[2])}">${ico(c[1],c[2])}</div><div class="t">${esc(x.n)||c[0]}<small>${c[0]}</small></div><div class="amt ${x.t==='E'?'e':''}">${x.t==='E'?'+':'−'} ${eur(x.imp)}</div></div>`};
+  const movRow=x=>{const c=x.t==='E'?CE[x.cat]:CU[x.cat];return `<div class="row"><div class="ic" style="background:${tint(c[2])}">${ico(c[1],c[2])}</div><div class="t">${esc(x.n)||esc(x.sp)||c[0]}<small>${c[0]}${x.sp&&x.n?' · '+esc(x.sp):''}</small></div><div class="amt ${x.t==='E'?'e':''}">${x.t==='E'?'+':'−'} ${eur(x.imp)}</div></div>`};
   $('movlist').innerHTML=Object.entries(groups).map(([d,l])=>`<p class="day">${pd(d).toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'})}</p><div class="card" style="margin-bottom:6px;padding:4px 16px">`+l.map(movRow).join('')+'</div>').join('')||'<div class="card"><p class="empty">Nessun movimento in questo mese.</p></div>';
   // agenda: griglia
   const first=new Date(y,mo,1),lead=(first.getDay()+6)%7,nd=new Date(y,mo+1,0).getDate(),tIso=iso(new Date());
@@ -448,9 +453,10 @@ let tipo='U',cat='spesa',scat='doc';
 function chips(el,set,selk,cb){el.innerHTML=Object.entries(set).map(([k,v])=>`<button data-k="${k}" class="${k===selk?'on':''}">${ico(v[1],v[2],16)} ${v[0]}</button>`).join('');el.onclick=e=>{const b=e.target.closest('button');if(!b)return;el.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));cb(b.dataset.k)}}
 function setTipo(t){tipo=t;document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));$('fMov').hidden=!(t==='U'||t==='E');$('fScad').hidden=t!=='S';$('fApp').hidden=t!=='A';
   $('shTitle').textContent=t==='S'?'Nuova scadenza':t==='A'?'Nuovo impegno':'Nuovo movimento';
-  if(t==='U'){cat='spesa';chips($('fCat'),CU,cat,k=>cat=k)}if(t==='E'){cat='stip';chips($('fCat'),CE,cat,k=>cat=k)}if(t==='S')chips($('sCat'),CS,scat,k=>scat=k)}
+  if(t==='U'){cat='spesa';chips($('fCat'),CU,cat,k=>{cat=k;specToggle()})}if(t==='E'){cat='stip';chips($('fCat'),CE,cat,k=>{cat=k;specToggle()})}specToggle();if(t==='S')chips($('sCat'),CS,scat,k=>scat=k)}
 $('seg').onclick=e=>{const b=e.target.closest('button');if(b)setTipo(b.dataset.t)};
-function openSheet(t){const d=view==='agenda'?sel:iso(new Date());$('fData').value=d;$('fImp').value='';$('fNota').value='';$('sTit').value='';$('sData').value=view==='agenda'?sel:'';
+function specToggle(){const on=(tipo==='U'||tipo==='E')&&(cat==='altro'||cat==='altroE');$('fSpecWrap').hidden=!on;if(on){const used=[...new Set(db.mov.filter(m=>m.t===tipo&&m.sp).map(m=>m.sp))].slice(-30);$('specList').innerHTML=used.map(v=>`<option value="${esc(v)}">`).join('');setTimeout(()=>$('fSpec').focus(),50)}}
+function openSheet(t){$('fSpec').value='';const d=view==='agenda'?sel:iso(new Date());$('fData').value=d;$('fImp').value='';$('fNota').value='';$('sTit').value='';$('sData').value=view==='agenda'?sel:'';
   $('aTit').value='';$('aData').value=d;$('aOra').value='';$('aLuogo').value='';$('aNota').value='';
   setTipo(t||(view==='scad'?'S':view==='agenda'?'A':'U'));$('bg').style.display='block';requestAnimationFrame(()=>$('sheet').classList.add('on'))}
 function closeSheet(){$('sheet').classList.remove('on');setTimeout(()=>$('bg').style.display='none',250)}
@@ -460,7 +466,7 @@ $('save').onclick=()=>{
   let nuovo=null;
   if(tipo==='S'){if(!$('sTit').value||!$('sData').value)return;nuovo=uid();db.scad.push({id:nuovo,u:Date.now(),tit:$('sTit').value.trim(),cat:scat,d:$('sData').value,ant:+$('sAnt').value})}
   else if(tipo==='A'){if(!$('aTit').value.trim()||!$('aData').value)return;nuovo=uid();db.app.push({id:nuovo,u:Date.now(),tit:$('aTit').value.trim(),d:$('aData').value,ora:$('aOra').value,luogo:$('aLuogo').value.trim(),nota:$('aNota').value.trim(),ant:+$('aAnt').value});sel=$('aData').value}
-  else{const v=parseFloat($('fImp').value.replace(/\./g,'').replace(',','.'));if(!v)return;db.mov.push({id:uid(),u:Date.now(),t:tipo,imp:v,cat,d:$('fData').value,n:$('fNota').value})}
+  else{const v=parseFloat($('fImp').value.replace(/\./g,'').replace(',','.'));if(!v)return;const sp=(cat==='altro'||cat==='altroE')?$('fSpec').value.trim():'';db.mov.push({id:uid(),u:Date.now(),t:tipo,imp:v,cat,d:$('fData').value,n:$('fNota').value,sp})}
   store();closeSheet();render();
   if(nuovo)snack(tipo==='S'?'Scadenza salvata. Vuoi il promemoria?':'Impegno salvato. Vuoi il promemoria?',nuovo);
 };
@@ -488,7 +494,7 @@ function closeAsk(){$('sheet4').classList.remove('on');setTimeout(()=>$('bg4').s
 $('cOk').onclick=()=>{closeAsk();const f=cCb;cCb=null;f&&f()};$('cNo').onclick=closeAsk;$('bg4').onclick=closeAsk;
 // dati di esempio, impostazioni, backup
 function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>el.classList.remove('on'),2200)}
-const _render=render;render=function(){$('demoCard').hidden=!db.demo;$('syncCard').hidden=!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));_render();renderAcct()};
+const _render=render;render=function(){$('demoCard').hidden=!db.demo;$('syncCard').hidden=true;const needs=!!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));$('syncStrip').hidden=!needs;document.body.classList.toggle('strip',needs);if(needs)$('syncStripTxt').textContent=syncState==='perm'?'Manca il permesso su Google Drive: tocca per riprovare':'Tocca per sincronizzare con Google Drive';_render();renderAcct()};
 function fresh(){const now=Date.now(),old=db.demo?[]:[...db.mov,...db.scad,...db.app].map(x=>({id:x.id,u:now}));db={mov:[],scad:[],app:[],del:[...(db.demo?[]:db.del||[]),...old]};store();cur=new Date();cur.setDate(1);sel=iso(new Date());go('home')}
 $('startBtn').onclick=()=>{prof=null;saveProf();db={mov:[],scad:[],app:[],del:[]};openWelcome(true)};
 const _save=$('save').onclick;$('save').onclick=()=>{if(db.demo){db={mov:[],scad:[],app:[],del:[]}}_save()};
@@ -522,23 +528,27 @@ const GCID='522180658723-nrt2sesr8tic25p4v9mbaa9gqh8l84bj.apps.googleusercontent
 const SCOPE='https://www.googleapis.com/auth/drive.appdata';
 const FN='casa-in-ordine.json';
 let tok=null,tokExp=0,syncState='',gisReady=null;
+try{const t=JSON.parse(localStorage.getItem('casainordine.accesso'));if(t&&t.exp>Date.now()+60000){tok=t.tok;tokExp=t.exp}}catch(e){}
+function keepTok(){try{tok?localStorage.setItem('casainordine.accesso',JSON.stringify({tok,exp:tokExp})):localStorage.removeItem('casainordine.accesso')}catch(e){}}
 function loadGIS(){return gisReady=gisReady||new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='https://accounts.google.com/gsi/client';sc.onload=ok;sc.onerror=ko;document.head.appendChild(sc)})}
 function askToken(select){return new Promise((ok,ko)=>{const c=google.accounts.oauth2.initTokenClient({client_id:GCID,scope:SCOPE,login_hint:(prof&&prof.email)||'',
-  callback:r=>{if(r.error)return ko(r);if(google.accounts.oauth2.hasGrantedAllScopes&&!google.accounts.oauth2.hasGrantedAllScopes(r,SCOPE)){tok=null;return ko('perm')}tok=r.access_token;tokExp=Date.now()+r.expires_in*1000;ok(tok)},error_callback:ko});c.requestAccessToken({prompt:select?'select_account':''})})}
+  callback:r=>{if(r.error)return ko(r);if(google.accounts.oauth2.hasGrantedAllScopes&&!google.accounts.oauth2.hasGrantedAllScopes(r,SCOPE)){tok=null;return ko('perm')}tok=r.access_token;tokExp=Date.now()+r.expires_in*1000;keepTok();ok(tok)},error_callback:ko});c.requestAccessToken({prompt:select?'select_account':''})})}
 async function token(interactive){if(tok&&Date.now()<tokExp-60000)return tok;if(!interactive)throw 'auth';await loadGIS();return askToken(interactive==='select')}
-async function gf(url,opt,interactive){const t=await token(interactive);const r=await fetch(url,{...(opt||{}),headers:{Authorization:'Bearer '+t}});if(r.status===401){tok=null;throw 'auth'}if(r.status===403){tok=null;throw 'perm'}if(!r.ok)throw 'drive';return r}
+async function gf(url,opt,interactive){const t=await token(interactive);const r=await fetch(url,{...(opt||{}),headers:{Authorization:'Bearer '+t}});if(r.status===401){tok=null;keepTok();throw 'auth'}if(r.status===403){tok=null;keepTok();throw 'perm'}if(!r.ok)throw 'drive';return r}
 function merge(a,b){const dl=new Map();[...(a.del||[]),...(b.del||[])].forEach(d=>dl.set(d.id,Math.max(dl.get(d.id)||0,d.u||0)));
   const o={del:[...dl].map(([id,u])=>({id,u}))};
   ['mov','scad','app'].forEach(k=>{const m=new Map();[...(a[k]||[]),...(b[k]||[])].forEach(x=>{const y=m.get(x.id);if(!y||(x.u||0)>(y.u||0))m.set(x.id,x)});o[k]=[...m.values()].filter(x=>!(dl.has(x.id)&&dl.get(x.id)>=(x.u||0)))});return o}
+const sig=o=>['mov','scad','app','del'].map(k=>(o[k]||[]).map(x=>x.id+':'+(x.u||0)).sort().join(',')).join('|');
 async function sync(interactive){
-  if(!prof||prof.mode!=='google'||!navigator.onLine)return;
-  syncState='busy';renderAcct();
+  if(!prof||prof.mode!=='google'||!navigator.onLine||syncState==='busy')return;
+  const prev=syncState;syncState='busy';if(interactive||prev!=='ok')renderAcct();
   try{
     const q=encodeURIComponent("name='"+FN+"'");
     const l=await (await gf('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&fields=files(id)&q='+q,null,interactive)).json();
     const fid=l.files&&l.files[0]&&l.files[0].id;
     const remote=fid?await (await gf('https://www.googleapis.com/drive/v3/files/'+fid+'?alt=media')).json():{};
-    db=merge(db,remote);localSave();
+    const before=sig(db);db=merge(db,remote);localSave();const changed=sig(db)!==before;
+    if(fid&&sig(db)===sig(remote)){prof.last=Date.now();saveProf();syncState='ok';if(changed||interactive)render();else renderAcct();return}
     const fd=new FormData();fd.append('metadata',new Blob([JSON.stringify(fid?{}:{name:FN,parents:['appDataFolder']})],{type:'application/json'}));
     fd.append('file',new Blob([JSON.stringify(db)],{type:'application/json'}));
     await gf('https://www.googleapis.com/upload/drive/v3/files'+(fid?'/'+fid:'')+'?uploadType=multipart',{method:fid?'PATCH':'POST',body:fd});
@@ -557,7 +567,7 @@ async function connectGoogle(fromWelcome){
   }catch(e){if(e==='perm'){closeMenu();ask('Serve il permesso su Google Drive','Casa in Ordine salva i tuoi dati in una cartella riservata del tuo Google Drive, separata dai tuoi file. Nella finestra di Google, se compare la casella su Google Drive, spuntala e poi premi Continua.','Riprova',()=>connectGoogle(fromWelcome))}else toast('Accesso non completato')}
 }
 function renderAcct(){
-  const el=$('acct');if(!el)return;
+  const el=$('acct');if(!el)return;$('mOut').hidden=!(prof&&prof.mode==='google');
   const ic=(bg,c,d)=>`<span class="ic" style="background:${bg};color:${c}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg></span>`;
   const user='<circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/>';
   if(prof&&prof.mode==='google'){
@@ -571,8 +581,10 @@ function renderAcct(){
     $('aConn').onclick=()=>connectGoogle(false);
   }
 }
-$('syncCard').onclick=()=>sync('yes');
+$('syncCard').onclick=()=>sync('yes');$('syncStrip').onclick=()=>sync('yes');
+setInterval(()=>{if(!document.hidden&&prof&&prof.mode==='google'&&syncState!=='auth'&&syncState!=='perm')sync(false)},60000);
 addEventListener('online',()=>sync(false));
+$('mOut').onclick=()=>{closeMenu();ask('Scollegare Google?','Su questo dispositivo torni ospite. I dati restano qui e nel tuo Google Drive: per rivederli altrove accedi di nuovo con lo stesso account.','Scollega',()=>{try{tok&&google.accounts.oauth2.revoke(tok,()=>{})}catch(e){}tok=null;tokExp=0;keepTok();prof={mode:'ospite'};saveProf();syncState='';render();toast('Account scollegato')})};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync(false)});
 if(!prof)openWelcome();else if(prof.mode==='google')sync(false);
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('sw.js');
