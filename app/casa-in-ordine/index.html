@@ -94,6 +94,13 @@ body.strip .top{padding-top:calc(56px + env(safe-area-inset-top,0px))}
 .crow .cn{font-size:14px;line-height:1.2}.crow .cv{text-align:right;font-weight:600;font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}.crow .cv small{display:block;font-weight:400;color:var(--muted);font-size:12px}
 .kpi.wide{grid-column:1/-1}
 body.inrep .month{visibility:hidden}
+.docseg{margin-bottom:12px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fcard{border:0;background:var(--card,#fff);border-radius:16px;padding:14px;text-align:left;font:inherit;color:inherit;cursor:pointer;box-shadow:0 2px 10px rgba(20,33,61,.06);display:flex;flex-direction:column;gap:8px;min-height:112px}
+.fcard b{font-size:16px;font-weight:600;line-height:1.2}.fcard small{color:var(--muted);font-size:13px;line-height:1.3}
+.fcard.new{border:1.5px dashed var(--line);box-shadow:none;background:transparent;align-items:center;justify-content:center;color:var(--pri-ink);font-weight:600}
+.fhead{display:flex;align-items:center;gap:10px;margin:0 0 10px}.fhead h3{margin:0;font-size:22px;flex:1}
+.chk2{display:flex;align-items:center;gap:10px;font-size:15px;margin:4px 0 12px;cursor:pointer}.chk2 input{width:20px;height:20px;accent-color:var(--blue)}
 .doctools{display:flex;gap:8px;justify-content:flex-end;margin-bottom:10px;flex-wrap:wrap}
 .doctools .pill{display:inline-flex;align-items:center;gap:6px;background:#fff;box-shadow:0 2px 8px rgba(20,33,61,.08)}
 .docrow{width:100%;border:0;background:none;text-align:left;font:inherit;color:inherit;cursor:pointer}
@@ -283,7 +290,9 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
     <div class="card"><h3>Ultimi 6 mesi <span style="font:500 12px Barlow,system-ui,sans-serif;color:var(--muted)"><span class="dot" style="background:var(--green)"></span> entrate &nbsp;<span class="dot" style="background:var(--red)"></span> uscite</span></h3><div class="bars" id="bars"></div><button class="replink" data-go="rep">Resoconto per periodo <span aria-hidden="true">›</span></button></div>
   </section>
   <section id="v-mov" hidden><button class="card repcta" data-go="rep"><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span class="t"><b>Resoconto per periodo</b><small>Entrate e uscite mese per mese, o in un intervallo a scelta</small></span><span aria-hidden="true" style="font-size:22px;color:var(--muted)">›</span></button><div id="movlist"></div></section>
-  <section id="v-doc" hidden><div class="doctools" id="docTools"></div><div id="docList"></div><p class="note">Numero, note e foto sono protetti dal PIN, se lo imposti. La scadenza finisce in Scadenze e Agenda.</p></section>
+  <section id="v-doc" hidden><div class="seg st docseg" id="docSeg"><button data-k="doc" class="on">Documenti</button><button data-k="bol">Bollette</button></div>
+    <div id="docPane"><div class="doctools" id="docTools"></div><div id="docList"></div><p class="note">Numero, note e foto sono protetti dal PIN, se lo imposti. La scadenza finisce in Scadenze e Agenda.</p></div>
+    <div id="bolPane" hidden><div id="bolList"></div><p class="note">Le bollette non sono protette dal PIN. Se le aggiungi alle uscite, la scadenza finisce da sola in Scadenze e Agenda.</p></div></section>
   <section id="v-rep" hidden>
     <div class="card">
       <h3>Periodo</h3>
@@ -394,6 +403,24 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   <p class="hint" id="dPinHint"><span>Consiglio: proteggi i documenti con un PIN, dal tasto in alto nella sezione Documenti.</span></p>
   <button class="save" id="dSave">Salva documento</button>
 </div>
+<div class="sheet-bg" id="bgB" style="z-index:30"></div>
+<div class="sheet" id="sheetB" style="z-index:31">
+  <h4 id="bTitle">Nuova bolletta</h4>
+  <label>Cartella</label><div class="chips" id="bCart"></div>
+  <div id="bNewWrap" hidden><label for="bNew">Nome della nuova cartella</label><input class="field" id="bNew" placeholder="es. Condominio" maxlength="40" autocomplete="off"></div>
+  <label for="bImp">Importo</label><input class="big" id="bImp" inputmode="decimal" placeholder="0,00 €">
+  <div class="two"><div><label for="bPer">Periodo</label><input class="field" id="bPer" placeholder="es. set-ott 2026" autocomplete="off"></div><div><label for="bScad">Scadenza</label><input class="field" type="date" id="bScad"></div></div>
+  <label for="bNota">Fornitore o nota</label><input class="field" id="bNota" placeholder="facoltativo" autocomplete="off">
+  <label>PDF o foto della bolletta <span style="color:var(--muted)">(facoltativo)</span></label><div class="attlist" id="bAtt"></div><input type="file" id="bFile" accept="image/*,application/pdf" multiple hidden>
+  <label class="chk2"><input type="checkbox" id="bMov" checked> Aggiungila anche alle uscite</label>
+  <div id="bMovWrap">
+    <div class="seg st" id="bStato"><button data-s="p" class="on">Da pagare</button><button data-s="ok">Già pagata</button></div>
+    <div id="bPayWrap" hidden><label for="bPay">Pagata il</label><input class="field" type="date" id="bPay"></div>
+    <div id="bAntWrap"><label for="bAnt">Promemoria tramite calendario</label><select class="field" id="bAnt"><option value="0">Nessun promemoria</option><option value="1">1 giorno prima</option><option value="3" selected>3 giorni prima</option><option value="7">7 giorni prima</option></select>
+    <p class="hint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span>La spesa compare in Scadenze e Agenda fino a quando la segni pagata. Il promemoria è facoltativo e arriva tramite il calendario del telefono, non come notifica dell'app.</span></p></div>
+  </div>
+  <button class="save" id="bSave">Salva bolletta</button>
+</div>
 <div class="sheet-bg" id="bgM" style="z-index:30"></div>
 <div class="sheet" id="sheetM" style="z-index:31"><div id="mvBody"></div></div>
 <div class="sheet-bg" id="bgD2" style="z-index:30"></div>
@@ -454,7 +481,7 @@ let prof=null; try{prof=JSON.parse(localStorage.getItem(PK))}catch(e){}
 function saveProf(){try{prof?localStorage.setItem(PK,JSON.stringify(prof)):localStorage.removeItem(PK)}catch(e){}}
 let db; try{db=JSON.parse(localStorage.getItem(K))}catch(e){}
 if(!db){db=(!prof||prof.mode==='esempio')?Object.assign(demo(),{demo:true}):{mov:[],scad:[],app:[]}}
-db.app=db.app||[];db.del=db.del||[];
+db.app=db.app||[];db.del=db.del||[];db.bol=db.bol||[];db.cart=db.cart||[];
 function localSave(){try{localStorage.setItem(K,JSON.stringify(db))}catch(e){}}
 function store(){if(db.demo)return;localSave();if(prof&&prof.mode==='google'){prof.dirty=true;saveProf();clearTimeout(store.t);store.t=setTimeout(()=>sync(false),1500)}}
 function demo(){
@@ -600,7 +627,7 @@ function editItem(k,id){
   else{const a=db.app.find(x=>x.id===id);if(!a)return;openSheet('A');editId=id;$('aTit').value=a.tit;$('aData').value=a.d;$('aOra').value=a.ora||'';$('aLuogo').value=a.luogo||'';$('aNota').value=a.nota||'';$('aAnt').value=String(a.ant||60);$('shTitle').textContent='Modifica impegno'}
   $('seg').hidden=true}
 function closeSheet(){$('sheet').classList.remove('on');setTimeout(()=>$('bg').style.display='none',250)}
-$('fab').onclick=()=>view==='doc'?openDocForm():openSheet();$('bg').onclick=closeSheet;
+$('fab').onclick=()=>view==='doc'?(docTab==='bol'?openBolForm(null,bolFolder):openDocForm()):openSheet();$('bg').onclick=closeSheet;
 document.addEventListener('click',e=>{if(e.target.closest('#addDay'))openSheet('A')});
 // sostituisce (modifica) o aggiunge
 function put(arr,o){const i=editId?arr.findIndex(x=>x.id===editId):-1;if(i>=0){const old=arr[i];arr[i]={...old,...o,id:old.id,u:Date.now()};return null}const id=uid();arr.push({...o,id,u:Date.now()});return id}
@@ -623,14 +650,16 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-ics],button.add
   if(r.dataset.mv)openMv(r.dataset.mv);else if(r.dataset.sc)openSc(r.dataset.sc);else openAp(r.dataset.ap)});
 const btn2=(a,b)=>`<div class="two" style="margin-top:14px">${a}${b}</div>`;
 const B_EDIT='<button class="save" id="mvEdit">Modifica</button>',B_DEL='<button class="save" id="mvDel" style="background:#FDECEC;color:var(--red)">Elimina</button>';
-function delItem(arr,id,what){ask('Eliminare '+what+'?','Verrà cancellato anche dagli altri dispositivi collegati.','Elimina',()=>{const now=Date.now();db[arr]=db[arr].filter(x=>x.id!==id);db.del=[...(db.del||[]),{id,u:now}];store();render();toast('Eliminato')},true)}
+function delItem(arr,id,what){ask('Eliminare '+what+'?','Verrà cancellato anche dagli altri dispositivi collegati.'+(arr==='mov'&&(db.bol||[]).some(b=>b.mv===id)?' La bolletta resta nella sua cartella.':''),'Elimina',()=>{const now=Date.now();db[arr]=db[arr].filter(x=>x.id!==id);if(arr==='mov')(db.bol||[]).forEach(b=>{if(b.mv===id){b.mv=null;b.u=now}});db.del=[...(db.del||[]),{id,u:now}];store();render();toast('Eliminato')},true)}
 function bindEdit(k,id,arr,what){$('mvEdit').onclick=()=>{closeSh('M');setTimeout(()=>editItem(k,id),260)};$('mvDel').onclick=()=>{closeSh('M');delItem(arr,id,what)}}
 function openMv(id){const m=db.mov.find(x=>x.id===id);if(!m)return;const e=m.t==='E',c=e?ce(m.cat):cu(m.cat),pl=!paid(m),g=gg(m.d);
   const when=pl?(g<0?`<b style="color:var(--red)">Scaduta il ${fd(m.d)}</b>`:`${e?'Da incassare':'Da pagare'} entro il ${fd(m.d)}`):`${e?'Incassata':'Pagata'} il ${fd(m.d)}${m.sc&&m.sc!==m.d?` · scadeva il ${fd(m.sc)}`:''}`;
   $('mvBody').innerHTML=`<h4>${esc(mvName(m))}</h4><p class="dvsub">${c[0]}${m.sp&&m.n?' · '+esc(m.sp):''}</p><p class="mvbig ${e?'e':''}">${e?'+':'−'} ${hideAmt?'•••• €':eur(m.imp)}</p><p class="dvval">${when}</p>
    ${pl?`<div class="paybox"><label for="mvPayD">${e?'Incassata il':'Pagata il'}</label><input class="field" type="date" id="mvPayD" value="${iso(new Date())}"><button class="save" id="mvPay" style="margin-top:4px">${e?'Segna come incassata':'Segna come pagata'}</button></div><button class="lnk" data-ics="${esc(m.id)}" style="width:100%">Aggiungi promemoria al calendario</button>`
        :(m.sc?`<button class="lnk" id="mvUnpay" style="width:100%">Rimetti ${e?'da incassare':'da pagare'}</button>`:'')}
+   ${(db.bol||[]).some(b=>b.mv===id)?`<button class="lnk" id="mvBol" style="width:100%">Apri la bolletta</button>`:''}
    ${btn2(B_EDIT,B_DEL)}`;
+  if($('mvBol'))$('mvBol').onclick=()=>{const b=db.bol.find(x=>x.mv===id);closeSh('M');docTab='bol';bolFolder=b.c;go('doc');setTimeout(()=>openBol(b.id),280)};
   if($('mvPay'))$('mvPay').onclick=()=>{const d=$('mvPayD').value||iso(new Date());const x=db.mov.find(y=>y.id===id);if(!x)return;x.sc=x.d;x.d=d;delete x.st;delete x.ant;x.u=Date.now();store();closeSh('M');render();toast(e?'Segnata come incassata':'Segnata come pagata')};
   if($('mvUnpay'))$('mvUnpay').onclick=()=>{const x=db.mov.find(y=>y.id===id);if(!x)return;x.d=x.sc;delete x.sc;x.st='p';x.ant=x.ant||3;x.u=Date.now();store();closeSh('M');render();toast(e?'Di nuovo da incassare':'Di nuovo da pagare')};
   bindEdit('mv',id,'mov','il movimento');openSh('M')}
@@ -702,20 +731,22 @@ let hideAmt=false;try{hideAmt=localStorage.getItem('casainordine.nascondi')==='1
 function applyHide(){$('eye').hidden=view==='agenda'||view==='doc';$('eyeIc').innerHTML=hideAmt?'<path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.3 2 12 2 12s3.5 7 10 7c1.9 0 3.5-.6 4.9-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>':'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>';$('eye').setAttribute('aria-label',hideAmt?'Mostra gli importi':'Nascondi gli importi');$('eye').setAttribute('aria-pressed',hideAmt);
   if(!hideAmt)return;const dots='•••••• €';if(view!=='agenda'&&view!=='doc')$('saldo').textContent=dots;['kE','kU'].forEach(k=>$(k).textContent='•••• €');document.querySelectorAll('#saldoPrev .pv,#dueBody .dk').forEach(e=>e.textContent='•••• €');if(view==='rep')document.querySelectorAll('#repKpi strong').forEach(e=>e.textContent='•••• €')}
 $('eye').onclick=()=>{hideAmt=!hideAmt;try{localStorage.setItem('casainordine.nascondi',hideAmt?'1':'0')}catch(e){}render()};
-const _render=render;render=function(){try{maybeInst()}catch(e){}if(!db.doc)db.doc=[];$('demoCard').hidden=!db.demo;$('syncCard').hidden=true;const needs=!!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));$('syncStrip').hidden=!needs;document.body.classList.toggle('strip',needs);if(needs)$('syncStripTxt').textContent=syncState==='perm'?'Manca il permesso su Google Drive: tocca per riprovare':'Tocca per sincronizzare con Google Drive';_render();renderAcct();if(view==='rep')renderRep();if(view==='doc'){$('saldoLbl').textContent='Documenti di famiglia';const n=db.doc.length;$('saldo').innerHTML=n+'<span>'+(n===1?'documento':'documenti')+'</span>';renderDoc()}applyHide()};
-function fresh(){const now=Date.now(),old=db.demo?[]:[...db.mov,...db.scad,...db.app,...(db.doc||[])].map(x=>({id:x.id,u:now}));db={mov:[],scad:[],app:[],doc:[],vault:{u:now,off:true},del:[...(db.demo?[]:db.del||[]),...old]};vKey=null;docCache.clear();vClear().catch(()=>{});store();cur=new Date();cur.setDate(1);sel=iso(new Date());go('home')}
+const _render=render;render=function(){try{maybeInst()}catch(e){}if(!db.doc)db.doc=[];$('demoCard').hidden=!db.demo;$('syncCard').hidden=true;const needs=!!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));$('syncStrip').hidden=!needs;document.body.classList.toggle('strip',needs);if(needs)$('syncStripTxt').textContent=syncState==='perm'?'Manca il permesso su Google Drive: tocca per riprovare':'Tocca per sincronizzare con Google Drive';_render();renderAcct();if(view==='rep')renderRep();if(view==='doc'){if(!db.bol)db.bol=[];if(!db.cart)db.cart=[];document.querySelectorAll('#docSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===docTab));$('docPane').hidden=docTab!=='doc';$('bolPane').hidden=docTab!=='bol';
+  if(docTab==='bol'){$('saldoLbl').textContent='Bollette di casa';const n=db.bol.length;$('saldo').innerHTML=n+'<span>'+(n===1?'bolletta':'bollette')+'</span>';$('fab').hidden=false;renderBol()}
+  else{$('saldoLbl').textContent='Documenti di famiglia';const n=db.doc.length;$('saldo').innerHTML=n+'<span>'+(n===1?'documento':'documenti')+'</span>';renderDoc()}}applyHide()};
+function fresh(){const now=Date.now(),old=db.demo?[]:[...db.mov,...db.scad,...db.app,...(db.doc||[]),...(db.bol||[]),...(db.cart||[])].map(x=>({id:x.id,u:now}));bClear().catch(()=>{});bolFolder=null;db={mov:[],scad:[],app:[],doc:[],bol:[],cart:[],vault:{u:now,off:true},del:[...(db.demo?[]:db.del||[]),...old]};vKey=null;docCache.clear();vClear().catch(()=>{});store();cur=new Date();cur.setDate(1);sel=iso(new Date());go('home')}
 $('startBtn').onclick=()=>{prof=null;saveProf();db={mov:[],scad:[],app:[],del:[]};openWelcome(true)};
 const _save=$('save').onclick;$('save').onclick=()=>{if(db.demo){db={mov:[],scad:[],app:[],del:[]}}_save()};
 function openMenu(){$('toast').classList.remove('on');loadGIS().catch(()=>{});$('bg2').style.display='block';requestAnimationFrame(()=>$('sheet2').classList.add('on'))}
 function closeMenu(){$('sheet2').classList.remove('on');setTimeout(()=>$('bg2').style.display='none',250)}
 $('menu').onclick=()=>{renderAcct();openMenu()};$('bg2').onclick=closeMenu;
-$('mExp').onclick=async()=>{let vr=[];try{vr=await vAll()}catch(e){}const data={app:'Casa in Ordine',versione:2,esportato:new Date().toISOString(),dati:{mov:db.mov,scad:db.scad,app:db.app,doc:db.doc,vault:pinOn()?db.vault:null,archivio:vr}};
+$('mExp').onclick=async()=>{let vr=[],br=[];try{vr=await vAll()}catch(e){}try{br=await bAll()}catch(e){}const data={app:'Casa in Ordine',versione:2,esportato:new Date().toISOString(),dati:{mov:db.mov,scad:db.scad,app:db.app,doc:db.doc,bol:db.bol||[],cart:db.cart||[],vault:pinOn()?db.vault:null,archivio:vr,bollette:br}};
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,1)],{type:'application/json'}));a.download='casa-in-ordine-backup-'+iso(new Date())+'.json';document.body.appendChild(a);a.click();a.remove();closeMenu();toast('Backup salvato nei download')};
 $('mImp').onclick=()=>$('impFile').click();
 $('impFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result),d=j.dati||j;
   if(!Array.isArray(d.mov)||!Array.isArray(d.scad))throw 0;
-  closeMenu();ask('Ripristinare il backup?','I dati di questo dispositivo verranno sostituiti con quelli del file scelto.','Ripristina',async()=>{const n=Date.now();db={mov:d.mov,scad:d.scad,app:Array.isArray(d.app)?d.app:[],doc:Array.isArray(d.doc)?d.doc:[],del:[],vault:d.vault&&d.vault.salt?{...d.vault,u:n}:{u:n,off:true}};['mov','scad','app','doc'].forEach(k=>db[k].forEach(x=>x.u=n));
-    vKey=null;docCache.clear();try{await vClear();for(const r of (Array.isArray(d.archivio)?d.archivio:[]))if(r&&r.id)await vPut({...r,u:n})}catch(e){}store();go('home');toast('Backup ripristinato')})}
+  closeMenu();ask('Ripristinare il backup?','I dati di questo dispositivo verranno sostituiti con quelli del file scelto.','Ripristina',async()=>{const n=Date.now();db={mov:d.mov,scad:d.scad,app:Array.isArray(d.app)?d.app:[],doc:Array.isArray(d.doc)?d.doc:[],bol:Array.isArray(d.bol)?d.bol:[],cart:Array.isArray(d.cart)?d.cart:[],del:[],vault:d.vault&&d.vault.salt?{...d.vault,u:n}:{u:n,off:true}};['mov','scad','app','doc','bol','cart'].forEach(k=>db[k].forEach(x=>x.u=n));
+    vKey=null;docCache.clear();try{await vClear();for(const r of (Array.isArray(d.archivio)?d.archivio:[]))if(r&&r.id)await vPut({...r,u:n})}catch(e){}try{await bClear();for(const r of (Array.isArray(d.bollette)?d.bollette:[]))if(r&&r.id)await bPut({...r,u:n})}catch(e){}bolFolder=null;store();go('home');toast('Backup ripristinato')})}
   catch(_){toast('Questo file non è un backup valido')}$('impFile').value=''};r.readAsText(f)};
 $('mDel').onclick=()=>{closeMenu();const g=prof&&prof.mode==='google';
   ask('Ricominciare da zero?','Verranno cancellati tutti i movimenti, le scadenze, gli impegni e i documenti'+(g?', anche dal tuo Google Drive e dagli altri dispositivi collegati':' su questo dispositivo')+'. Poi torni alla schermata iniziale e scegli di nuovo come usare l\'app.','Continua',()=>setTimeout(()=>
@@ -748,6 +779,11 @@ addEventListener('appinstalled',()=>{instEvt=null;$('mInst').hidden=true;maybeIn
 // Metadati (tipo, intestatario, scadenza) in db.doc; numero, note e allegati nell'archivio IndexedDB "vault".
 // Con PIN: numero, note e allegati cifrati con AES-GCM, chiave derivata dal PIN (PBKDF2). Senza PIN: in chiaro.
 const DT={ci:["Carta d'identità",'id'],pat:['Patente','car'],pas:['Passaporto','globe'],ts:['Tessera sanitaria','health'],cf:['Codice fiscale','receipt'],altro:['Altro documento','dots']};
+P.flame='<path d="M12 3c1 3.5 5 6 5 10.5A5 5 0 0 1 7 13.5C7 11 8.5 9.5 9.5 8c.3 2 1.2 3 2.3 3.3C11.4 9 11.5 5.5 12 3z"/>';
+P.drop='<path d="M12 3.5S6 10 6 14a6 6 0 0 0 12 0c0-4-6-10.5-6-10.5z"/>';
+P.wifi='<path d="M4 9.5a12 12 0 0 1 16 0M7 12.8a7.5 7.5 0 0 1 10 0M10 16a3 3 0 0 1 4 0"/><circle cx="12" cy="19" r=".9" fill="currentColor"/>';
+P.trash='<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/>';
+P.folder='<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>';
 P.globe='<circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c2.5 2.5 2.5 13.5 0 16M12 4c-2.5 2.5-2.5 13.5 0 16"/>';
 P.share='<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.5M8.2 13.2l7.6 4.5"/>';
 P.finger='<path d="M12 11v3.5a4 4 0 0 1-1 2.6M8.5 9.5A3.5 3.5 0 0 1 15.5 10v4c0 2-.6 3.6-1.6 5M6 8a6.5 6.5 0 0 1 12 2.5V13M5.5 13.5V12M8.5 13v1.5c0 1.6-.5 3-1.3 4.2M18.3 16.5a12 12 0 0 1-1 3"/>';
@@ -1013,6 +1049,115 @@ async function docSync(){if(!db.doc)db.doc=[];
   if(vKey&&pinOn())await healVault();
   return changed}
 
+// ===================== BOLLETTE =====================
+// Dati (cartella, importo, periodo, scadenza, spesa collegata) in db.bol; cartelle personali in db.cart.
+// I file (PDF o foto) stanno in un archivio IndexedDB separato, mai cifrati, e su Drive come bol-<id>.json.
+const BF={luce:['Luce','bolt','#E0A030'],gas:['Gas','flame','#E36F3B'],acqua:['Acqua','drop','#3A8FB7'],tel:['Telefono e internet','wifi','#5B6CD9'],rifiuti:['Rifiuti','trash','#5F8D4E']};
+let docTab='doc',bolFolder=null;
+const folders=()=>[...Object.entries(BF).map(([k,v])=>({k,n:v[0],i:v[1],c:v[2]})),...(db.cart||[]).slice().sort((a,b)=>a.nome.localeCompare(b.nome)).map(c=>({k:c.id,n:c.nome,i:'folder',c:'#8E6CD8',own:true}))];
+const fOf=k=>folders().find(f=>f.k===k)||{k,n:'Altre bollette',i:'folder',c:'#8E6CD8'};
+let bdbP=null;
+function bdb(){return bdbP=bdbP||new Promise((ok,ko)=>{const r=indexedDB.open('casainordine-bollette',1);r.onupgradeneeded=()=>r.result.createObjectStore('file',{keyPath:'id'});r.onsuccess=()=>ok(r.result);r.onerror=()=>{bdbP=null;ko(r.error)}})}
+async function bTx(mode,fn){const d=await bdb();return new Promise((ok,ko)=>{const t=d.transaction('file',mode),st=t.objectStore('file');let out;Promise.resolve(fn(st)).then(v=>out=v);t.oncomplete=()=>ok(out);t.onerror=()=>ko(t.error)})}
+const bGet=id=>bTx('readonly',st=>new Promise(ok=>{const r=st.get(id);r.onsuccess=()=>ok(r.result||null)}));
+const bAll=()=>bTx('readonly',st=>new Promise(ok=>{const r=st.getAll();r.onsuccess=()=>ok(r.result||[])}));
+const bPut=rec=>bTx('readwrite',st=>{st.put(rec)});
+const bDel=id=>bTx('readwrite',st=>{st.delete(id)});
+const bClear=()=>bTx('readwrite',st=>{st.clear()});
+const bolMv=b=>b.mv?db.mov.find(m=>m.id===b.mv):null;
+function bolState(b){const m=bolMv(b);if(m){if(paid(m))return ['Pagata il '+fd(m.d),'var(--green)'];const g=gg(m.d);return [g<0?'Scaduta il '+fd(m.d):'Da pagare entro il '+fd(m.d),g<0?'var(--red)':g<=7?'#B87A12':'var(--muted)']}return [b.scad?'Scadenza '+fd(b.scad):'Non aggiunta alle uscite','var(--muted)']}
+const bolTitle=b=>b.per||(b.scad?'Scad. '+pd(b.scad).toLocaleDateString('it-IT',{day:'numeric',month:'short',year:'numeric'}):'Bolletta');
+function renderBol(){const el=$('bolList');if(!el)return;const all=db.bol||[];
+  if(!bolFolder){
+    el.innerHTML=`<div class="fgrid">${folders().map(f=>{const l=all.filter(b=>b.c===f.k).sort((a,b)=>(b.scad||'').localeCompare(a.scad||''));const last=l[0];
+      return `<button class="fcard" data-fold="${esc(f.k)}"><span class="ic" style="background:${tint(f.c)}">${ico(f.i,f.c)}</span><b>${esc(f.n)}</b><small>${l.length?l.length+' '+(l.length===1?'bolletta':'bollette')+(last?' · ultima '+eur(last.imp):''):'Vuota'}</small></button>`}).join('')}<button class="fcard new" id="fNew">${ico('plus','currentColor',22)}Nuova cartella</button></div>`;
+    el.querySelectorAll('[data-fold]').forEach(b=>b.onclick=()=>{bolFolder=b.dataset.fold;render();scrollTo(0,0)});$('fNew').onclick=newFolder;return}
+  const f=fOf(bolFolder),l=all.filter(b=>b.c===bolFolder).sort((a,b)=>(b.scad||'').localeCompare(a.scad||'')||(b.u||0)-(a.u||0));
+  el.innerHTML=`<div class="fhead"><button class="pill" id="fBack">‹ Cartelle</button><h3></h3>${f.own?'<button class="pill" id="fRen">Rinomina</button>':''}</div>
+   <div class="card" style="padding:4px 16px"><p class="day" style="margin-top:12px;display:flex;align-items:center;gap:8px"><span class="ic" style="background:${tint(f.c)};width:28px;height:28px">${ico(f.i,f.c,16)}</span>${esc(f.n)}</p>
+   ${l.map(b=>{const st=bolState(b);return `<button class="row docrow" data-bol="${esc(b.id)}"><div class="t">${esc(bolTitle(b))}${b.f?` <span style="color:var(--muted);vertical-align:-2px">${ico('clip','currentColor',14)}</span>`:''}<small style="color:${st[1]}">${st[0]}${b.n?' <span style="color:var(--muted)">· '+esc(b.n)+'</span>':''}</small></div><div class="amt">${eur(b.imp)}</div></button>`}).join('')||'<p class="empty">Nessuna bolletta in questa cartella. Tocca <b>+</b> per aggiungerne una.</p>'}</div>
+   ${f.own&&!l.length?'<button class="lnk" id="fDel" style="width:100%;color:var(--red)">Elimina la cartella</button>':''}`;
+  $('fBack').onclick=()=>{bolFolder=null;render();scrollTo(0,0)};
+  el.querySelectorAll('[data-bol]').forEach(b=>b.onclick=()=>openBol(b.dataset.bol));
+  if($('fRen'))$('fRen').onclick=()=>renameFolder(bolFolder);
+  if($('fDel'))$('fDel').onclick=()=>{const id=bolFolder;ask('Eliminare la cartella?','La cartella è vuota: sparirà anche dagli altri dispositivi collegati.','Elimina',()=>{const now=Date.now();db.cart=db.cart.filter(c=>c.id!==id);db.del=[...(db.del||[]),{id,u:now}];bolFolder=null;store();render()},true)}}
+// nuova cartella / rinomina: piccolo modulo nel foglio di conferma
+function folderAsk(tit,val,done){ask(tit,'','Salva',()=>{const v=($('fName').value||'').trim().slice(0,40);if(!v){toast('Scrivi un nome');return}done(v)},false,null,'Annulla');
+  $('cTxt').innerHTML='<input class="field" id="fName" maxlength="40" autocomplete="off" placeholder="es. Condominio">';$('fName').value=val||'';setTimeout(()=>$('fName').focus(),300)}
+function addFolder(nome){if(db.demo){db={mov:[],scad:[],app:[],del:[],doc:[],bol:[],cart:[]}}const ex=folders().find(f=>f.n.toLowerCase()===nome.toLowerCase());if(ex)return ex.k;const id='c'+uid();db.cart.push({id,u:Date.now(),nome});return id}
+function newFolder(){folderAsk('Nuova cartella','',v=>{bolFolder=addFolder(v);store();render()})}
+function renameFolder(id){const c=db.cart.find(x=>x.id===id);if(!c)return;folderAsk('Rinomina la cartella',c.nome,v=>{c.nome=v;c.u=Date.now();store();render()})}
+// ---- modulo bolletta
+let bForm={id:null,c:'luce',files:[],stato:'p'};
+function bStato(s){bForm.stato=s;document.querySelectorAll('#bStato button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));$('bPayWrap').hidden=s!=='ok';$('bAntWrap').hidden=s==='ok'}
+$('bStato').onclick=e=>{const b=e.target.closest('button');if(b)bStato(b.dataset.s)};
+$('bMov').onchange=()=>{$('bMovWrap').hidden=!$('bMov').checked};
+function bCartChips(){const set={};folders().forEach(f=>set[f.k]=[f.n,f.i,f.c]);set._new=['Nuova cartella','plus','#5F7089'];
+  chips($('bCart'),set,bForm.c,k=>{if(k==='_new'){$('bNewWrap').hidden=false;setTimeout(()=>$('bNew').focus(),50)}else{bForm.c=k;$('bNewWrap').hidden=true}})}
+async function openBolForm(id,folder){const b=id?db.bol.find(x=>x.id===id):null;let files=[];if(b&&b.f){try{const r=await bGet(b.id);files=r&&r.files?r.files.filter(okFile):[]}catch(e){}}
+  const m=b?bolMv(b):null;
+  bForm={id:b?b.id:null,c:b?b.c:(folder||'luce'),files:files.map(f=>({type:f.type,name:f.name,data:f.data})),stato:'p'};
+  $('bTitle').textContent=b?'Modifica bolletta':'Nuova bolletta';$('bNew').value='';$('bNewWrap').hidden=true;bCartChips();
+  $('bImp').value=b?String(b.imp).replace('.',','):'';$('bPer').value=b?b.per||'':'';$('bScad').value=b?b.scad||'':'';$('bNota').value=b?b.n||'':'';
+  $('bMov').checked=b?!!m:true;$('bMovWrap').hidden=!$('bMov').checked;$('bPay').value=m&&paid(m)?m.d:iso(new Date());$('bAnt').value=String(m&&m.ant!=null?m.ant:3);bStato(m&&paid(m)?'ok':'p');
+  renderBAtt();openSh('B')}
+function renderBAtt(){$('bAtt').innerHTML=bForm.files.map((f,i)=>`<div class="att">${f.type==='application/pdf'?`<span class="attpdf">${ico('file','currentColor',22)}</span>`:`<img src="data:image/jpeg;base64,${esc(f.data)}" alt="">`}<button class="attx" data-brm="${i}" aria-label="Togli allegato">×</button></div>`).join('')+(bForm.files.length<3?`<label class="attadd" for="bFile">${ico('clip','currentColor',18)}<span>Aggiungi PDF o foto</span></label>`:'');
+  $('bAtt').querySelectorAll('[data-brm]').forEach(b=>b.onclick=()=>{bForm.files.splice(+b.dataset.brm,1);renderBAtt()})}
+$('bFile').onchange=async e=>{const fs=[...e.target.files].slice(0,3-bForm.files.length);for(const f of fs){try{bForm.files.push(await fileToData(f))}catch(er){toast(er==='grande'?'PDF troppo grande (massimo 2 MB)':'File non supportato: usa una foto o un PDF')}}e.target.value='';renderBAtt()};
+$('bgB').onclick=()=>closeSh('B');
+$('bSave').onclick=async()=>{if(!db.bol)db.bol=[];if(!db.cart)db.cart=[];
+  const imp=parseImp($('bImp').value);if(!imp){toast('Scrivi l\'importo, per esempio 85,40');$('bImp').focus();return}
+  const scad=$('bScad').value,withMov=$('bMov').checked,st=bForm.stato;
+  if(withMov&&st==='p'&&!scad){toast('Scegli la data di scadenza');$('bScad').focus();return}
+  if(!$('bNewWrap').hidden){const nome=$('bNew').value.trim();if(!nome){toast('Scrivi il nome della nuova cartella');$('bNew').focus();return}}
+  if(db.demo){db={mov:[],scad:[],app:[],del:[],doc:[],bol:[],cart:[]}}
+  if(!$('bNewWrap').hidden)bForm.c=addFolder($('bNew').value.trim());
+  const id=bForm.id||uid(),now=Date.now(),old=db.bol.find(x=>x.id===id),f=fOf(bForm.c),per=$('bPer').value.trim(),n=$('bNota').value.trim();
+  // file
+  if(bForm.files.length){const rec={id,u:now,files:bForm.files};if(JSON.stringify(rec).length>4.8e6){toast('Allegati troppo pesanti: togli un file');return}try{await bPut(rec)}catch(e){toast('Salvataggio del file non riuscito: memoria del browser non disponibile o piena');return}}
+  else if(old&&old.f){try{await bDel(id)}catch(e){}}
+  // spesa collegata
+  let mv=old?old.mv:null;const mName=f.n+(per?' '+per:'');
+  if(withMov){let m=mv?db.mov.find(x=>x.id===mv):null;const base={t:'U',imp,cat:'bollette',n:mName,sp:''};
+    if(st==='p'){Object.assign(base,{st:'p',d:scad,ant:+$('bAnt').value})}else{Object.assign(base,{d:$('bPay').value||iso(new Date())});if(scad)base.sc=scad}
+    if(m){const keep={id:m.id};for(const k of Object.keys(m))delete m[k];Object.assign(m,base,keep,{u:now})}else{mv=uid();db.mov.push({...base,id:mv,u:now})}}
+  else if(mv){db.mov=db.mov.filter(x=>x.id!==mv);db.del=[...(db.del||[]),{id:mv,u:now}];mv=null}
+  const rec={id,u:now,c:bForm.c,imp,per,n,scad,mv,f:bForm.files.length};
+  db.bol=db.bol.filter(x=>x.id!==id).concat(rec);bolFolder=bForm.c;
+  store();closeSh('B');render();
+  if(withMov&&st==='p'&&+$('bAnt').value&&!old)setTimeout(()=>snack('Bolletta salvata e aggiunta alle uscite da pagare. Vuoi il promemoria?',mv),300);
+  else toast(withMov?(st==='p'?'Bolletta salvata: è tra le uscite da pagare':'Bolletta salvata e aggiunta alle uscite'):'Bolletta salvata')};
+// ---- dettaglio bolletta
+async function openBol(id){const b=(db.bol||[]).find(x=>x.id===id);if(!b)return;const f=fOf(b.c),m=bolMv(b),st=bolState(b);
+  let files=[];if(b.f){try{const r=await bGet(id);files=r&&r.files?r.files.filter(okFile):[]}catch(e){}}
+  files=files.map(x=>({...x,url:blobUrl(x)}));
+  $('mvBody').innerHTML=`<h4>${esc(f.n)}${b.per?' · '+esc(b.per):''}</h4><p class="dvsub">${b.n?esc(b.n):'Bolletta'}</p><p class="mvbig">${hideAmt?'•••• €':eur(b.imp)}</p><p class="dvval" style="color:${st[1]}">${st[0]}</p>
+   ${b.scad&&m&&paid(m)?`<p class="dvval" style="color:var(--muted)">Scadenza ${fd(b.scad)}</p>`:''}
+   ${files.length?`<div class="thumbs">${files.map((x,i)=>x.type==='application/pdf'?`<a class="thumb pdf" href="${x.url}" target="_blank" rel="noopener" download="${esc(x.name||'bolletta.pdf')}">${ico('file','currentColor',28)}<span>${esc(x.name||'PDF')}</span></a>`:`<button class="thumb" data-bview="${i}"><img src="${x.url}" alt="Foto della bolletta ${i+1}"></button>`).join('')}</div>`
+     :(b.f?'<p class="empty">Il file non è ancora su questo dispositivo: tocca Sincronizza nel menu.</p>':'<p class="empty" style="text-align:left">Nessun file allegato. Puoi aggiungerlo con Modifica.</p>')}
+   ${m&&!paid(m)?`<div class="paybox"><label for="mvPayD">Pagata il</label><input class="field" type="date" id="mvPayD" value="${iso(new Date())}"><button class="save" id="bPayBtn" style="margin-top:4px">Segna come pagata</button></div>`:''}
+   ${btn2(B_EDIT,B_DEL)}`;
+  $('mvBody').querySelectorAll('[data-bview]').forEach(x=>x.onclick=()=>{const fl=files[+x.dataset.bview];$('viewImg').src=fl.url;$('viewDl').href=fl.url;$('viewDl').download=fl.name||'bolletta.jpg';$('viewer').hidden=false});
+  if($('bPayBtn'))$('bPayBtn').onclick=()=>{const d=$('mvPayD').value||iso(new Date());const x=db.mov.find(y=>y.id===b.mv);if(!x)return;x.sc=x.d;x.d=d;delete x.st;delete x.ant;x.u=Date.now();store();closeSh('M');render();toast('Segnata come pagata')};
+  $('mvEdit').onclick=()=>{closeSh('M');setTimeout(()=>openBolForm(id),260)};
+  $('mvDel').onclick=()=>{closeSh('M');ask('Eliminare la bolletta?',(m?'Verranno cancellati la bolletta, il suo file e la spesa collegata':'Verranno cancellati la bolletta e il suo file')+', anche dagli altri dispositivi collegati.','Elimina',async()=>{const now=Date.now();db.bol=db.bol.filter(x=>x.id!==id);const dl=[{id,u:now}];if(m){db.mov=db.mov.filter(x=>x.id!==m.id);dl.push({id:m.id,u:now})}db.del=[...(db.del||[]),...dl];try{await bDel(id)}catch(e){}store();render();toast('Bolletta eliminata')},true)};
+  openSh('M')}
+$('docSeg').onclick=e=>{const b=e.target.closest('button');if(!b||b.dataset.k===docTab)return;docTab=b.dataset.k;bolFolder=null;render();scrollTo(0,0)};
+// ---- sincronizzazione file delle bollette su Drive (un file per bolletta con allegati)
+async function bolSync(){if(!db.bol)db.bol=[];
+  const l=await (await gf('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&pageSize=1000&fields=files(id,name,appProperties)')).json();
+  const remote=new Map();for(const f of (l.files||[])){if(!f.name||!/^bol-.+\.json$/.test(f.name))continue;const id=f.name.replace(/^bol-|\.json$/g,'');const u=+((f.appProperties||{}).u||0);const prev=remote.get(id);
+    if(prev){if(prev.u>=u){await gf('https://www.googleapis.com/drive/v3/files/'+f.id,{method:'DELETE'});continue}await gf('https://www.googleapis.com/drive/v3/files/'+prev.fid,{method:'DELETE'})}
+    remote.set(id,{fid:f.id,u})}
+  const ids=new Set(db.bol.filter(b=>b.f).map(b=>b.id));let local=new Map();try{local=new Map((await bAll()).map(r=>[r.id,r]))}catch(e){}let changed=false,fail=0;
+  for(const [id,r] of remote){if(!ids.has(id)){await gf('https://www.googleapis.com/drive/v3/files/'+r.fid,{method:'DELETE'});continue}
+    const lr=local.get(id);if(!lr||r.u>lr.u){const rec=await (await gf('https://www.googleapis.com/drive/v3/files/'+r.fid+'?alt=media')).json();if(rec&&rec.id===id&&Array.isArray(rec.files)){rec.files=rec.files.filter(okFile);await bPut(rec);changed=true}}}
+  for(const [id,lr] of local){if(!ids.has(id)){if(!db.bol.some(b=>b.id===id))await bDel(id);continue}const r=remote.get(id);if(r&&r.u>=lr.u)continue;
+    const fd=new FormData();fd.append('metadata',new Blob([JSON.stringify(r?{appProperties:{u:String(lr.u)}}:{name:'bol-'+id+'.json',parents:['appDataFolder'],appProperties:{u:String(lr.u)}})],{type:'application/json'}));
+    fd.append('file',new Blob([JSON.stringify(lr)],{type:'application/json'}));
+    try{await gf('https://www.googleapis.com/upload/drive/v3/files'+(r?'/'+r.fid:'')+'?uploadType=multipart',{method:r?'PATCH':'POST',body:fd})}catch(e){if(e==='auth'||e==='perm')throw e;fail++}}
+  if(fail)toast(fail===1?'Il file di una bolletta non è stato salvato su Drive':'I file di '+fail+' bollette non sono stati salvati su Drive');
+  return changed}
 // ---- benvenuto: Google o ospite
 function openWelcome(noDemo){$('wDemo').hidden=!!noDemo;$('welcome').hidden=false;scrollTo(0,0)}
 function closeWelcome(){$('welcome').hidden=true;go('home')}
@@ -1043,8 +1188,8 @@ async function gf(url,opt,interactive){const t=await token(interactive);const r=
 function merge(a,b){const dl=new Map();[...(a.del||[]),...(b.del||[])].forEach(d=>dl.set(d.id,Math.max(dl.get(d.id)||0,d.u||0)));
   const lim=Date.now()-180*864e5;const o={del:[...dl].filter(([,u])=>u>lim).map(([id,u])=>({id,u}))};
   o.vault=(a.vault&&b.vault)?((a.vault.u||0)>=(b.vault.u||0)?a.vault:b.vault):(a.vault||b.vault||null);
-  ['mov','scad','app','doc'].forEach(k=>{const m=new Map();[...(a[k]||[]),...(b[k]||[])].forEach(x=>{const y=m.get(x.id);if(!y||(x.u||0)>(y.u||0))m.set(x.id,x)});o[k]=[...m.values()].filter(x=>!(dl.has(x.id)&&dl.get(x.id)>=(x.u||0)))});return o}
-const sig=o=>['mov','scad','app','del','doc'].map(k=>(o[k]||[]).map(x=>x.id+':'+(x.u||0)).sort().join(',')).join('|')+'|v'+((o.vault&&o.vault.u)||0);
+  ['mov','scad','app','doc','bol','cart'].forEach(k=>{const m=new Map();[...(a[k]||[]),...(b[k]||[])].forEach(x=>{const y=m.get(x.id);if(!y||(x.u||0)>(y.u||0))m.set(x.id,x)});o[k]=[...m.values()].filter(x=>!(dl.has(x.id)&&dl.get(x.id)>=(x.u||0)))});return o}
+const sig=o=>['mov','scad','app','del','doc','bol','cart'].map(k=>(o[k]||[]).map(x=>x.id+':'+(x.u||0)).sort().join(',')).join('|')+'|v'+((o.vault&&o.vault.u)||0);
 async function sync(interactive){
   if(!prof||prof.mode!=='google'||!navigator.onLine||syncState==='busy')return;
   const prev=syncState;syncState='busy';if(interactive||prev!=='ok')renderAcct();
@@ -1056,7 +1201,7 @@ async function sync(interactive){
     let remote=fid?await (await gf('https://www.googleapis.com/drive/v3/files/'+fid+'?alt=media')).json():{};
     for(const extra of files.slice(1)){remote=merge(remote,await (await gf('https://www.googleapis.com/drive/v3/files/'+extra+'?alt=media')).json());await gf('https://www.googleapis.com/drive/v3/files/'+extra,{method:'DELETE'})}
     const before=sig(db);db=merge(db,remote);localSave();const changed=sig(db)!==before;
-    const dc=await docSync();
+    const dc=(await docSync())|(await bolSync());
     if(fid&&sig(db)===sig(remote)){prof.last=Date.now();prof.dirty=false;saveProf();syncState='ok';if(changed||dc||interactive)render();else renderAcct();return}
     const fd=new FormData();fd.append('metadata',new Blob([JSON.stringify(fid?{}:{name:FN,parents:['appDataFolder']})],{type:'application/json'}));
     fd.append('file',new Blob([JSON.stringify(db)],{type:'application/json'}));
