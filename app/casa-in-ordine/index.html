@@ -230,7 +230,7 @@ body.instOn .toast{bottom:calc(240px + env(safe-area-inset-bottom))}
 [data-mv],[data-sc],[data-ap]{cursor:pointer}
 .amt.pl{color:var(--muted)}
 .alert .amt{margin-left:auto;font-size:15px}
-.duekpi{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px}
+.duesum{font-size:14px;color:var(--muted);margin:-4px 0 2px}.duesum b{color:var(--navy);font-weight:600}
 .mvbig{font-family:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;font-size:40px;font-weight:600;margin:-6px 0 4px}
 .mvbig.e{color:var(--green)}
 .paybox{background:var(--bg);border-radius:12px;padding:12px;margin:10px 0 4px}
@@ -284,7 +284,7 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
       <div class="kpi"><small><span class="dot" style="background:var(--green)"></span>Entrate</small><strong id="kE"></strong></div>
       <div class="kpi"><small><span class="dot" style="background:var(--red)"></span>Uscite</small><strong id="kU"></strong></div>
     </div>
-    <div class="card" id="dueCard"><h3>Da pagare e da incassare <a data-go="scad">Tutte</a></h3><div id="dueBody"></div></div>
+    <div class="card" id="dueCard" hidden><h3>Da pagare <a data-go="scad">Scadenze</a></h3><div id="dueBody"></div></div>
     <div class="card"><h3>In arrivo <a data-go="agenda">Agenda</a></h3><div id="alerts"></div></div>
     <div class="card"><h3>Dove vanno i soldi</h3><div class="donut" id="donut"></div></div>
     <div class="card"><h3>Ultimi 6 mesi <span style="font:500 12px Barlow,system-ui,sans-serif;color:var(--muted)"><span class="dot" style="background:var(--green)"></span> entrate &nbsp;<span class="dot" style="background:var(--red)"></span> uscite</span></h3><div class="bars" id="bars"></div><button class="replink" data-go="rep">Resoconto per periodo <span aria-hidden="true">›</span></button></div>
@@ -548,8 +548,8 @@ function render(){
   // da pagare / da incassare
   {const pl=db.mov.filter(x=>!paid(x)).map(x=>({...x,g:gg(x.d)})).sort((a,b)=>a.g-b.g);
    const near=pl.filter(x=>x.g<=30),tu=near.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0),te=near.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0);
-   $('dueBody').innerHTML=pl.length?`<div class="duekpi"><div class="kpi"><small><span class="dot" style="background:var(--red)"></span>Da pagare, 30 giorni</small><strong class="dk">${eur(tu)}</strong></div><div class="kpi"><small><span class="dot" style="background:var(--green)"></span>Da incassare, 30 giorni</small><strong class="dk">${eur(te)}</strong></div></div>`+pl.slice(0,5).map(x=>dueRow(x)).join('')+(pl.length>5?`<p class="note" style="text-align:left">E altre ${pl.length-5}: le trovi in Scadenze.</p>`:'')
-     :'<p class="empty">Niente da pagare. Quando aggiungi una spesa con il tasto +, scegli "Da pagare" e indica la scadenza.</p>'}
+   $('dueCard').hidden=!pl.length;const parts=[];if(tu)parts.push(`<b class="dk">− ${eur(tu)}</b>`);if(te)parts.push(`<b class="dk" style="color:var(--green)">+ ${eur(te)}</b>`);
+   $('dueBody').innerHTML=(parts.length?`<p class="duesum">Nei prossimi 30 giorni: ${parts.join(' &nbsp;')}</p>`:'')+pl.slice(0,3).map(x=>dueRow(x)).join('')+(pl.length>3?`<button class="replink" data-go="scad">Altre ${pl.length-3} in Scadenze <span aria-hidden="true">›</span></button>`:'')}
   $('kE').textContent=eur(E);$('kU').textContent=eur(U);
   // torta
   const by={};ms.filter(x=>x.t==='U').forEach(x=>by[x.cat]=(by[x.cat]||0)+x.imp);
