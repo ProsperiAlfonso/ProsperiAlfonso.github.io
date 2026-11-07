@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="In Ordine">
+<meta name="apple-mobile-web-app-title" content="Casa in Ordine">
 <meta name="theme-color" content="#14213D">
 <style>
 @font-face{font-family:'Barlow';font-weight:400;src:url(../assets/fonts/barlow-latin-400-normal.woff2) format('woff2')}
@@ -93,6 +93,29 @@ body.strip .top{padding-top:calc(56px + env(safe-area-inset-top,0px))}
 .crow .cn{font-size:14px;line-height:1.2}.crow .cv{text-align:right;font-weight:600;font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}.crow .cv small{display:block;font-weight:400;color:var(--muted);font-size:12px}
 .kpi.wide{grid-column:1/-1}
 body.inrep .month{visibility:hidden}
+.doctools{display:flex;gap:8px;justify-content:flex-end;margin-bottom:10px;flex-wrap:wrap}
+.doctools .pill{display:inline-flex;align-items:center;gap:6px;background:#fff;box-shadow:0 2px 8px rgba(20,33,61,.08)}
+.docrow{width:100%;border:0;background:none;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.lockcard{display:flex;flex-direction:column;align-items:center;gap:10px;padding:26px 18px}.lockcard form{width:100%}
+.ic.big{width:56px;height:56px;border-radius:16px}
+.field.pin{text-align:center;font-size:24px;letter-spacing:.3em;font-family:'IBM Plex Mono',ui-monospace,monospace}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.warnline{display:flex;gap:10px;align-items:center;background:#FFF6E5;font-size:14px}.warnline p{flex:1}
+.lnkin{border:0;background:none;color:var(--pri-ink);font-weight:600;text-decoration:underline;cursor:pointer;padding:0;font:inherit}
+.attlist{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.att{position:relative;width:86px;height:64px;border-radius:10px;overflow:hidden;border:1.5px solid var(--line);background:var(--bg)}
+.att img{width:100%;height:100%;object-fit:cover;display:block}.attpdf{display:grid;place-items:center;height:100%;color:var(--muted)}
+.attx{position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(20,33,61,.75);color:#fff;font-size:16px;line-height:1;cursor:pointer}
+.attadd{width:120px;height:64px;border-radius:10px;border:1.5px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12px;color:var(--pri-ink);cursor:pointer;text-align:center;margin:0}
+.dvsub{color:var(--muted);margin:-8px 0 12px}
+.dvgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px}.dvval{font-size:17px;margin-bottom:8px}
+.thumbs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.thumb{border:1.5px solid var(--line);border-radius:12px;overflow:hidden;padding:0;background:var(--bg);cursor:pointer;aspect-ratio:1.55;display:block;width:100%}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb.pdf{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--pri-ink);text-decoration:none;font-size:13px;padding:8px;text-align:center;word-break:break-all}
+.viewer{position:fixed;inset:0;z-index:70;background:#0b1222;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom))}
+.viewer img{max-width:100%;max-height:calc(100% - 64px);object-fit:contain;touch-action:pinch-zoom}
+.viewbar{display:flex;gap:12px;margin-top:14px}.viewbar .pill{text-decoration:none}
 .toast{position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:999px;font-size:14px;z-index:60;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
 .toast.on{opacity:1}
 .month{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border-radius:999px;padding:4px 6px}
@@ -236,6 +259,7 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
     <div class="card"><h3>Ultimi 6 mesi <span style="font:500 12px Barlow,system-ui,sans-serif;color:var(--muted)"><span class="dot" style="background:var(--green)"></span> entrate &nbsp;<span class="dot" style="background:var(--red)"></span> uscite</span></h3><div class="bars" id="bars"></div><button class="replink" data-go="rep">Resoconto per periodo <span aria-hidden="true">›</span></button></div>
   </section>
   <section id="v-mov" hidden><button class="card repcta" data-go="rep"><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span class="t"><b>Resoconto per periodo</b><small>Entrate e uscite mese per mese, o in un intervallo a scelta</small></span><span aria-hidden="true" style="font-size:22px;color:var(--muted)">›</span></button><div id="movlist"></div></section>
+  <section id="v-doc" hidden><div class="doctools" id="docTools"></div><div id="docList"></div><p class="note">Numero, note e foto sono protetti dal PIN, se lo imposti. La scadenza finisce in Scadenze e Agenda.</p></section>
   <section id="v-rep" hidden>
     <div class="card">
       <h3>Periodo</h3>
@@ -268,6 +292,7 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   <button data-go="mov"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Movimenti</button>
   <button data-go="agenda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/><circle cx="9" cy="14.5" r=".9" fill="currentColor"/><circle cx="12" cy="14.5" r=".9" fill="currentColor"/><circle cx="15" cy="14.5" r=".9" fill="currentColor"/></svg>Agenda</button>
   <button data-go="scad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9"/></svg>Scadenze</button>
+  <button data-go="doc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.5 1.7-2 3-2s2.4.5 3 2M14 10h4M14 13h3"/></svg>Documenti</button>
 </nav>
 
 <div class="sheet-bg" id="bg"></div>
@@ -328,6 +353,23 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
 </div>
 <div class="snack" id="snack"><span id="snackTxt"></span><button class="cal" id="snackBtn">Aggiungi al calendario</button></div>
 <button class="syncstrip" id="syncStrip" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 0 1-14.5 4.6M4 12A8 8 0 0 1 18.5 7.4"/><path d="M18 3v4.5h-4.5M6 21v-4.5h4.5"/></svg><span id="syncStripTxt">Tocca per sincronizzare con Google Drive</span></button>
+<div class="sheet-bg" id="bgD" style="z-index:30"></div>
+<div class="sheet" id="sheetD" style="z-index:31">
+  <h4 id="shDTitle">Nuovo documento</h4>
+  <label>Tipo</label><div class="chips" id="dTipo"></div>
+  <label for="dChi">Di chi è</label><input class="field" id="dChi" list="chiList" placeholder="es. Mario" autocomplete="off"><datalist id="chiList"></datalist>
+  <label for="dNum">Numero del documento</label><input class="field mono" id="dNum" autocomplete="off" placeholder="facoltativo">
+  <div class="two"><div><label for="dScad">Scadenza</label><input class="field" type="date" id="dScad"></div><div><label for="dAnt">Promemoria</label><select class="field" id="dAnt"><option value="30">30 giorni prima</option><option value="60" selected>60 giorni prima</option><option value="90">90 giorni prima</option></select></div></div>
+  <label>Foto fronte e retro, o PDF</label><div class="attlist" id="dAtt"></div><input type="file" id="dFile" accept="image/*,application/pdf" multiple hidden>
+  <label for="dNote">Note</label><input class="field" id="dNote" placeholder="es. rilasciata dal Comune di…">
+  <p class="hint" id="dPinHint"><span>Consiglio: proteggi i documenti con un PIN, dal tasto in alto nella sezione Documenti.</span></p>
+  <button class="save" id="dSave">Salva documento</button>
+</div>
+<div class="sheet-bg" id="bgD2" style="z-index:30"></div>
+<div class="sheet" id="sheetD2" style="z-index:31"><div id="dvBody"></div></div>
+<div class="sheet-bg" id="bgP" style="z-index:30"></div>
+<div class="sheet" id="sheetP" style="z-index:31"><h4 id="pinTitle">PIN</h4><div id="pinBody"></div></div>
+<div class="viewer" id="viewer" hidden><img id="viewImg" alt="Allegato del documento"><div class="viewbar"><a class="pill" id="viewDl" href="#">Salva</a><button class="pill" id="viewClose">Chiudi</button></div></div>
 <div class="toast" id="toast"></div>
 <script>
 const P={
@@ -485,7 +527,7 @@ function render(){
 // navigazione
 let view='home';
 document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)go(b.dataset.go)});
-function go(v){view=v;['home','mov','agenda','scad','rep'].forEach(k=>$('v-'+k).hidden=k!==v);document.body.classList.toggle('inrep',v==='rep');document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.go===v));render();scrollTo(0,0)}
+function go(v){view=v;['home','mov','agenda','scad','rep','doc'].forEach(k=>$('v-'+k).hidden=k!==v);document.body.classList.toggle('inrep',v==='rep'||v==='doc');$('fab').hidden=false;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.go===v));render();scrollTo(0,0)}
 function shiftMonth(n){cur.setMonth(cur.getMonth()+n);const t=new Date();sel=(cur.getFullYear()===t.getFullYear()&&cur.getMonth()===t.getMonth())?iso(t):iso(cur);render()}
 $('prev').onclick=()=>shiftMonth(-1);$('next').onclick=()=>shiftMonth(1);
 $('grid').addEventListener('click',e=>{const b=e.target.closest('[data-day]');if(!b)return;sel=b.dataset.day;render()});
@@ -501,7 +543,7 @@ function openSheet(t){$('fSpec').value='';const d=view==='agenda'?sel:iso(new Da
   $('aTit').value='';$('aData').value=d;$('aOra').value='';$('aLuogo').value='';$('aNota').value='';
   setTipo(t||(view==='scad'?'S':view==='agenda'?'A':'U'));$('bg').style.display='block';requestAnimationFrame(()=>$('sheet').classList.add('on'))}
 function closeSheet(){$('sheet').classList.remove('on');setTimeout(()=>$('bg').style.display='none',250)}
-$('fab').onclick=()=>openSheet();$('bg').onclick=closeSheet;
+$('fab').onclick=()=>view==='doc'?openDocForm():openSheet();$('bg').onclick=closeSheet;
 document.addEventListener('click',e=>{if(e.target.closest('#addDay'))openSheet('A')});
 $('save').onclick=()=>{
   let nuovo=null;
@@ -570,30 +612,31 @@ $('repPer').addEventListener('click',e=>{const b=e.target.closest('button');if(!
 $('repDa').addEventListener('change',()=>{rep.da=$('repDa').value;renderRep()});$('repA').addEventListener('change',()=>{rep.a=$('repA').value;renderRep()});
 $('repMesi').addEventListener('click',e=>{const b=e.target.closest('[data-ym]');if(!b)return;const [y,m]=b.dataset.ym.split('-').map(Number);cur=new Date(y,m,1);go('mov')});
 let hideAmt=false;try{hideAmt=localStorage.getItem('casainordine.nascondi')==='1'}catch(e){}
-function applyHide(){$('eye').hidden=view==='agenda';$('eyeIc').innerHTML=hideAmt?'<path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.3 2 12 2 12s3.5 7 10 7c1.9 0 3.5-.6 4.9-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>':'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>';$('eye').setAttribute('aria-label',hideAmt?'Mostra gli importi':'Nascondi gli importi');$('eye').setAttribute('aria-pressed',hideAmt);
-  if(!hideAmt)return;const dots='•••••• €';if(view!=='agenda')$('saldo').textContent=dots;['kE','kU'].forEach(k=>$(k).textContent='•••• €');if(view==='rep')document.querySelectorAll('#repKpi strong').forEach(e=>e.textContent='•••• €')}
+function applyHide(){$('eye').hidden=view==='agenda'||view==='doc';$('eyeIc').innerHTML=hideAmt?'<path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.3 2 12 2 12s3.5 7 10 7c1.9 0 3.5-.6 4.9-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>':'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>';$('eye').setAttribute('aria-label',hideAmt?'Mostra gli importi':'Nascondi gli importi');$('eye').setAttribute('aria-pressed',hideAmt);
+  if(!hideAmt)return;const dots='•••••• €';if(view!=='agenda'&&view!=='doc')$('saldo').textContent=dots;['kE','kU'].forEach(k=>$(k).textContent='•••• €');if(view==='rep')document.querySelectorAll('#repKpi strong').forEach(e=>e.textContent='•••• €')}
 $('eye').onclick=()=>{hideAmt=!hideAmt;try{localStorage.setItem('casainordine.nascondi',hideAmt?'1':'0')}catch(e){}render()};
-const _render=render;render=function(){$('demoCard').hidden=!db.demo;$('syncCard').hidden=true;const needs=!!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));$('syncStrip').hidden=!needs;document.body.classList.toggle('strip',needs);if(needs)$('syncStripTxt').textContent=syncState==='perm'?'Manca il permesso su Google Drive: tocca per riprovare':'Tocca per sincronizzare con Google Drive';_render();renderAcct();if(view==='rep')renderRep();applyHide()};
-function fresh(){const now=Date.now(),old=db.demo?[]:[...db.mov,...db.scad,...db.app].map(x=>({id:x.id,u:now}));db={mov:[],scad:[],app:[],del:[...(db.demo?[]:db.del||[]),...old]};store();cur=new Date();cur.setDate(1);sel=iso(new Date());go('home')}
+const _render=render;render=function(){if(!db.doc)db.doc=[];$('demoCard').hidden=!db.demo;$('syncCard').hidden=true;const needs=!!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));$('syncStrip').hidden=!needs;document.body.classList.toggle('strip',needs);if(needs)$('syncStripTxt').textContent=syncState==='perm'?'Manca il permesso su Google Drive: tocca per riprovare':'Tocca per sincronizzare con Google Drive';_render();renderAcct();if(view==='rep')renderRep();if(view==='doc'){$('saldoLbl').textContent='Documenti di famiglia';const n=db.doc.length;$('saldo').innerHTML=n+'<span>'+(n===1?'documento':'documenti')+'</span>';renderDoc()}applyHide()};
+function fresh(){const now=Date.now(),old=db.demo?[]:[...db.mov,...db.scad,...db.app,...(db.doc||[])].map(x=>({id:x.id,u:now}));db={mov:[],scad:[],app:[],doc:[],vault:{u:now,off:true},del:[...(db.demo?[]:db.del||[]),...old]};vKey=null;docCache.clear();vClear().catch(()=>{});store();cur=new Date();cur.setDate(1);sel=iso(new Date());go('home')}
 $('startBtn').onclick=()=>{prof=null;saveProf();db={mov:[],scad:[],app:[],del:[]};openWelcome(true)};
 const _save=$('save').onclick;$('save').onclick=()=>{if(db.demo){db={mov:[],scad:[],app:[],del:[]}}_save()};
 function openMenu(){loadGIS().catch(()=>{});$('bg2').style.display='block';requestAnimationFrame(()=>$('sheet2').classList.add('on'))}
 function closeMenu(){$('sheet2').classList.remove('on');setTimeout(()=>$('bg2').style.display='none',250)}
 $('menu').onclick=()=>{renderAcct();openMenu()};$('bg2').onclick=closeMenu;
-$('mExp').onclick=()=>{const data={app:'Casa in Ordine',versione:1,esportato:new Date().toISOString(),dati:{mov:db.mov,scad:db.scad,app:db.app}};
+$('mExp').onclick=async()=>{let vr=[];try{vr=await vAll()}catch(e){}const data={app:'Casa in Ordine',versione:2,esportato:new Date().toISOString(),dati:{mov:db.mov,scad:db.scad,app:db.app,doc:db.doc,vault:pinOn()?db.vault:null,archivio:vr}};
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,1)],{type:'application/json'}));a.download='casa-in-ordine-backup-'+iso(new Date())+'.json';document.body.appendChild(a);a.click();a.remove();closeMenu();toast('Backup salvato nei download')};
 $('mImp').onclick=()=>$('impFile').click();
 $('impFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result),d=j.dati||j;
   if(!Array.isArray(d.mov)||!Array.isArray(d.scad))throw 0;
-  closeMenu();ask('Ripristinare il backup?','I dati di questo dispositivo verranno sostituiti con quelli del file scelto.','Ripristina',()=>{db={mov:d.mov,scad:d.scad,app:Array.isArray(d.app)?d.app:[],del:[]};const n=Date.now();['mov','scad','app'].forEach(k=>db[k].forEach(x=>x.u=n));store();go('home');toast('Backup ripristinato')})}
+  closeMenu();ask('Ripristinare il backup?','I dati di questo dispositivo verranno sostituiti con quelli del file scelto.','Ripristina',async()=>{const n=Date.now();db={mov:d.mov,scad:d.scad,app:Array.isArray(d.app)?d.app:[],doc:Array.isArray(d.doc)?d.doc:[],del:[],vault:d.vault&&d.vault.salt?{...d.vault,u:n}:{u:n,off:true}};['mov','scad','app','doc'].forEach(k=>db[k].forEach(x=>x.u=n));
+    vKey=null;docCache.clear();try{await vClear();for(const r of (Array.isArray(d.archivio)?d.archivio:[]))if(r&&r.id)await vPut({...r,u:n})}catch(e){}store();go('home');toast('Backup ripristinato')})}
   catch(_){toast('Questo file non è un backup valido')}$('impFile').value=''};r.readAsText(f)};
 $('mDel').onclick=()=>{closeMenu();const g=prof&&prof.mode==='google';
-  ask('Ricominciare da zero?','Verranno cancellati tutti i movimenti, le scadenze e gli impegni'+(g?', anche dal tuo Google Drive e dagli altri dispositivi collegati':' su questo dispositivo')+'. Poi torni alla schermata iniziale e scegli di nuovo come usare l\'app.','Continua',()=>setTimeout(()=>
+  ask('Ricominciare da zero?','Verranno cancellati tutti i movimenti, le scadenze, gli impegni e i documenti'+(g?', anche dal tuo Google Drive e dagli altri dispositivi collegati':' su questo dispositivo')+'. Poi torni alla schermata iniziale e scegli di nuovo come usare l\'app.','Continua',()=>setTimeout(()=>
   ask('Ultima conferma','Questa operazione non si può annullare. Se vuoi tenere una copia, prima tocca Annulla e usa Esporta backup dal menu.','Sì, cancella tutto',async()=>{
     const wasDemo=db.demo;fresh();
     if(g){clearTimeout(store.t);await sync('yes');if(syncState!=='ok'){ask('Cancellati solo qui','I dati sono stati cancellati da questo dispositivo, ma non è stato possibile aggiornare Google Drive. Riprova quando sei online con Sincronizza dal menu: finché non lo fai, l\'account resta collegato.','Ho capito',null);return}
       try{tok&&google.accounts.oauth2.revoke(tok,()=>{})}catch(e){}tok=null;tokExp=0;keepTok()}
-    prof=null;saveProf();syncState='';db={mov:[],scad:[],app:[],del:[]};localSave();render();openWelcome();toast('Dati cancellati, puoi ricominciare')
+    prof=null;saveProf();syncState='';db={mov:[],scad:[],app:[],del:[],doc:[]};localSave();render();openWelcome();toast('Dati cancellati, puoi ricominciare')
   },true),320),true)};
 // installazione
 let instEvt=null;
@@ -602,6 +645,167 @@ $('mInst').onclick=async()=>{if(!instEvt)return;instEvt.prompt();await instEvt.u
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
 const iosWeb=(/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))&&!standalone;
 if(iosWeb){$('iosHint').hidden=false;$('iosWarn').hidden=false}
+// ===================== DOCUMENTI =====================
+// Metadati (tipo, intestatario, scadenza) in db.doc; numero, note e allegati nell'archivio IndexedDB "vault".
+// Con PIN: numero, note e allegati cifrati con AES-GCM, chiave derivata dal PIN (PBKDF2). Senza PIN: in chiaro.
+const DT={ci:["Carta d'identità",'id'],pat:['Patente','car'],pas:['Passaporto','globe'],ts:['Tessera sanitaria','health'],cf:['Codice fiscale','receipt'],altro:['Altro documento','dots']};
+P.globe='<circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c2.5 2.5 2.5 13.5 0 16M12 4c-2.5 2.5-2.5 13.5 0 16"/>';
+P.lock='<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>';
+P.clip='<path d="M20 11.5 12.5 19a5 5 0 0 1-7-7L13 4.5a3.3 3.3 0 0 1 4.7 4.7L10.2 16.7a1.7 1.7 0 0 1-2.4-2.4l7-7"/>';
+P.file='<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>';
+const DCOL='#2B68B0';
+db.doc=db.doc||[];
+const dt=k=>DT[k]||DT.altro;
+// ---- archivio locale (IndexedDB)
+let idbP=null;
+function idb(){return idbP=idbP||new Promise((ok,ko)=>{const r=indexedDB.open('casainordine-documenti',1);r.onupgradeneeded=()=>r.result.createObjectStore('vault',{keyPath:'id'});r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error)})}
+async function vTx(mode,fn){const d=await idb();return new Promise((ok,ko)=>{const t=d.transaction('vault',mode),s=t.objectStore('vault');let out;Promise.resolve(fn(s)).then(v=>out=v);t.oncomplete=()=>ok(out);t.onerror=()=>ko(t.error)})}
+const vGet=id=>vTx('readonly',s=>new Promise(ok=>{const r=s.get(id);r.onsuccess=()=>ok(r.result||null)}));
+const vAll=()=>vTx('readonly',s=>new Promise(ok=>{const r=s.getAll();r.onsuccess=()=>ok(r.result||[])}));
+const vPut=rec=>vTx('readwrite',s=>{s.put(rec)});
+const vDel=id=>vTx('readwrite',s=>{s.delete(id)});
+const vClear=()=>vTx('readwrite',s=>{s.clear()});
+// ---- cifratura
+const b64=buf=>{let s='';const a=new Uint8Array(buf);for(let i=0;i<a.length;i+=0x8000)s+=String.fromCharCode.apply(null,a.subarray(i,i+0x8000));return btoa(s)};
+const unb64=t=>Uint8Array.from(atob(t),c=>c.charCodeAt(0));
+async function deriveKey(pin,salt){const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt:unb64(salt),iterations:310000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function encObj(key,obj){const iv=crypto.getRandomValues(new Uint8Array(12));const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(obj)));return {iv:b64(iv),ct:b64(ct)}}
+async function decObj(key,e){const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(e.iv)},key,unb64(e.ct));return JSON.parse(new TextDecoder().decode(pt))}
+let vKey=null,vKeySalt=null,vLockT=null;const docCache=new Map();
+const pinOn=()=>!!(db.vault&&!db.vault.off&&db.vault.salt);
+const locked=()=>pinOn()&&!vKey;
+function lockNow(){vKey=null;docCache.forEach(c=>c.files.forEach(f=>f.url&&URL.revokeObjectURL(f.url)));docCache.clear();if(view==='doc')render()}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){clearTimeout(vLockT);vLockT=setTimeout(()=>{if(pinOn())lockNow()},60000)}else clearTimeout(vLockT)});
+async function unlock(pin){const k=await deriveKey(pin,db.vault.salt);try{const t=await decObj(k,db.vault.check);if(t!=='casainordine')throw 0}catch(e){return false}vKey=k;vKeySalt=db.vault.salt;await healVault();return true}
+async function sealRec(id,data){const u=Date.now();if(pinOn()){if(!vKey)throw 'locked';return {id,u,enc:await encObj(vKey,data)}}return {id,u,plain:data}}
+async function openRec(rec){if(!rec)return {num:'',note:'',files:[]};if(rec.plain)return rec.plain;if(rec.enc){if(!vKey)throw 'locked';return decObj(vKey,rec.enc)}return {num:'',note:'',files:[]}}
+// porta tutti i record allo stato giusto (cifrati se c'è il PIN, in chiaro se non c'è)
+async function healVault(){const all=await vAll();let n=0;for(const r of all){
+  if(pinOn()&&r.plain&&vKey){await vPut(await sealRec(r.id,r.plain));n++}
+  else if(!pinOn()&&r.enc&&vKey){try{await vPut({id:r.id,u:Date.now(),plain:await decObj(vKey,r.enc)});n++}catch(e){}}}
+  if(!pinOn())vKey=null;if(n){docCache.clear();markDirty()}}
+function markDirty(){if(prof&&prof.mode==='google'){prof.dirty=true;saveProf();clearTimeout(store.t);store.t=setTimeout(()=>sync(false),1500)}}
+async function setPin(pin){const salt=b64(crypto.getRandomValues(new Uint8Array(16)));const k=await deriveKey(pin,salt);
+  const recs=[];for(const r of await vAll())recs.push({id:r.id,data:await openRec(r)});
+  db.vault={u:Date.now(),salt,check:await encObj(k,'casainordine')};vKey=k;vKeySalt=salt;
+  for(const r of recs)await vPut(await sealRec(r.id,r.data));docCache.clear();store()}
+async function removePin(){const recs=[];for(const r of await vAll())recs.push({id:r.id,data:await openRec(r)});
+  db.vault={u:Date.now(),off:true};for(const r of recs)await vPut({id:r.id,u:Date.now(),plain:r.data});vKey=null;docCache.clear();store()}
+// ---- allegati
+function fileToData(f){return new Promise((ok,ko)=>{
+  if(f.type==='application/pdf'){if(f.size>3e6)return ko('grande');const r=new FileReader();r.onload=()=>ok({type:f.type,name:f.name,data:r.result.split(',')[1]});r.onerror=ko;r.readAsDataURL(f);return}
+  if(!/^image\//.test(f.type))return ko('tipo');
+  const img=new Image(),u=URL.createObjectURL(f);img.onload=()=>{const M=1600,s=Math.min(1,M/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);ok({type:'image/jpeg',name:(f.name||'foto').replace(/\.\w+$/,'')+'.jpg',data:c.toDataURL('image/jpeg',.82).split(',')[1]})};
+  img.onerror=()=>{URL.revokeObjectURL(u);ko('img')};img.src=u})}
+function blobUrl(f){return URL.createObjectURL(new Blob([unb64(f.data)],{type:f.type}))}
+async function getDoc(id){if(docCache.has(id))return docCache.get(id);const d=await openRec(await vGet(id));const c={num:d.num||'',note:d.note||'',files:(d.files||[]).map(f=>({...f,url:blobUrl(f)}))};docCache.set(id,c);return c}
+// ---- vista Documenti
+const maskNum=n=>!n?'':n.length<=4?n:'•••• '+n.slice(-4);
+async function renderDoc(){
+  const el=$('docList');if(!el)return;if(vKey&&pinOn()&&db.vault.salt!==vKeySalt){vKey=null;docCache.clear()}
+  $('fab').hidden=locked();
+  $('docTools').innerHTML=locked()?'':pinOn()?`<button class="pill" id="dLock">${ico('lock','currentColor',14)} Blocca</button><button class="pill" id="dPin">PIN</button>`:`<button class="pill" id="dPin">${ico('lock','currentColor',14)} Imposta un PIN</button>`;
+  if(locked()){el.innerHTML=`<div class="card lockcard"><span class="ic big" style="background:var(--pri-t);color:var(--pri-ink)">${ico('lock','currentColor',26)}</span><h3 style="justify-content:center">Documenti protetti</h3><p class="empty" style="text-align:center">Inserisci il PIN per vedere i tuoi documenti.</p>
+    <form id="unlockF" autocomplete="off"><input class="field pin" id="unlockPin" type="password" inputmode="numeric" placeholder="PIN" aria-label="PIN" maxlength="20"><button class="save" type="submit">Sblocca</button></form><button class="lnk" id="dForgot" style="width:100%">Ho dimenticato il PIN</button></div>`;
+    $('unlockF').onsubmit=async e=>{e.preventDefault();const p=$('unlockPin').value;if(!p)return;$('unlockF').querySelector('button').textContent='Verifico…';if(await unlock(p)){render()}else{$('unlockF').querySelector('button').textContent='Sblocca';$('unlockPin').value='';toast('PIN non corretto')}};
+    bindDocTools();return}
+  const list=db.doc.slice().sort((a,b)=>(a.chi||'').localeCompare(b.chi||'')||a.tipo.localeCompare(b.tipo));
+  let banner=!pinOn()&&list.length?`<div class="card warnline">${ico('lock','#B87A12',18)}<p>I documenti non sono protetti da PIN. <button class="lnkin" id="dPin2">Imposta un PIN</button></p></div>`:'';
+  if(!list.length){el.innerHTML=`<div class="card"><p class="empty">Nessun documento. Tocca <b>+</b> per aggiungere carta d'identità, patente, passaporto o tessera sanitaria, con le foto fronte e retro.</p><p class="empty">${pinOn()?'Sono protetti dal tuo PIN.':'Ti consigliamo di proteggerli con un PIN.'}</p></div>`;bindDocTools();return}
+  const groups={};list.forEach(d=>(groups[d.chi||'Senza intestatario']=groups[d.chi||'Senza intestatario']||[]).push(d));
+  const rows=[];for(const [chi,l] of Object.entries(groups)){let h=`<p class="day">${esc(chi)}</p><div class="card" style="padding:4px 16px;margin-bottom:6px">`;
+    for(const d of l){let c={num:'',files:[]};try{c=await getDoc(d.id)}catch(e){}const t=dt(d.tipo),g=d.scad?gg(d.scad):null;
+      h+=`<button class="row docrow" data-doc="${esc(d.id)}"><div class="ic" style="background:${tint(DCOL)}">${ico(t[1],DCOL)}</div><div class="t">${esc(t[0])}<small>${c.num?esc(maskNum(c.num))+' · ':''}${d.scad?'scade il '+fd(d.scad):'senza scadenza'}${c.files.length?' · '+c.files.length+' '+(c.files.length===1?'allegato':'allegati'):''}</small></div>${g!==null?badge(g,'S'):''}</button>`}
+    rows.push(h+'</div>')}
+  el.innerHTML=banner+rows.join('');bindDocTools();
+}
+function bindDocTools(){const pinBtn=()=>pinSheet();if($('dPin'))$('dPin').onclick=pinBtn;if($('dPin2'))$('dPin2').onclick=pinBtn;if($('dLock'))$('dLock').onclick=()=>{lockNow();toast('Documenti bloccati')};
+  if($('dForgot'))$('dForgot').onclick=()=>ask('PIN dimenticato','Senza il PIN i documenti protetti non si possono recuperare, né da qui né da altri dispositivi. Puoi solo cancellarli e ricominciare la sezione Documenti. Movimenti, scadenze e agenda restano.','Continua',()=>setTimeout(()=>ask('Ultima conferma','Verranno cancellati tutti i documenti e le loro foto, anche da Google Drive. Non si può annullare.','Sì, cancella i documenti',async()=>{await wipeDocs();toast('Documenti cancellati')},true),320),true)}
+async function wipeDocs(){if(!db.doc)db.doc=[];const now=Date.now();db.del=[...(db.del||[]),...db.doc.map(d=>({id:d.id,u:now})),...db.scad.filter(s=>s.doc).map(s=>({id:s.id,u:now}))];
+  db.scad=db.scad.filter(s=>!s.doc);db.doc=[];db.vault={u:now,off:true};vKey=null;docCache.clear();await vClear();store();render()}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-doc]');if(b)openDocDetail(b.dataset.doc)});
+// ---- dettaglio
+async function openDocDetail(id){if(!db.doc)db.doc=[];const d=db.doc.find(x=>x.id===id);if(!d)return;let c;try{c=await getDoc(id)}catch(e){toast('Sblocca prima i documenti');return}
+  const t=dt(d.tipo);
+  $('dvBody').innerHTML=`<h4>${esc(t[0])}</h4><p class="dvsub">${esc(d.chi||'')}</p>
+   <div class="dvgrid"><div><label>Numero</label><p class="dvval mono">${c.num?esc(c.num):'—'}</p></div><div><label>Scadenza</label><p class="dvval">${d.scad?fd(d.scad):'nessuna'}</p></div></div>
+   ${c.num?`<button class="pill" id="dvCopy">Copia il numero</button>`:''}
+   ${c.note?`<label>Note</label><p class="dvval" style="white-space:pre-wrap">${esc(c.note)}</p>`:''}
+   <div class="thumbs">${c.files.map((f,i)=>f.type==='application/pdf'?`<a class="thumb pdf" href="${f.url}" target="_blank" rel="noopener">${ico('file','currentColor',28)}<span>${esc(f.name||'PDF')}</span></a>`:`<button class="thumb" data-view="${i}"><img src="${f.url}" alt="Allegato ${i+1}"></button>`).join('')}</div>
+   ${c.files.length?`<p class="note" style="text-align:left">Tocca una foto per ingrandirla.</p>`:''}
+   <div class="two" style="margin-top:14px"><button class="save" id="dvEdit">Modifica</button><button class="save" id="dvDel" style="background:#FDECEC;color:var(--red)">Elimina</button></div>`;
+  $('dvBody').querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{const f=c.files[+b.dataset.view];$('viewImg').src=f.url;$('viewDl').href=f.url;$('viewDl').download=f.name||'documento.jpg';$('viewer').hidden=false});
+  if($('dvCopy'))$('dvCopy').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(c.num).then(()=>toast('Numero copiato'),()=>toast('Copia non riuscita'))};
+  $('dvEdit').onclick=()=>{closeSh('D2');setTimeout(()=>openDocForm(id),260)};
+  $('dvDel').onclick=()=>{closeSh('D2');ask('Eliminare il documento?','Verranno cancellati il documento e le sue foto, anche dagli altri dispositivi collegati.','Elimina',()=>delDoc(id),true)};
+  openSh('D2')}
+function openSh(k){$('toast').classList.remove('on');$('bg'+k).style.display='block';requestAnimationFrame(()=>$('sheet'+k).classList.add('on'))}
+function closeSh(k){$('sheet'+k).classList.remove('on');setTimeout(()=>$('bg'+k).style.display='none',250)}
+$('viewClose').onclick=()=>{$('viewer').hidden=true;$('viewImg').removeAttribute('src')};
+async function delDoc(id){if(!db.doc)db.doc=[];const now=Date.now();db.doc=db.doc.filter(x=>x.id!==id);const sd=db.scad.filter(s=>s.doc===id);db.scad=db.scad.filter(s=>s.doc!==id);
+  db.del=[...(db.del||[]),{id,u:now},...sd.map(s=>({id:s.id,u:now}))];await vDel(id);docCache.delete(id);store();render();toast('Documento eliminato')}
+// ---- modulo
+let dForm={id:null,tipo:'ci',files:[]};
+async function openDocForm(id){if(!db.doc)db.doc=[];if(locked()){toast('Sblocca prima i documenti');return}
+  const d=id?db.doc.find(x=>x.id===id):null;let c={num:'',note:'',files:[]};if(d){try{c=await getDoc(id)}catch(e){toast('Sblocca prima i documenti');return}}
+  dForm={id:d?d.id:null,tipo:d?d.tipo:'ci',files:c.files.map(f=>({type:f.type,name:f.name,data:f.data}))};
+  $('shDTitle').textContent=d?'Modifica documento':'Nuovo documento';
+  chips($('dTipo'),Object.fromEntries(Object.entries(DT).map(([k,v])=>[k,[v[0],v[1],DCOL]])),dForm.tipo,k=>dForm.tipo=k);
+  $('dChi').value=d?d.chi||'':'';$('dNum').value=c.num;$('dScad').value=d&&d.scad||'';$('dNote').value=c.note;
+  const ls=db.scad.find(s=>s.doc===dForm.id);$('dAnt').value=String(ls?ls.ant:60);
+  $('chiList').innerHTML=[...new Set(db.doc.map(x=>x.chi).filter(Boolean))].map(v=>`<option value="${esc(v)}">`).join('');
+  renderAtt();$('dPinHint').hidden=pinOn();openSh('D')}
+function renderAtt(){$('dAtt').innerHTML=dForm.files.map((f,i)=>`<div class="att">${f.type==='application/pdf'?`<span class="attpdf">${ico('file','currentColor',22)}</span>`:`<img src="data:${f.type};base64,${f.data}" alt="">`}<button class="attx" data-rm="${i}" aria-label="Togli allegato">×</button></div>`).join('')+(dForm.files.length<4?`<label class="attadd" for="dFile">${ico('clip','currentColor',20)}<span>Aggiungi foto o PDF</span></label>`:'');
+  $('dAtt').querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{dForm.files.splice(+b.dataset.rm,1);renderAtt()})}
+$('dFile').onchange=async e=>{const fs=[...e.target.files].slice(0,4-dForm.files.length);for(const f of fs){try{dForm.files.push(await fileToData(f))}catch(er){toast(er==='grande'?'PDF troppo grande (massimo 3 MB)':'File non supportato: usa una foto o un PDF')}}e.target.value='';renderAtt()};
+$('bgD').onclick=()=>closeSh('D');$('bgD2').onclick=()=>closeSh('D2');
+$('dSave').onclick=async()=>{if(!db.doc)db.doc=[];const chi=$('dChi').value.trim();if(!chi){toast('Scrivi di chi è il documento');$('dChi').focus();return}
+  if(locked()){toast('Sblocca prima i documenti');return}
+  if(db.demo){db={mov:[],scad:[],app:[],del:[],doc:[]};}
+  const id=dForm.id||uid(),now=Date.now(),scad=$('dScad').value,ant=+$('dAnt').value;
+  const payload={num:$('dNum').value.trim(),note:$('dNote').value.trim(),files:dForm.files};if(JSON.stringify(payload).length>4.3e6){toast('Allegati troppo pesanti: togli un file');return}
+  try{await vPut(await sealRec(id,payload))}catch(e){toast('Salvataggio non riuscito: memoria piena?');return}
+  docCache.delete(id);
+  const meta={id,u:now,tipo:dForm.tipo,chi,scad};db.doc=db.doc.filter(x=>x.id!==id).concat(meta);
+  const old=db.scad.find(s=>s.doc===id);db.scad=db.scad.filter(s=>s.doc!==id);
+  if(scad){db.scad.push({id:old?old.id:'sd-'+id,u:now,tit:dt(dForm.tipo)[0]+' di '+chi,cat:'doc',d:scad,ant,doc:id})}
+  else if(old){db.del=[...(db.del||[]),{id:old.id,u:now}]}
+  store();closeSh('D');render();toast(scad?'Documento salvato: la scadenza è in Scadenze e Agenda':'Documento salvato')};
+// ---- PIN
+function pinSheet(){
+  if(locked()){toast('Sblocca prima i documenti');return}
+  const on=pinOn();$('pinTitle').textContent=on?'PIN dei documenti':'Imposta un PIN';
+  $('pinBody').innerHTML=on?`<p class="empty">I documenti sono cifrati con il tuo PIN, su questo dispositivo e su Google Drive.</p><button class="save" id="pinChange">Cambia PIN</button><button class="lnk" id="pinOff" style="width:100%;color:var(--red)">Togli il PIN</button>`
+   :`<div class="warn"><span>Con il PIN numero, note e foto dei documenti vengono <b>cifrati</b>: nessuno può leggerli senza PIN, nemmeno da Google Drive. <b>Se lo dimentichi non si possono recuperare</b>, quindi scegline uno che ricordi. Usa almeno 6 cifre.</span></div>
+     <form id="pinF" autocomplete="off"><label for="pin1">Nuovo PIN</label><input class="field pin" id="pin1" type="password" inputmode="numeric" maxlength="20"><label for="pin2">Ripeti il PIN</label><input class="field pin" id="pin2" type="password" inputmode="numeric" maxlength="20"><button class="save" type="submit">Imposta il PIN</button></form>`;
+  if(on){$('pinChange').onclick=()=>{closeSh('P');setTimeout(()=>pinNew(true),260)};
+    $('pinOff').onclick=()=>{closeSh('P');ask('Togliere il PIN?','I documenti non saranno più cifrati: chi usa questo dispositivo sbloccato potrà vederli.','Togli il PIN',async()=>{await removePin();render();toast('PIN tolto')},true)}}
+  else bindPinForm();
+  openSh('P')}
+function pinNew(change){$('pinTitle').textContent=change?'Nuovo PIN':'Imposta un PIN';$('pinBody').innerHTML=`<form id="pinF" autocomplete="off"><label for="pin1">Nuovo PIN</label><input class="field pin" id="pin1" type="password" inputmode="numeric" maxlength="20"><label for="pin2">Ripeti il PIN</label><input class="field pin" id="pin2" type="password" inputmode="numeric" maxlength="20"><button class="save" type="submit">Salva il PIN</button></form>`;bindPinForm();openSh('P')}
+function bindPinForm(){$('pinF').onsubmit=async e=>{e.preventDefault();const a=$('pin1').value,b=$('pin2').value;
+  if(a.length<6){toast('Il PIN deve avere almeno 6 caratteri');return}if(a!==b){toast('I due PIN non coincidono');return}
+  $('pinF').querySelector('button').textContent='Cifro i documenti…';await setPin(a);closeSh('P');render();toast('PIN impostato: i documenti sono cifrati')}}
+$('bgP').onclick=()=>closeSh('P');
+// ---- sincronizzazione documenti su Drive (un file per documento)
+async function docSync(){if(!db.doc)db.doc=[];
+  const q=encodeURIComponent("name contains 'doc-' and trashed=false");
+  const l=await (await gf('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&pageSize=1000&fields=files(id,name,appProperties)&q='+q)).json();
+  const remote=new Map();for(const f of (l.files||[])){const id=f.name.replace(/^doc-|\.json$/g,'');const u=+((f.appProperties||{}).u||0);const prev=remote.get(id);
+    if(prev){if(prev.u>=u){await gf('https://www.googleapis.com/drive/v3/files/'+f.id,{method:'DELETE'});continue}await gf('https://www.googleapis.com/drive/v3/files/'+prev.fid,{method:'DELETE'})}
+    remote.set(id,{fid:f.id,u})}
+  const ids=new Set(db.doc.map(d=>d.id));const local=new Map((await vAll()).map(r=>[r.id,r]));let changed=false;
+  for(const [id,r] of remote){if(!ids.has(id)){await gf('https://www.googleapis.com/drive/v3/files/'+r.fid,{method:'DELETE'});continue}
+    const lr=local.get(id);if(!lr||r.u>lr.u){const rec=await (await gf('https://www.googleapis.com/drive/v3/files/'+r.fid+'?alt=media')).json();await vPut(rec);docCache.delete(id);changed=true}}
+  for(const [id,lr] of local){if(!ids.has(id)){await vDel(id);continue}const r=remote.get(id);if(r&&r.u>=lr.u)continue;
+    const fd=new FormData();fd.append('metadata',new Blob([JSON.stringify(r?{appProperties:{u:String(lr.u)}}:{name:'doc-'+id+'.json',parents:['appDataFolder'],appProperties:{u:String(lr.u)}})],{type:'application/json'}));
+    fd.append('file',new Blob([JSON.stringify(lr)],{type:'application/json'}));
+    await gf('https://www.googleapis.com/upload/drive/v3/files'+(r?'/'+r.fid:'')+'?uploadType=multipart',{method:r?'PATCH':'POST',body:fd})}
+  if(vKey&&pinOn())await healVault();
+  return changed}
+
 // ---- benvenuto: Google o ospite
 function openWelcome(noDemo){$('wDemo').hidden=!!noDemo;$('welcome').hidden=false;scrollTo(0,0)}
 function closeWelcome(){$('welcome').hidden=true;go('home')}
@@ -631,8 +835,9 @@ function token(interactive){
 async function gf(url,opt,interactive){const t=await token(interactive);const r=await fetch(url,{...(opt||{}),headers:{Authorization:'Bearer '+t}});if(r.status===401){tok=null;keepTok();throw 'auth'}if(r.status===403){tok=null;keepTok();throw 'perm'}if(!r.ok)throw 'drive';return r}
 function merge(a,b){const dl=new Map();[...(a.del||[]),...(b.del||[])].forEach(d=>dl.set(d.id,Math.max(dl.get(d.id)||0,d.u||0)));
   const lim=Date.now()-180*864e5;const o={del:[...dl].filter(([,u])=>u>lim).map(([id,u])=>({id,u}))};
-  ['mov','scad','app'].forEach(k=>{const m=new Map();[...(a[k]||[]),...(b[k]||[])].forEach(x=>{const y=m.get(x.id);if(!y||(x.u||0)>(y.u||0))m.set(x.id,x)});o[k]=[...m.values()].filter(x=>!(dl.has(x.id)&&dl.get(x.id)>=(x.u||0)))});return o}
-const sig=o=>['mov','scad','app','del'].map(k=>(o[k]||[]).map(x=>x.id+':'+(x.u||0)).sort().join(',')).join('|');
+  o.vault=(a.vault&&b.vault)?((a.vault.u||0)>=(b.vault.u||0)?a.vault:b.vault):(a.vault||b.vault||null);
+  ['mov','scad','app','doc'].forEach(k=>{const m=new Map();[...(a[k]||[]),...(b[k]||[])].forEach(x=>{const y=m.get(x.id);if(!y||(x.u||0)>(y.u||0))m.set(x.id,x)});o[k]=[...m.values()].filter(x=>!(dl.has(x.id)&&dl.get(x.id)>=(x.u||0)))});return o}
+const sig=o=>['mov','scad','app','del','doc'].map(k=>(o[k]||[]).map(x=>x.id+':'+(x.u||0)).sort().join(',')).join('|')+'|v'+((o.vault&&o.vault.u)||0);
 async function sync(interactive){
   if(!prof||prof.mode!=='google'||!navigator.onLine||syncState==='busy')return;
   const prev=syncState;syncState='busy';if(interactive||prev!=='ok')renderAcct();
@@ -644,10 +849,11 @@ async function sync(interactive){
     let remote=fid?await (await gf('https://www.googleapis.com/drive/v3/files/'+fid+'?alt=media')).json():{};
     for(const extra of files.slice(1)){remote=merge(remote,await (await gf('https://www.googleapis.com/drive/v3/files/'+extra+'?alt=media')).json());await gf('https://www.googleapis.com/drive/v3/files/'+extra,{method:'DELETE'})}
     const before=sig(db);db=merge(db,remote);localSave();const changed=sig(db)!==before;
-    if(fid&&sig(db)===sig(remote)){prof.last=Date.now();prof.dirty=false;saveProf();syncState='ok';if(changed||interactive)render();else renderAcct();return}
+    if(fid&&sig(db)===sig(remote)){const dc=await docSync();prof.last=Date.now();prof.dirty=false;saveProf();syncState='ok';if(changed||dc||interactive)render();else renderAcct();return}
     const fd=new FormData();fd.append('metadata',new Blob([JSON.stringify(fid?{}:{name:FN,parents:['appDataFolder']})],{type:'application/json'}));
     fd.append('file',new Blob([JSON.stringify(db)],{type:'application/json'}));
     await gf('https://www.googleapis.com/upload/drive/v3/files'+(fid?'/'+fid:'')+'?uploadType=multipart',{method:fid?'PATCH':'POST',body:fd});
+    await docSync();
     prof.last=Date.now();prof.dirty=false;saveProf();syncState='ok';
   }catch(e){syncState=e==='perm'?'perm':(e==='auth'||e==='annullato')?'auth':'err'}
   finally{clearTimeout(guard)}
