@@ -580,7 +580,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-ics]');if(
 // conferma in pagina
 let cCb=null;
 let cNoCb=null;
-function ask(tit,txt,ok,cb,danger,onNo){cNoCb=onNo||null;$('toast').classList.remove('on');$('cTit').textContent=tit;$('cTxt').textContent=txt;$('cOk').textContent=ok;$('cOk').style.background=danger?'var(--red)':'';$('cOk').style.color=danger?'#fff':'';cCb=cb;$('bg4').style.display='block';requestAnimationFrame(()=>$('sheet4').classList.add('on'))}
+function ask(tit,txt,ok,cb,danger,onNo,no){cNoCb=onNo||null;$('toast').classList.remove('on');$('cTit').textContent=tit;$('cTxt').textContent=txt;$('cOk').textContent=ok;$('cNo').textContent=no||'Annulla';$('cOk').style.background=danger?'var(--red)':'';$('cOk').style.color=danger?'#fff':'';cCb=cb;$('bg4').style.display='block';requestAnimationFrame(()=>$('sheet4').classList.add('on'))}
 function closeAsk(){$('sheet4').classList.remove('on');setTimeout(()=>$('bg4').style.display='none',250)}
 $('cOk').onclick=()=>{cNoCb=null;closeAsk();const f=cCb;cCb=null;f&&f()};
 const askNo=()=>{closeAsk();const f=cNoCb;cNoCb=null;cCb=null;f&&f()};$('cNo').onclick=askNo;$('bg4').onclick=askNo;
@@ -666,7 +666,7 @@ db.doc=db.doc||[];
 const dt=k=>DT[k]||DT.altro;
 // ---- archivio locale (IndexedDB)
 let idbP=null;
-function idb(){return idbP=idbP||new Promise((ok,ko)=>{const r=indexedDB.open('casainordine-documenti',1);r.onupgradeneeded=()=>r.result.createObjectStore('vault',{keyPath:'id'});r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error)})}
+function idb(){return idbP=idbP||new Promise((ok,ko)=>{const r=indexedDB.open('casainordine-documenti',1);r.onupgradeneeded=()=>r.result.createObjectStore('vault',{keyPath:'id'});r.onsuccess=()=>ok(r.result);r.onerror=()=>{idbP=null;ko(r.error)}})}
 async function vTx(mode,fn){const d=await idb();return new Promise((ok,ko)=>{const t=d.transaction('vault',mode),s=t.objectStore('vault');let out;Promise.resolve(fn(s)).then(v=>out=v);t.oncomplete=()=>ok(out);t.onerror=()=>ko(t.error)})}
 const vGet=id=>vTx('readonly',s=>new Promise(ok=>{const r=s.get(id);r.onsuccess=()=>ok(r.result||null)}));
 const vAll=()=>vTx('readonly',s=>new Promise(ok=>{const r=s.getAll();r.onsuccess=()=>ok(r.result||[])}));
@@ -676,8 +676,8 @@ const vClear=()=>vTx('readwrite',s=>{s.clear()});
 // ---- cifratura
 const b64=buf=>{let s='';const a=new Uint8Array(buf);for(let i=0;i<a.length;i+=0x8000)s+=String.fromCharCode.apply(null,a.subarray(i,i+0x8000));return btoa(s)};
 const unb64=t=>Uint8Array.from(atob(t),c=>c.charCodeAt(0));
-async function deriveKey(pin,salt){const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveKey']);
-  return crypto.subtle.deriveKey({name:'PBKDF2',salt:unb64(salt),iterations:310000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function deriveKey(pin,salt,it){const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt:unb64(salt),iterations:it||310000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
 async function encObj(key,obj){const iv=crypto.getRandomValues(new Uint8Array(12));const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(obj)));return {iv:b64(iv),ct:b64(ct)}}
 async function decObj(key,e){const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(e.iv)},key,unb64(e.ct));return JSON.parse(new TextDecoder().decode(pt))}
 let vKey=null,vKid=null,vLockT=null;const docCache=new Map();
@@ -685,76 +685,83 @@ let vKey=null,vKid=null,vLockT=null;const docCache=new Map();
 const pinOn=()=>!!(db.vault&&!db.vault.off&&db.vault.wPin);
 const locked=()=>pinOn()&&!vKey;
 function lockNow(){vKey=null;vKid=null;docCache.forEach(c=>c.files.forEach(f=>f.url&&URL.revokeObjectURL(f.url)));docCache.clear();if(view==='doc')render()}
-document.addEventListener('visibilitychange',()=>{if(document.hidden){clearTimeout(vLockT);vLockT=setTimeout(()=>{if(pinOn())lockNow()},60000)}else clearTimeout(vLockT)});
+let hidAt=0;document.addEventListener('visibilitychange',()=>{if(document.hidden){hidAt=Date.now();clearTimeout(vLockT);vLockT=setTimeout(()=>{if(pinOn())lockNow()},60000)}else{clearTimeout(vLockT);if(hidAt&&Date.now()-hidAt>=60000&&pinOn()&&vKey)lockNow();hidAt=0}});
 const importDek=raw=>crypto.subtle.importKey('raw',raw,{name:'AES-GCM'},false,['encrypt','decrypt']);
 const normCode=c=>String(c||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
 function newCode(){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r=crypto.getRandomValues(new Uint8Array(16));let c='';r.forEach((x,i)=>{c+=A[x%32];if(i%4===3&&i<15)c+='-'});return c}
 const newSalt=()=>b64(crypto.getRandomValues(new Uint8Array(16)));
-async function openWith(secret,salt,wrapped){try{const k=await deriveKey(secret,salt);const raw=unb64(await decObj(k,wrapped));return {raw,key:await importDek(raw)}}catch(e){return null}}
+async function openWith(secret,salt,wrapped,it){try{const k=await deriveKey(secret,salt,it);const raw=unb64(await decObj(k,wrapped));return {raw,key:await importDek(raw)}}catch(e){return null}}
 async function useDek(o){vKey=o.key;vKid=db.vault.kid;await healVault()}
-async function unlock(pin){const o=await openWith(pin,db.vault.salt,db.vault.wPin);if(!o)return false;await useDek(o);return true}
+async function unlock(pin){const o=await openWith(pin,db.vault.salt,db.vault.wPin,db.vault.it);if(!o)return false;await useDek(o);return true}
 // ---- sblocco con impronta (passkey con estensione PRF): la chiave dei documenti viene avvolta anche con un segreto
 // che il telefono rilascia solo dopo impronta o volto. Vale solo su questo dispositivo; PIN e codice restano validi.
 const PKK='casainordine.impronta';
 const pkGet=()=>{try{const o=JSON.parse(localStorage.getItem(PKK));return o&&db.vault&&o.kid===db.vault.kid?o:null}catch(e){return null}};
 const pkSet=o=>{try{o?localStorage.setItem(PKK,JSON.stringify(o)):localStorage.removeItem(PKK)}catch(e){}};
-const pkOk=()=>!!(window.PublicKeyCredential&&navigator.credentials&&window.isSecureContext);
+// spento finché non lo proviamo su telefoni veri: per accenderlo su un dispositivo, localStorage casainordine.prova-impronta = 1
+const PK_ON=(()=>{try{return localStorage.getItem('casainordine.prova-impronta')==='1'}catch(e){return false}})();
+const pkOk=()=>PK_ON&&!!(window.PublicKeyCredential&&navigator.credentials&&window.isSecureContext);
 const prfKey=out=>crypto.subtle.importKey('raw',new Uint8Array(out),{name:'AES-GCM'},false,['encrypt','decrypt']);
 function pkAssert(o){return navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),rpId:location.hostname,
   allowCredentials:[{type:'public-key',id:unb64(o.cred)}],userVerification:'required',timeout:60000,extensions:{prf:{eval:{first:unb64(o.salt)}}}}})}
 function pkOut(cred){const r=cred&&cred.getClientExtensionResults&&cred.getClientExtensionResults();return r&&r.prf&&r.prf.results&&r.prf.results.first}
 // attivazione in due tocchi: prima si crea la passkey, poi (nuovo tocco, come vuole Safari) si legge il segreto
 function pkEnable(raw){const salt=crypto.getRandomValues(new Uint8Array(32));
-  navigator.credentials.create({publicKey:{rp:{name:'Casa in Ordine',id:location.hostname},user:{id:crypto.getRandomValues(new Uint8Array(16)),name:'Documenti Casa in Ordine',displayName:'Documenti Casa in Ordine'},
+  navigator.credentials.create({publicKey:{rp:{name:'Casa in Ordine',id:location.hostname},user:{id:new TextEncoder().encode(('cio-'+db.vault.kid).slice(0,64)),name:'Documenti Casa in Ordine',displayName:'Documenti Casa in Ordine'},
     challenge:crypto.getRandomValues(new Uint8Array(32)),pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
     authenticatorSelection:{userVerification:'required',residentKey:'preferred'},timeout:60000,extensions:{prf:{eval:{first:salt}}}}})
-  .then(async cred=>{const ext=cred.getClientExtensionResults();if(!ext.prf||ext.prf.enabled===false){toast('Questo dispositivo non supporta lo sblocco con impronta');return}
+  .then(async cred=>{const ext=cred.getClientExtensionResults();if(ext.prf&&ext.prf.enabled===false){toast('Questo dispositivo non supporta lo sblocco con impronta');return}
     const o={cred:b64(cred.rawId),salt:b64(salt),kid:db.vault.kid};const out=pkOut(cred);
     if(out){o.w=await encObj(await prfKey(out),b64(raw));pkSet(o);closeSh('P');toast('Sblocco con impronta attivato');return}
     $('pinTitle').textContent='Conferma l\'impronta';$('pinBody').innerHTML='<p class="empty">Ultimo passaggio: tocca il pulsante e conferma di nuovo con impronta o volto.</p><button class="save" id="pkConf">Conferma</button>';
     $('pkConf').onclick=()=>{pkAssert(o).then(async c=>{const out2=pkOut(c);if(!out2)throw 0;o.w=await encObj(await prfKey(out2),b64(raw));pkSet(o);closeSh('P');toast('Sblocco con impronta attivato')}).catch(()=>toast('Attivazione non completata'))}})
   .catch(e=>toast(e&&e.name==='NotAllowedError'?'Attivazione annullata':'Questo dispositivo non supporta lo sblocco con impronta'))}
-function pkUnlock(){const o=pkGet();if(!o)return;
+function pkUnlock(){const o=pkGet();if(!o||!PK_ON)return;
   pkAssert(o).then(async c=>{const out=pkOut(c);if(!out)throw 'prf';const raw=unb64(await decObj(await prfKey(out),o.w));await useDek({key:await importDek(raw)});render()})
   .catch(e=>toast(e==='prf'?'Impronta non disponibile: usa il PIN':'Sblocco non riuscito: usa il PIN'))}
 let recRaw=null;
-async function unlockRecovery(code){const o=await openWith(normCode(code),db.vault.rsalt,db.vault.wRec);if(!o)return false;recRaw=o.raw;await useDek(o);return true}
-async function sealRec(id,data){const u=Date.now();if(pinOn()){if(!vKey)throw 'locked';return {id,u,enc:await encObj(vKey,data)}}return {id,u,plain:data}}
-async function openRec(rec){if(!rec)return {num:'',note:'',files:[]};if(rec.plain)return rec.plain;if(rec.enc){if(!vKey)throw 'locked';return decObj(vKey,rec.enc)}return {num:'',note:'',files:[]}}
+async function unlockRecovery(code){const o=await openWith(normCode(code),db.vault.rsalt,db.vault.wRec,db.vault.it);if(!o)return false;recRaw=o.raw;await useDek(o);return true}
+async function sealRec(id,data){const u=Date.now();if(pinOn()){if(!vKey)throw 'locked';return {id,u,kid:db.vault.kid,enc:await encObj(vKey,data)}}return {id,u,plain:data}}
+async function openRec(rec){if(!rec)return {num:'',note:'',files:[]};if(rec.plain)return rec.plain;if(rec.enc){if(rec.kid&&(!pinOn()||rec.kid!==db.vault.kid))throw 'vecchio';if(!vKey)throw 'locked';return decObj(vKey,rec.enc)}return {num:'',note:'',files:[]}}
 // porta tutti i record allo stato giusto (cifrati se c'è il PIN, in chiaro se non c'è)
 async function healVault(){const all=await vAll();let n=0;for(const r of all){
   if(pinOn()&&r.plain&&vKey){await vPut(await sealRec(r.id,r.plain));n++}
-  else if(!pinOn()&&r.enc&&vKey){try{await vPut({id:r.id,u:Date.now(),plain:await decObj(vKey,r.enc)});n++}catch(e){}}}
+  else if(pinOn()&&r.enc&&!r.kid&&vKey){try{await vPut(await sealRec(r.id,await decObj(vKey,r.enc)));n++}catch(e){}}
+  else if(!pinOn()&&r.enc&&(!r.kid||r.kid===vKid)&&vKey){try{await vPut({id:r.id,u:Date.now(),plain:await decObj(vKey,r.enc)});n++}catch(e){}}}
   if(!pinOn()){vKey=null;vKid=null}if(n){docCache.clear();markDirty()}}
 function markDirty(){if(prof&&prof.mode==='google'){prof.dirty=true;saveProf();clearTimeout(store.t);store.t=setTimeout(()=>sync(false),1500)}}
 // primo PIN: crea la chiave, cifra i documenti, restituisce il codice di recupero
 async function setPin(pin){const raw=crypto.getRandomValues(new Uint8Array(32)),code=newCode();
   const recs=[];for(const r of await vAll())recs.push({id:r.id,data:await openRec(r)});
-  const salt=newSalt(),rsalt=newSalt();
-  db.vault={u:Date.now(),v:2,kid:b64(crypto.getRandomValues(new Uint8Array(9))),salt,wPin:await encObj(await deriveKey(pin,salt),b64(raw)),rsalt,wRec:await encObj(await deriveKey(normCode(code),rsalt),b64(raw))};
+  const salt=newSalt(),rsalt=newSalt(),prev=db.vault&&db.vault.prev||null;
+  db.vault={u:Date.now(),v:2,it:600000,prev,kid:b64(crypto.getRandomValues(new Uint8Array(9))),salt,wPin:await encObj(await deriveKey(pin,salt,600000),b64(raw)),rsalt,wRec:await encObj(await deriveKey(normCode(code),rsalt,600000),b64(raw))};
   vKey=await importDek(raw);vKid=db.vault.kid;
   for(const r of recs)await vPut(await sealRec(r.id,r.data));docCache.clear();store();return code}
 // cambio PIN: serve la chiave in chiaro, che si ottiene di nuovo con il PIN attuale o con il codice
-async function rewrapPin(raw,pin){const salt=newSalt();db.vault={...db.vault,u:Date.now(),salt,wPin:await encObj(await deriveKey(pin,salt),b64(raw))};store()}
-async function rewrapCode(raw){const code=newCode(),rsalt=newSalt();db.vault={...db.vault,u:Date.now(),rsalt,wRec:await encObj(await deriveKey(normCode(code),rsalt),b64(raw))};store();return code}
+async function rewrapPin(raw,pin){const salt=newSalt(),it=db.vault.it||310000;db.vault={...db.vault,u:Date.now(),salt,wPin:await encObj(await deriveKey(pin,salt,it),b64(raw))};store()}
+async function rewrapCode(raw){const code=newCode(),rsalt=newSalt(),it=db.vault.it||310000;db.vault={...db.vault,u:Date.now(),rsalt,wRec:await encObj(await deriveKey(normCode(code),rsalt,it),b64(raw))};store();return code}
 async function removePin(){const recs=[];for(const r of await vAll())recs.push({id:r.id,data:await openRec(r)});
-  pkSet(null);db.vault={u:Date.now(),off:true};for(const r of recs)await vPut({id:r.id,u:Date.now(),plain:r.data});vKey=null;vKid=null;docCache.clear();store()}
+  const v=db.vault;pkSet(null);db.vault={u:Date.now(),off:true,prev:{kid:v.kid,salt:v.salt,wPin:v.wPin,it:v.it}};for(const r of recs)await vPut({id:r.id,u:Date.now(),plain:r.data});vKey=null;vKid=null;docCache.clear();store()}
+async function staleRecs(){try{return (await vAll()).filter(r=>r.enc&&r.kid&&(!pinOn()||r.kid!==db.vault.kid))}catch(e){return []}}
+async function convertStale(oldPin){const pv=db.vault&&db.vault.prev;if(!pv)return false;const o=await openWith(oldPin,pv.salt,pv.wPin,pv.it);if(!o)return false;
+  for(const r of await staleRecs()){if(r.kid!==pv.kid)continue;const data=await decObj(o.key,r.enc);await vPut(pinOn()?(vKey?await sealRec(r.id,data):r):{id:r.id,u:Date.now(),plain:data})}docCache.clear();markDirty();return true}
 // ---- allegati
 function fileToData(f){return new Promise((ok,ko)=>{
-  if(f.type==='application/pdf'){if(f.size>3e6)return ko('grande');const r=new FileReader();r.onload=()=>ok({type:f.type,name:f.name,data:r.result.split(',')[1]});r.onerror=ko;r.readAsDataURL(f);return}
+  if(f.type==='application/pdf'){if(f.size>2e6)return ko('grande');const r=new FileReader();r.onload=()=>ok({type:f.type,name:f.name,data:r.result.split(',')[1]});r.onerror=ko;r.readAsDataURL(f);return}
   if(!/^image\//.test(f.type))return ko('tipo');
   const img=new Image(),u=URL.createObjectURL(f);img.onload=()=>{const M=1600,s=Math.min(1,M/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
     c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);ok({type:'image/jpeg',name:(f.name||'foto').replace(/\.\w+$/,'')+'.jpg',data:c.toDataURL('image/jpeg',.82).split(',')[1]})};
   img.onerror=()=>{URL.revokeObjectURL(u);ko('img')};img.src=u})}
 function blobUrl(f){return URL.createObjectURL(new Blob([unb64(f.data)],{type:f.type}))}
-async function getDoc(id){if(docCache.has(id))return docCache.get(id);const d=await openRec(await vGet(id));const c={num:d.num||'',note:d.note||'',files:(d.files||[]).map(f=>({...f,url:blobUrl(f)}))};docCache.set(id,c);return c}
+const okFile=f=>f&&(f.type==='image/jpeg'||f.type==='application/pdf')&&typeof f.data==='string'&&/^[A-Za-z0-9+/=]+$/.test(f.data);
+async function getDoc(id){if(docCache.has(id))return docCache.get(id);const rec=await vGet(id);if(!rec)throw 'manca';const d=await openRec(rec);d.files=(d.files||[]).filter(okFile);const c={num:d.num||'',note:d.note||'',files:(d.files||[]).map(f=>({...f,url:blobUrl(f)}))};docCache.set(id,c);return c}
 // ---- vista Documenti
 const maskNum=n=>!n?'':n.length<=4?n:'•••• '+n.slice(-4);
 async function renderDoc(){
   const el=$('docList');if(!el)return;if(vKey&&pinOn()&&db.vault.kid!==vKid){vKey=null;vKid=null;docCache.clear()}
   $('fab').hidden=locked();
   $('docTools').innerHTML=locked()?'':pinOn()?`<button class="pill" id="dLock">${ico('lock','currentColor',14)} Blocca</button><button class="pill" id="dPin">PIN</button>`:`<button class="pill" id="dPin">${ico('lock','currentColor',14)} Imposta un PIN</button>`;
-  if(locked()){el.innerHTML=`<div class="card lockcard"><span class="ic big" style="background:var(--pri-t);color:var(--pri-ink)">${ico('lock','currentColor',26)}</span><h3 style="justify-content:center">Documenti protetti</h3>${pkGet()?`<button class="save" id="pkBtn" style="display:flex;align-items:center;justify-content:center;gap:8px">${ico('finger','currentColor',20)} Sblocca con impronta</button><p class="empty" style="text-align:center">oppure inserisci il PIN</p>`:'<p class="empty" style="text-align:center">Inserisci il PIN per vedere i tuoi documenti.</p>'}
+  if(locked()){el.innerHTML=`<div class="card lockcard"><span class="ic big" style="background:var(--pri-t);color:var(--pri-ink)">${ico('lock','currentColor',26)}</span><h3 style="justify-content:center">Documenti protetti</h3>${pkGet()&&PK_ON?`<button class="save" id="pkBtn" style="display:flex;align-items:center;justify-content:center;gap:8px">${ico('finger','currentColor',20)} Sblocca con impronta</button><p class="empty" style="text-align:center">oppure inserisci il PIN</p>`:'<p class="empty" style="text-align:center">Inserisci il PIN per vedere i tuoi documenti.</p>'}
     <form id="unlockF" autocomplete="off"><input class="field pin" id="unlockPin" type="password" inputmode="numeric" placeholder="PIN" aria-label="PIN" maxlength="20"><button class="save" type="submit">Sblocca</button></form><button class="lnk" id="dForgot" style="width:100%">Ho dimenticato il PIN</button></div>`;
     if($('pkBtn'))$('pkBtn').onclick=pkUnlock;
     $('unlockF').onsubmit=async e=>{e.preventDefault();const p=$('unlockPin').value;if(!p)return;$('unlockF').querySelector('button').textContent='Verifico…';if(await unlock(p)){render()}else{$('unlockF').querySelector('button').textContent='Sblocca';$('unlockPin').value='';toast('PIN non corretto')}};
@@ -772,10 +779,11 @@ async function renderDoc(){
 function bindDocTools(){const pinBtn=()=>pinSheet();if($('dPin'))$('dPin').onclick=pinBtn;if($('dPin2'))$('dPin2').onclick=pinBtn;if($('dLock'))$('dLock').onclick=()=>{lockNow();toast('Documenti bloccati')};
   if($('dForgot'))$('dForgot').onclick=forgotSheet}
 async function wipeDocs(){if(!db.doc)db.doc=[];const now=Date.now();db.del=[...(db.del||[]),...db.doc.map(d=>({id:d.id,u:now})),...db.scad.filter(s=>s.doc).map(s=>({id:s.id,u:now}))];
-  db.scad=db.scad.filter(s=>!s.doc);db.doc=[];db.vault={u:now,off:true};vKey=null;docCache.clear();await vClear();store();render()}
+  db.scad=db.scad.filter(s=>!s.doc);db.doc=[];db.vault={u:now,off:true};vKey=null;docCache.clear();store();try{await vClear()}catch(e){}render()}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-doc]');if(b)openDocDetail(b.dataset.doc)});
 // ---- dettaglio
-async function openDocDetail(id){if(!db.doc)db.doc=[];const d=db.doc.find(x=>x.id===id);if(!d)return;let c;try{c=await getDoc(id)}catch(e){toast('Sblocca prima i documenti');return}
+function docErr(e){toast(e==='manca'?'Documento non ancora scaricato su questo dispositivo: tocca Sincronizza nel menu':e==='vecchio'?'Documento protetto da un PIN precedente: vedi l\'avviso in alto':'Sblocca prima i documenti')}
+async function openDocDetail(id){if(!db.doc)db.doc=[];const d=db.doc.find(x=>x.id===id);if(!d)return;let c;try{c=await getDoc(id)}catch(e){docErr(e);return}
   const t=dt(d.tipo);
   $('dvBody').innerHTML=`<h4>${esc(t[0])}</h4><p class="dvsub">${esc(d.chi||'')}</p>
    <div class="dvgrid"><div><label>Numero</label><p class="dvval mono">${c.num?esc(c.num):'—'}</p></div><div><label>Scadenza</label><p class="dvval">${d.scad?fd(d.scad):'nessuna'}</p></div></div>
@@ -821,7 +829,7 @@ function shareDoc(d,c){const t=dt(d.tipo)[0],base=safeName(t+(d.chi?' - '+d.chi:
 // ---- modulo
 let dForm={id:null,tipo:'ci',files:[]};
 async function openDocForm(id){if(!db.doc)db.doc=[];if(locked()){toast('Sblocca prima i documenti');return}
-  const d=id?db.doc.find(x=>x.id===id):null;let c={num:'',note:'',files:[]};if(d){try{c=await getDoc(id)}catch(e){toast('Sblocca prima i documenti');return}}
+  const d=id?db.doc.find(x=>x.id===id):null;let c={num:'',note:'',files:[]};if(d){try{c=await getDoc(id)}catch(e){docErr(e);return}}
   dForm={id:d?d.id:null,tipo:d?d.tipo:'ci',files:c.files.map(f=>({type:f.type,name:f.name,data:f.data}))};
   $('shDTitle').textContent=d?'Modifica documento':'Nuovo documento';
   chips($('dTipo'),Object.fromEntries(Object.entries(DT).map(([k,v])=>[k,[v[0],v[1],DCOL]])),dForm.tipo,k=>dForm.tipo=k);
@@ -829,29 +837,32 @@ async function openDocForm(id){if(!db.doc)db.doc=[];if(locked()){toast('Sblocca 
   const ls=db.scad.find(s=>s.doc===dForm.id);$('dAnt').value=String(ls?ls.ant:60);
   $('chiList').innerHTML=[...new Set(db.doc.map(x=>x.chi).filter(Boolean))].map(v=>`<option value="${esc(v)}">`).join('');
   renderAtt();$('dPinHint').hidden=pinOn();openSh('D')}
-function renderAtt(){$('dAtt').innerHTML=dForm.files.map((f,i)=>`<div class="att">${f.type==='application/pdf'?`<span class="attpdf">${ico('file','currentColor',22)}</span>`:`<img src="data:${f.type};base64,${f.data}" alt="">`}<button class="attx" data-rm="${i}" aria-label="Togli allegato">×</button></div>`).join('')+(dForm.files.length<4?`<label class="attadd" for="dFile">${ico('clip','currentColor',20)}<span>Aggiungi foto o PDF</span></label>`:'');
+function renderAtt(){$('dAtt').innerHTML=dForm.files.map((f,i)=>`<div class="att">${f.type==='application/pdf'?`<span class="attpdf">${ico('file','currentColor',22)}</span>`:`<img src="data:image/jpeg;base64,${esc(f.data)}" alt="">`}<button class="attx" data-rm="${i}" aria-label="Togli allegato">×</button></div>`).join('')+(dForm.files.length<4?`<label class="attadd" for="dFile">${ico('clip','currentColor',20)}<span>Aggiungi foto o PDF</span></label>`:'');
   $('dAtt').querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{dForm.files.splice(+b.dataset.rm,1);renderAtt()})}
-$('dFile').onchange=async e=>{const fs=[...e.target.files].slice(0,4-dForm.files.length);for(const f of fs){try{dForm.files.push(await fileToData(f))}catch(er){toast(er==='grande'?'PDF troppo grande (massimo 3 MB)':'File non supportato: usa una foto o un PDF')}}e.target.value='';renderAtt()};
+$('dFile').onchange=async e=>{const fs=[...e.target.files].slice(0,4-dForm.files.length);for(const f of fs){try{dForm.files.push(await fileToData(f))}catch(er){toast(er==='grande'?'PDF troppo grande (massimo 2 MB)':'File non supportato: usa una foto o un PDF')}}e.target.value='';renderAtt()};
 $('bgD').onclick=()=>closeSh('D');$('bgD2').onclick=()=>closeSh('D2');
 $('dSave').onclick=async()=>{if(!db.doc)db.doc=[];const chi=$('dChi').value.trim();if(!chi){toast('Scrivi di chi è il documento');$('dChi').focus();return}
   if(locked()){toast('Sblocca prima i documenti');return}
   if(db.demo){db={mov:[],scad:[],app:[],del:[],doc:[]};}
   const id=dForm.id||uid(),now=Date.now(),scad=$('dScad').value,ant=+$('dAnt').value;
-  const payload={num:$('dNum').value.trim(),note:$('dNote').value.trim(),files:dForm.files};if(JSON.stringify(payload).length>4.3e6){toast('Allegati troppo pesanti: togli un file');return}
-  try{await vPut(await sealRec(id,payload))}catch(e){toast('Salvataggio non riuscito: memoria piena?');return}
+  const payload={num:$('dNum').value.trim(),note:$('dNote').value.trim(),files:dForm.files};let rec;
+  try{rec=await sealRec(id,payload)}catch(e){toast('Sblocca prima i documenti');return}
+  if(JSON.stringify(rec).length>4.8e6){toast('Allegati troppo pesanti: togli un file o usa foto al posto del PDF');return}
+  try{await vPut(rec)}catch(e){toast('Salvataggio non riuscito: memoria del browser non disponibile o piena');return}
   docCache.delete(id);
-  const meta={id,u:now,tipo:dForm.tipo,chi,scad};db.doc=db.doc.filter(x=>x.id!==id).concat(meta);
+  const primo=!db.doc.length&&!pinOn();const meta={id,u:now,tipo:dForm.tipo,chi,scad};db.doc=db.doc.filter(x=>x.id!==id).concat(meta);
   const old=db.scad.find(s=>s.doc===id);db.scad=db.scad.filter(s=>s.doc!==id);
   if(scad){db.scad.push({id:old?old.id:'sd-'+id,u:now,tit:dt(dForm.tipo)[0]+' di '+chi,cat:'doc',d:scad,ant,doc:id})}
   else if(old){db.del=[...(db.del||[]),{id:old.id,u:now}]}
-  store();closeSh('D');render();toast(scad?'Documento salvato: la scadenza è in Scadenze e Agenda':'Documento salvato')};
+  store();closeSh('D');render();toast(scad?'Documento salvato: la scadenza è in Scadenze e Agenda':'Documento salvato');
+  if(primo)setTimeout(()=>ask('Proteggere i documenti con un PIN?','Il PIN è facoltativo ma consigliato: numero, note e foto vengono cifrati, qui e su Google Drive. Puoi farlo anche più tardi dal tasto in alto.','Imposta il PIN',()=>setTimeout(pinSheet,260),false,null,'Più tardi'),700)};
 // ---- PIN
-const PINF=(btn)=>`<form id="pinF" autocomplete="off"><label for="pin1">Nuovo PIN</label><input class="field pin" id="pin1" type="password" inputmode="numeric" maxlength="20"><label for="pin2">Ripeti il PIN</label><input class="field pin" id="pin2" type="password" inputmode="numeric" maxlength="20"><button class="save" type="submit">${btn}</button></form>`;
+const PINF=(btn)=>`<form id="pinF" autocomplete="off"><label for="pin1">Nuovo PIN</label><input class="field pin" id="pin1" type="password" maxlength="40" autocomplete="off"><label for="pin2">Ripeti il PIN</label><input class="field pin" id="pin2" type="password" maxlength="40" autocomplete="off"><button class="save" type="submit">${btn}</button></form>`;
 function pinSheet(){
   if(locked()){toast('Sblocca prima i documenti');return}
   const on=pinOn();$('pinTitle').textContent=on?'PIN dei documenti':'Imposta un PIN';
   $('pinBody').innerHTML=on?`<p class="empty">I documenti sono cifrati con il tuo PIN, su questo dispositivo e su Google Drive.</p><button class="save" id="pinChange">Cambia PIN</button><button class="save" id="pinCode" style="background:var(--pri-t);color:var(--pri-ink);margin-top:10px">Nuovo codice di recupero</button>${pkOk()?(pkGet()?`<button class="save" id="pkOff" style="background:var(--pri-t);color:var(--pri-ink);margin-top:10px">Disattiva lo sblocco con impronta</button>`:`<button class="save" id="pkOn" style="background:var(--pri-t);color:var(--pri-ink);margin-top:10px">Sblocca con impronta su questo dispositivo</button>`):''}<button class="lnk" id="pinOff" style="width:100%;color:var(--red)">Togli il PIN</button>`
-   :`<div class="warn"><span>Con il PIN numero, note e foto dei documenti vengono <b>cifrati</b>: nessuno può leggerli senza PIN, nemmeno da Google Drive. Subito dopo ti diamo un <b>codice di recupero</b> da conservare: serve se dimentichi il PIN. Usa almeno 6 cifre.</span></div>`+PINF('Imposta il PIN');
+   :`<div class="warn"><span>Con il PIN numero, note e foto dei documenti vengono <b>cifrati</b>: nessuno può leggerli senza PIN, nemmeno da Google Drive. Subito dopo ti diamo un <b>codice di recupero</b> da conservare: serve se dimentichi il PIN. Usa almeno 8 caratteri: più è lungo, più è sicuro.</span></div>`+PINF('Imposta il PIN');
   if(on){$('pinChange').onclick=()=>{closeSh('P');setTimeout(()=>askPinFor('change'),260)};
     $('pinCode').onclick=()=>{closeSh('P');setTimeout(()=>askPinFor('code'),260)};
     if($('pkOn'))$('pkOn').onclick=()=>{closeSh('P');setTimeout(()=>askPinFor('pk'),260)};
@@ -861,15 +872,15 @@ function pinSheet(){
   openSh('P')}
 // per cambiare PIN o codice chiediamo il PIN attuale (serve a riaprire la chiave)
 function askPinFor(what){$('pinTitle').textContent=what==='change'?'Cambia PIN':what==='pk'?'Sblocco con impronta':'Nuovo codice di recupero';
-  $('pinBody').innerHTML=`<form id="pinCur" autocomplete="off"><label for="pin0">PIN attuale</label><input class="field pin" id="pin0" type="password" inputmode="numeric" maxlength="20"><button class="save" type="submit">Continua</button></form>`;
-  $('pinCur').onsubmit=async e=>{e.preventDefault();const o=await openWith($('pin0').value,db.vault.salt,db.vault.wPin);if(!o){toast('PIN non corretto');$('pin0').value='';return}
+  $('pinBody').innerHTML=`<form id="pinCur" autocomplete="off"><label for="pin0">PIN attuale</label><input class="field pin" id="pin0" type="password" maxlength="40" autocomplete="off"><button class="save" type="submit">Continua</button></form>`;
+  $('pinCur').onsubmit=async e=>{e.preventDefault();const o=await openWith($('pin0').value,db.vault.salt,db.vault.wPin,db.vault.it);if(!o){toast('PIN non corretto');$('pin0').value='';return}
     if(what==='pk'){$('pinTitle').textContent='Sblocco con impronta';$('pinBody').innerHTML='<p class="empty">Tocca il pulsante e conferma con impronta o volto. Funzionerà solo su questo dispositivo; il PIN resta sempre valido.</p><button class="save" id="pkGo">Attiva</button>';$('pkGo').onclick=()=>pkEnable(o.raw);return}
     if(what==='change')newPinForm(o.raw);else{const code=await rewrapCode(o.raw);closeSh('P');setTimeout(()=>showCode(code,false),260)}};
   openSh('P')}
 function newPinForm(raw,afterRecovery){$('pinTitle').textContent=afterRecovery?'Scegli un nuovo PIN':'Nuovo PIN';$('pinBody').innerHTML=(afterRecovery?'<p class="empty">Codice di recupero corretto. Ora scegli un nuovo PIN.</p>':'')+PINF('Salva il PIN');
   bindPinForm(async a=>{await rewrapPin(raw,a);closeSh('P');render();toast('Nuovo PIN salvato')});openSh('P')}
 function bindPinForm(done){$('pinF').onsubmit=async e=>{e.preventDefault();const a=$('pin1').value,b=$('pin2').value;
-  if(a.length<6){toast('Il PIN deve avere almeno 6 caratteri');return}if(a!==b){toast('I due PIN non coincidono');return}
+  if(a.length<8){toast('Il PIN deve avere almeno 8 caratteri: cifre, lettere o entrambi');return}if(a!==b){toast('I due PIN non coincidono');return}
   $('pinF').querySelector('button').textContent='Un attimo…';await done(a)}}
 function showCode(code,first){$('pinTitle').textContent='Il tuo codice di recupero';
   $('pinBody').innerHTML=`<p class="empty">Se dimentichi il PIN, con questo codice riapri i documenti e ne scegli uno nuovo. <b>Salvalo adesso</b>: per sicurezza non lo mostreremo più.</p>
@@ -894,18 +905,18 @@ function forgotSheet(){$('pinTitle').textContent='PIN dimenticato';
 function bgPclose(){closeSh('P')}$('bgP').onclick=bgPclose;
 // ---- sincronizzazione documenti su Drive (un file per documento)
 async function docSync(){if(!db.doc)db.doc=[];
-  const q=encodeURIComponent("name contains 'doc-' and trashed=false");
-  const l=await (await gf('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&pageSize=1000&fields=files(id,name,appProperties)&q='+q)).json();
+  const l=await (await gf('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&pageSize=1000&fields=files(id,name,appProperties)')).json();
   const remote=new Map();for(const f of (l.files||[])){if(!f.name||!/^doc-.+\.json$/.test(f.name))continue;const id=f.name.replace(/^doc-|\.json$/g,'');const u=+((f.appProperties||{}).u||0);const prev=remote.get(id);
     if(prev){if(prev.u>=u){await gf('https://www.googleapis.com/drive/v3/files/'+f.id,{method:'DELETE'});continue}await gf('https://www.googleapis.com/drive/v3/files/'+prev.fid,{method:'DELETE'})}
     remote.set(id,{fid:f.id,u})}
-  const ids=new Set(db.doc.map(d=>d.id));const local=new Map((await vAll()).map(r=>[r.id,r]));let changed=false;
+  let docFail=0;const ids=new Set(db.doc.map(d=>d.id));const local=new Map((await vAll()).map(r=>[r.id,r]));let changed=false;
   for(const [id,r] of remote){if(!ids.has(id)){await gf('https://www.googleapis.com/drive/v3/files/'+r.fid,{method:'DELETE'});continue}
     const lr=local.get(id);if(!lr||r.u>lr.u){const rec=await (await gf('https://www.googleapis.com/drive/v3/files/'+r.fid+'?alt=media')).json();await vPut(rec);docCache.delete(id);changed=true}}
   for(const [id,lr] of local){if(!ids.has(id)){await vDel(id);continue}const r=remote.get(id);if(r&&r.u>=lr.u)continue;
     const fd=new FormData();fd.append('metadata',new Blob([JSON.stringify(r?{appProperties:{u:String(lr.u)}}:{name:'doc-'+id+'.json',parents:['appDataFolder'],appProperties:{u:String(lr.u)}})],{type:'application/json'}));
     fd.append('file',new Blob([JSON.stringify(lr)],{type:'application/json'}));
-    await gf('https://www.googleapis.com/upload/drive/v3/files'+(r?'/'+r.fid:'')+'?uploadType=multipart',{method:r?'PATCH':'POST',body:fd})}
+    try{await gf('https://www.googleapis.com/upload/drive/v3/files'+(r?'/'+r.fid:'')+'?uploadType=multipart',{method:r?'PATCH':'POST',body:fd})}catch(e){if(e==='auth'||e==='perm')throw e;docFail++}}
+  if(docFail)toast(docFail===1?'Un documento non è stato salvato su Drive: è troppo pesante':docFail+' documenti non salvati su Drive: troppo pesanti');
   if(vKey&&pinOn())await healVault();
   return changed}
 
@@ -952,11 +963,11 @@ async function sync(interactive){
     let remote=fid?await (await gf('https://www.googleapis.com/drive/v3/files/'+fid+'?alt=media')).json():{};
     for(const extra of files.slice(1)){remote=merge(remote,await (await gf('https://www.googleapis.com/drive/v3/files/'+extra+'?alt=media')).json());await gf('https://www.googleapis.com/drive/v3/files/'+extra,{method:'DELETE'})}
     const before=sig(db);db=merge(db,remote);localSave();const changed=sig(db)!==before;
-    if(fid&&sig(db)===sig(remote)){const dc=await docSync();prof.last=Date.now();prof.dirty=false;saveProf();syncState='ok';if(changed||dc||interactive)render();else renderAcct();return}
+    const dc=await docSync();
+    if(fid&&sig(db)===sig(remote)){prof.last=Date.now();prof.dirty=false;saveProf();syncState='ok';if(changed||dc||interactive)render();else renderAcct();return}
     const fd=new FormData();fd.append('metadata',new Blob([JSON.stringify(fid?{}:{name:FN,parents:['appDataFolder']})],{type:'application/json'}));
     fd.append('file',new Blob([JSON.stringify(db)],{type:'application/json'}));
     await gf('https://www.googleapis.com/upload/drive/v3/files'+(fid?'/'+fid:'')+'?uploadType=multipart',{method:fid?'PATCH':'POST',body:fd});
-    await docSync();
     prof.last=Date.now();prof.dirty=false;saveProf();syncState='ok';
   }catch(e){syncState=e==='perm'?'perm':(e==='auth'||e==='annullato')?'auth':'err'}
   finally{clearTimeout(guard)}
