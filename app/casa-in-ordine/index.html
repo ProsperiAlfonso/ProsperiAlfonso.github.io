@@ -942,7 +942,7 @@ function docErr(e){toast(e==='manca'?'Documento non ancora scaricato su questo d
 async function openDocDetail(id){if(!db.doc)db.doc=[];const d=db.doc.find(x=>x.id===id);if(!d)return;let c;try{c=await getDoc(id)}catch(e){docErr(e);return}
   const t=dtOf(d);
   $('dvBody').innerHTML=`<h4>${esc(t[0])}</h4><p class="dvsub">${esc(d.chi||'')}</p>
-   <div class="dvgrid"><div><label>Numero</label><p class="dvval mono">${c.num?esc(c.num):'—'}</p></div><div><label>Scadenza</label><p class="dvval">${d.scad?fd(d.scad):'nessuna'}</p></div></div>
+   <div class="dvgrid"><div><label>Numero</label><p class="dvval mono">${c.num?esc(c.num):'non indicato'}</p></div><div><label>Scadenza</label><p class="dvval">${d.scad?fd(d.scad):'nessuna'}</p></div></div>
    ${c.num?`<button class="pill" id="dvCopy">Copia il numero</button>`:''}
    ${c.note?`<label>Note</label><p class="dvval" style="white-space:pre-wrap">${esc(c.note)}</p>`:''}
    <div class="thumbs">${c.files.map((f,i)=>f.type==='application/pdf'?`<a class="thumb pdf" href="${f.url}" target="_blank" rel="noopener">${ico('file','currentColor',28)}<span>${esc(f.name||'PDF')}</span></a>`:`<button class="thumb" data-view="${i}"><img src="${f.url}" alt="Allegato ${i+1}"></button>`).join('')}</div>
@@ -1057,7 +1057,7 @@ function forgotSheet(){$('pinTitle').textContent='PIN dimenticato';
    <button class="lnk" id="recNone" style="width:100%;color:var(--red)">Non ho il codice</button>`;
   $('recF').onsubmit=async e=>{e.preventDefault();$('recF').querySelector('button').textContent='Verifico…';
     if(await unlockRecovery($('recCode').value)){const raw=recRaw;recRaw=null;render();newPinForm(raw,true)}else{$('recF').querySelector('button').textContent='Riapri i documenti';toast('Codice non corretto')}};
-  $('recNone').onclick=()=>{closeSh('P');setTimeout(()=>ask('Senza PIN e senza codice','I documenti protetti non si possono aprire in nessun altro modo. Puoi solo cancellarli e ricominciare la sezione Documenti. Movimenti, scadenze e agenda restano.','Continua',()=>setTimeout(()=>ask('Ultima conferma','Verranno cancellati tutti i documenti e le loro foto, anche da Google Drive. Non si può annullare.','Sì, cancella i documenti',async()=>{await wipeDocs();toast('Documenti cancellati')},true),320),true),260)};
+  $('recNone').onclick=()=>{closeSh('P');setTimeout(()=>ask('Senza PIN e senza codice','I documenti protetti non si possono aprire in nessun altro modo. Puoi solo cancellarli e ricominciare la sezione Documenti. Movimenti, scadenze e bollette restano.','Continua',()=>setTimeout(()=>ask('Ultima conferma','Verranno cancellati tutti i documenti e le loro foto, anche da Google Drive. Non si può annullare.','Sì, cancella i documenti',async()=>{await wipeDocs();toast('Documenti cancellati')},true),320),true),260)};
   openSh('P')}
 function bgPclose(){closeSh('P')}$('bgP').onclick=bgPclose;
 // ---- sincronizzazione documenti su Drive (un file per documento)
@@ -1098,7 +1098,7 @@ const bolTitle=b=>b.per||(b.scad?'Scad. '+pd(b.scad).toLocaleDateString('it-IT',
 function renderBol(){const el=$('bolList');if(!el)return;const all=db.bol||[];
   if(!bolFolder){
     el.innerHTML=`<div class="fgrid">${folders().map(f=>{const l=all.filter(b=>b.c===f.k).sort((a,b)=>(b.scad||'').localeCompare(a.scad||''));const last=l[0];
-      return `<button class="fcard" data-fold="${esc(f.k)}"><span class="ic" style="background:${tint(f.c)}">${ico(f.i,f.c)}</span><b>${esc(f.n)}</b><small>${l.length?l.length+' '+(l.length===1?'bolletta':'bollette')+(last?' · ultima '+eur(last.imp):''):'Vuota'}</small></button>`}).join('')}<button class="fcard new" id="fNew">${ico('plus','currentColor',22)}Nuova cartella</button></div>`;
+      return `<button class="fcard" data-fold="${esc(f.k)}"><span class="ic" style="background:${tint(f.c)}">${ico(f.i,f.c)}</span><b>${esc(f.n)}</b><small>${l.length?l.length+' '+(l.length===1?'bolletta':'bollette')+(last?` · ultima <span style="white-space:nowrap">${eur(last.imp)}</span>`:''):'Vuota'}</small></button>`}).join('')}<button class="fcard new" id="fNew">${ico('plus','currentColor',22)}Nuova cartella</button></div>`;
     el.querySelectorAll('[data-fold]').forEach(b=>b.onclick=()=>{bolFolder=b.dataset.fold;render();scrollTo(0,0)});$('fNew').onclick=newFolder;return}
   const f=fOf(bolFolder),l=all.filter(b=>b.c===bolFolder).sort((a,b)=>(b.scad||'').localeCompare(a.scad||'')||(b.u||0)-(a.u||0));
   el.innerHTML=`<div class="fhead"><button class="pill" id="fBack">‹ Cartelle</button><h3></h3>${f.own?'<button class="pill" id="fRen">Rinomina</button>':''}</div>
