@@ -533,15 +533,15 @@ function demo(){
     add(o,10,'U',Math.round(120*f),'figli','Materiale scolastico');add(o,20,'U',90,'sport','Piscina');add(o,22,'U',Math.round(45*f),'salute','Farmacia');add(o,25,'U',Math.round(60*(2-f)),'risto','Pizzeria');
     if(o===1)add(o,16,'U',420,'assic','RC auto');if(o===3)add(o,14,'E',350,'rimb','Rimborso 730');if(o%2===0)add(o,27,'U',Math.round(80*f),'abbigl','Scarpe');if(o===0)add(o,8,'U',210,'casa','Idraulico');}
   const rel=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
-  const s=[],ds=(days,tit,cat,ant)=>s.push({id:uid(),tit,cat,d:rel(days),ant});
-  ds(5,'Bollo auto','auto',7);ds(23,'Revisione auto','auto',30);ds(41,'ISEE da rinnovare','fisco',30);ds(70,"Carta d'identità",'doc',60);ds(118,'Assicurazione casa','assic',30);
+  const s=[],ds=(days,tit,cat,ant,rip)=>s.push({id:uid(),tit,cat,d:rel(days),ant,...(rip?{rip}:{})});
+  ds(5,'Bollo auto','auto',7,12);ds(23,'Revisione auto','auto',30);ds(41,'ISEE da rinnovare','fisco',30);ds(70,"Carta d'identità",'doc',60);ds(118,'Assicurazione casa','assic',30,12);
   // da pagare / da incassare e bollette di esempio
-  const pl=(days,imp,cat,n,t)=>{const id=uid();m.push({id,t:t||'U',imp,cat,d:rel(days),n,sp:'',st:'p',ant:3});return id};
+  const pl=(days,imp,cat,n,t,x)=>{const id=uid();m.push({id,t:t||'U',imp,cat,d:rel(days),n,sp:'',st:'p',ant:3,...(x||{})});return id};
   const bl=[],b=(c,imp,per,n,mv,scad,paidOff)=>{bl.push({id:uid(),c,imp,per,n,scad,mv,f:0})};
-  const lu=pl(6,94.6,'bollette','Luce set-ott'),ga=pl(13,138.2,'bollette','Gas set-ott');pl(20,85,'casa','Rata condominio');pl(9,350,'rimb','Rimborso 730','E');
+  const lu=pl(6,94.6,'bollette','Luce set-ott'),ga=pl(13,138.2,'bollette','Gas set-ott');pl(20,85,'casa','Rata condominio','U',{rip:3});pl(11,29.9,'bollette','Telefono e internet','U',{rip:1,auto:true,ant:0});pl(16,90,'sport','Piscina ragazzi','U',{rip:1});pl(9,350,'rimb','Rimborso 730','E');
   b('luce',94.6,'set-ott','Fornitore luce',lu,rel(6));b('gas',138.2,'set-ott','Fornitore gas',ga,rel(13));
   b('luce',88.3,'lug-ago','Fornitore luce',null,rel(-55));b('acqua',62,'2° semestre','Acquedotto',null,rel(-20));b('tel',29.9,'ottobre','Fibra di casa',null,rel(-12));
-  return {mov:m,scad:s,app:[],bol:bl,cart:[]};
+  return {mov:m,scad:s,app:[],bol:bl,cart:[],conto:{u:1,imp:2350,d:rel(-4)}};
 }
 let cur=new Date();cur.setDate(1);
 const today0=()=>{const t=new Date();t.setHours(0,0,0,0);return t};
@@ -587,7 +587,7 @@ function render(){
     document.querySelectorAll('#scadSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===scadTab));$('scadListPane').hidden=scadTab!=='list';$('scadCalPane').hidden=scadTab!=='cal';
   }else{$('saldoLbl').textContent='Saldo del mese';$('saldo').textContent=(E-U>=0?'+':'')+eur(E-U)}
   // saldo del conto: saldo scritto dall'utente a una data + movimenti pagati con data successiva
-  {const c=db.conto,has=!!(c&&c.d),show=view==='home'&&!db.demo;$('saldoConto').hidden=!show;
+  {const c=db.conto,has=!!(c&&c.d),show=view==='home';$('saldoConto').hidden=!show;
    if(show){const v=contoNow();$('saldoConto').innerHTML=has?`Sul conto oggi: <b class="pv">${(v<0?'−':'')+eur(Math.abs(v))}</b> <u>aggiorna</u>`:'<u>+ Inserisci il saldo del conto</u>'}}
   // previsto a fine mese: saldo + entrate da incassare - uscite da pagare del mese (nel mese in corso anche quelle già scadute)
   {const t=new Date(),isCur=y===t.getFullYear()&&mo===t.getMonth(),m0=iso(new Date(y,mo,1));
