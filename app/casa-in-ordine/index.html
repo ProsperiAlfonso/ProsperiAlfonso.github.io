@@ -351,6 +351,7 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   <div id="fMov">
     <input class="big" id="fImp" inputmode="decimal" placeholder="0,00 €">
     <div class="seg st" id="fStato"><button data-s="ok" class="on">Pagata</button><button data-s="p">Da pagare</button></div>
+    <p class="hint" id="fFut" hidden><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span id="fFutTxt"></span></p>
     <label>Categoria</label><div class="chips" id="fCat"></div>
     <div id="fSpecWrap" hidden><label for="fSpec">Specifica</label><input class="field" id="fSpec" list="specList" placeholder="es. Ricambi bici" autocomplete="off"><datalist id="specList"></datalist></div>
     <div class="two"><div><label id="fDataL">Data</label><input class="field" type="date" id="fData"></div><div><label>Nota</label><input class="field" id="fNota" placeholder="facoltativa"></div></div>
@@ -500,6 +501,8 @@ function saveProf(){try{prof?localStorage.setItem(PK,JSON.stringify(prof)):local
 let db; try{db=JSON.parse(localStorage.getItem(K))}catch(e){}
 if(!db){db=(!prof||prof.mode==='esempio')?Object.assign(demo(),{demo:true}):{mov:[],scad:[],app:[]}}
 db.app=db.app||[];db.del=db.del||[];db.bol=db.bol||[];db.cart=db.cart||[];
+// uscite/entrate segnate pagate ma con data futura (anche inserite prima di questa regola o da un altro dispositivo) diventano da pagare
+function normFut(){if(db.demo)return 0;const oggi=iso(new Date());let n=0;db.mov.forEach(m=>{if(m.st!=='p'&&!m.sc&&m.d>oggi){m.st='p';m.ant=0;m.u=Date.now();n++}});return n}
 function localSave(){try{localStorage.setItem(K,JSON.stringify(db))}catch(e){}}
 function store(){if(db.demo)return;localSave();if(prof&&prof.mode==='google'){prof.dirty=true;saveProf();clearTimeout(store.t);store.t=setTimeout(()=>sync(false),1500)}}
 function demo(){
@@ -632,14 +635,19 @@ $('prev').onclick=()=>shiftMonth(-1);$('next').onclick=()=>shiftMonth(1);
 $('grid').addEventListener('click',e=>{const b=e.target.closest('[data-day]');if(!b)return;sel=b.dataset.day;render()});
 // foglio aggiunta
 let tipo='U',cat='spesa',scat='doc',stato='ok',editId=null;
-function setStato(s){stato=s;document.querySelectorAll('#fStato button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));const p=s==='p';
+const futuro=d=>!!d&&d>iso(new Date());
+// data nel futuro: la voce non può essere già pagata, resta "da pagare" fino a quando la segni pagata
+function checkFut(){if(tipo!=='U'&&tipo!=='E')return;const f=futuro($('fData').value),b=$('fStato').querySelector('[data-s=ok]');b.disabled=f;b.style.opacity=f?.4:'';
+  $('fFut').hidden=!f;if(f){$('fFutTxt').innerHTML=tipo==='E'?'La data è nel futuro, quindi l\'entrata resta tra quelle <b>da incassare</b>. Quando arriva, toccala e scegli "Segna come incassata": passa da sola tra le entrate.':'La data è nel futuro, quindi la spesa resta tra quelle <b>da pagare</b>. Quando la paghi, toccala e scegli "Segna come pagata": passa da sola tra le uscite pagate.';if(stato!=='p')setStato('p')}}
+$('fData').addEventListener('input',checkFut);$('fData').addEventListener('change',checkFut);
+function setStato(s){if(s==='ok'&&(tipo==='U'||tipo==='E')&&futuro($('fData').value))s='p';stato=s;document.querySelectorAll('#fStato button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));const p=s==='p';
   $('fDataL').textContent=p?'Scade il':tipo==='E'?'Incassata il':'Pagata il';$('fAntWrap').hidden=!p}
 $('fStato').onclick=e=>{const b=e.target.closest('button');if(b)setStato(b.dataset.s)};
 function chips(el,set,selk,cb){el.innerHTML=Object.entries(set).map(([k,v])=>`<button data-k="${k}" class="${k===selk?'on':''}">${ico(v[1],v[2],16)} ${v[0]}</button>`).join('');el.onclick=e=>{const b=e.target.closest('button');if(!b)return;el.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));cb(b.dataset.k)}}
 function setTipo(t){tipo=t;document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));$('fMov').hidden=!(t==='U'||t==='E');$('fScad').hidden=t!=='S';$('fApp').hidden=t!=='A';
   $('shTitle').textContent=t==='S'?'Nuova scadenza':t==='A'?'Nuovo impegno':'Nuovo movimento';
   if(t==='U'){cat='spesa';chips($('fCat'),CU,cat,k=>{cat=k;specToggle()})}if(t==='E'){cat='stip';chips($('fCat'),CE,cat,k=>{cat=k;specToggle()})}specToggle();
-  if(t==='U'||t==='E'){const b=$('fStato').querySelectorAll('button');b[0].textContent=t==='E'?'Incassata':'Pagata';b[1].textContent=t==='E'?'Da incassare':'Da pagare';setStato(stato)}if(t==='S')chips($('sCat'),CS,scat,k=>scat=k)}
+  if(t==='U'||t==='E'){const b=$('fStato').querySelectorAll('button');b[0].textContent=t==='E'?'Incassata':'Pagata';b[1].textContent=t==='E'?'Da incassare':'Da pagare';setStato(stato);checkFut()}if(t==='S')chips($('sCat'),CS,scat,k=>scat=k)}
 $('seg').onclick=e=>{const b=e.target.closest('button');if(b)setTipo(b.dataset.t)};
 function specToggle(){const on=(tipo==='U'||tipo==='E')&&(cat==='altro'||cat==='altroE');$('fSpecWrap').hidden=!on;if(on){const used=[...new Set(db.mov.filter(m=>m.t===tipo&&m.sp).map(m=>m.sp))].slice(-30);$('specList').innerHTML=used.map(v=>`<option value="${esc(v)}">`).join('');setTimeout(()=>$('fSpec').focus(),50)}}
 function openSheet(t){$('snack').classList.remove('on');editId=null;$('seg').hidden=false;stato='ok';$('fAnt').value='3';$('fSpec').value='';const calOn=view==='scad'&&scadTab==='cal',d=calOn?sel:iso(new Date());$('fData').value=d;$('fImp').value='';$('fNota').value='';$('sTit').value='';$('sData').value=calOn?sel:'';
@@ -648,7 +656,7 @@ function openSheet(t){$('snack').classList.remove('on');editId=null;$('seg').hid
 // modifica: riapre il modulo con i dati dell'elemento
 function editItem(k,id){
   if(k==='mv'){const m=db.mov.find(x=>x.id===id);if(!m)return;openSheet(m.t);editId=id;stato=paid(m)?'ok':'p';setTipo(m.t);cat=m.cat;chips($('fCat'),m.t==='E'?CE:CU,cat,k=>{cat=k;specToggle()});specToggle();
-    $('fImp').value=String(m.imp).replace('.',',');$('fData').value=m.d;$('fNota').value=m.n||'';$('fSpec').value=m.sp||'';$('fAnt').value=String(m.ant!=null?m.ant:3);$('shTitle').textContent='Modifica movimento'}
+    $('fImp').value=String(m.imp).replace('.',',');$('fData').value=m.d;$('fNota').value=m.n||'';$('fSpec').value=m.sp||'';$('fAnt').value=String(m.ant!=null?m.ant:3);setStato(stato);checkFut();$('shTitle').textContent='Modifica movimento'}
   else if(k==='sc'){const s=db.scad.find(x=>x.id===id);if(!s)return;openSheet('S');editId=id;scat=s.cat;chips($('sCat'),CS,scat,k=>scat=k);$('sTit').value=s.tit;$('sData').value=s.d;$('sAnt').value=String(s.ant||30);$('shTitle').textContent='Modifica scadenza'}
   else{const a=db.app.find(x=>x.id===id);if(!a)return;openSheet('A');editId=id;$('aTit').value=a.tit;$('aData').value=a.d;$('aOra').value=a.ora||'';$('aLuogo').value=a.luogo||'';$('aNota').value=a.nota||'';$('aAnt').value=String(a.ant||60);$('shTitle').textContent='Modifica impegno'}
   $('seg').hidden=true}
@@ -663,6 +671,7 @@ $('save').onclick=()=>{
   else if(tipo==='A'){if(!$('aTit').value.trim()||!$('aData').value){toast('Scrivi cosa devi fare e il giorno');return}nuovo=put(db.app,{tit:$('aTit').value.trim(),d:$('aData').value,ora:$('aOra').value,luogo:$('aLuogo').value.trim(),nota:$('aNota').value.trim(),ant:+$('aAnt').value});sel=$('aData').value;msg='Impegno salvato. Vuoi il promemoria?'}
   else{const v=parseImp($('fImp').value);if(!v){toast('Scrivi un importo valido, per esempio 12,50');return}if(!$('fData').value){toast(stato==='p'?'Scegli la data di scadenza':'Scegli la data');return}
     const sp=(cat==='altro'||cat==='altroE')?$('fSpec').value.trim():'';const o={t:tipo,imp:v,cat,d:$('fData').value,n:$('fNota').value.trim(),sp};
+    if(futuro(o.d))stato='p';
     if(stato==='p'){o.st='p';o.ant=+$('fAnt').value}else{o.st=undefined;o.ant=undefined}
     nuovo=put(db.mov,o);if(editId&&o.st===undefined){const m=db.mov.find(x=>x.id===editId);if(m){delete m.st;delete m.ant}}
     if(stato==='p'&&+$('fAnt').value)msg=(tipo==='E'?'Entrata da incassare':'Spesa da pagare')+' salvata. Vuoi il promemoria?'}
@@ -681,12 +690,12 @@ function bindEdit(k,id,arr,what){$('mvEdit').onclick=()=>{closeSh('M');setTimeou
 function openMv(id){const m=db.mov.find(x=>x.id===id);if(!m)return;const e=m.t==='E',c=e?ce(m.cat):cu(m.cat),pl=!paid(m),g=gg(m.d);
   const when=pl?(g<0?`<b style="color:var(--red)">Scaduta il ${fd(m.d)}</b>`:`${e?'Da incassare':'Da pagare'} entro il ${fd(m.d)}`):`${e?'Incassata':'Pagata'} il ${fd(m.d)}${m.sc&&m.sc!==m.d?` · scadeva il ${fd(m.sc)}`:''}`;
   $('mvBody').innerHTML=`<h4>${esc(mvName(m))}</h4><p class="dvsub">${c[0]}${m.sp&&m.n?' · '+esc(m.sp):''}</p><p class="mvbig ${e?'e':''}">${e?'+':'−'} ${hideAmt?'•••• €':eur(m.imp)}</p><p class="dvval">${when}</p>
-   ${pl?`<div class="paybox"><label for="mvPayD">${e?'Incassata il':'Pagata il'}</label><input class="field" type="date" id="mvPayD" value="${iso(new Date())}"><button class="save" id="mvPay" style="margin-top:4px">${e?'Segna come incassata':'Segna come pagata'}</button></div><button class="lnk" data-ics="${esc(m.id)}" style="width:100%">Aggiungi promemoria al calendario</button>`
+   ${pl?`<div class="paybox"><label for="mvPayD">${e?'Incassata il':'Pagata il'}</label><input class="field" type="date" id="mvPayD" value="${iso(new Date())}" max="${iso(new Date())}"><button class="save" id="mvPay" style="margin-top:4px">${e?'Segna come incassata':'Segna come pagata'}</button></div><button class="lnk" data-ics="${esc(m.id)}" style="width:100%">Aggiungi promemoria al calendario</button>`
        :(m.sc?`<button class="lnk" id="mvUnpay" style="width:100%">Rimetti ${e?'da incassare':'da pagare'}</button>`:'')}
    ${(db.bol||[]).some(b=>b.mv===id)?`<button class="lnk" id="mvBol" style="width:100%">Apri la bolletta</button>`:''}
    ${btn2(B_EDIT,B_DEL)}`;
   if($('mvBol'))$('mvBol').onclick=()=>{const b=db.bol.find(x=>x.mv===id);closeSh('M');docTab='bol';bolFolder=b.c;go('doc');setTimeout(()=>openBol(b.id),280)};
-  if($('mvPay'))$('mvPay').onclick=()=>{const d=$('mvPayD').value||iso(new Date());const x=db.mov.find(y=>y.id===id);if(!x)return;x.sc=x.d;x.d=d;delete x.st;delete x.ant;x.u=Date.now();store();closeSh('M');render();toast(e?'Segnata come incassata':'Segnata come pagata')};
+  if($('mvPay'))$('mvPay').onclick=()=>{const d=$('mvPayD').value||iso(new Date());if(futuro(d)){toast(e?'La data di incasso non può essere nel futuro':'La data di pagamento non può essere nel futuro');return}const x=db.mov.find(y=>y.id===id);if(!x)return;x.sc=x.d;x.d=d;delete x.st;delete x.ant;x.u=Date.now();store();closeSh('M');render();toast(e?'Segnata come incassata':'Segnata come pagata')};
   if($('mvUnpay'))$('mvUnpay').onclick=()=>{const x=db.mov.find(y=>y.id===id);if(!x)return;x.d=x.sc;delete x.sc;x.st='p';x.ant=x.ant||3;x.u=Date.now();store();closeSh('M');render();toast(e?'Di nuovo da incassare':'Di nuovo da pagare')};
   bindEdit('mv',id,'mov','il movimento');openSh('M')}
 function openSc(id){const s=db.scad.find(x=>x.id===id);if(!s)return;
@@ -757,7 +766,7 @@ let hideAmt=false;try{hideAmt=localStorage.getItem('casainordine.nascondi')==='1
 function applyHide(){$('eye').hidden=view==='scad'||view==='doc';$('eyeIc').innerHTML=hideAmt?'<path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.3 2 12 2 12s3.5 7 10 7c1.9 0 3.5-.6 4.9-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>':'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>';$('eye').setAttribute('aria-label',hideAmt?'Mostra gli importi':'Nascondi gli importi');$('eye').setAttribute('aria-pressed',hideAmt);
   if(!hideAmt)return;const dots='•••••• €';if(view!=='scad'&&view!=='doc')$('saldo').textContent=dots;['kE','kU'].forEach(k=>$(k).textContent='•••• €');document.querySelectorAll('#saldoPrev .pv,#dueBody .dk').forEach(e=>e.textContent='•••• €');if(view==='rep')document.querySelectorAll('#repKpi strong').forEach(e=>e.textContent='•••• €')}
 $('eye').onclick=()=>{hideAmt=!hideAmt;try{localStorage.setItem('casainordine.nascondi',hideAmt?'1':'0')}catch(e){}render()};
-const _render=render;render=function(){try{maybeInst()}catch(e){}if(!db.doc)db.doc=[];$('demoCard').hidden=!db.demo;$('syncCard').hidden=true;const needs=!!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));$('syncStrip').hidden=!needs;document.body.classList.toggle('strip',needs);if(needs)$('syncStripTxt').textContent=syncState==='perm'?'Manca il permesso su Google Drive: tocca per riprovare':'Tocca per sincronizzare con Google Drive';_render();renderAcct();if(view==='rep')renderRep();try{document.body.classList.toggle('sec-bol',view==='doc'&&docTab==='bol')}catch(e){}if(view==='doc'){if(!db.bol)db.bol=[];if(!db.cart)db.cart=[];document.querySelectorAll('#docSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===docTab));$('docPane').hidden=docTab!=='doc';$('bolPane').hidden=docTab!=='bol';
+const _render=render;render=function(){if(normFut())setTimeout(store,0);try{maybeInst()}catch(e){}if(!db.doc)db.doc=[];$('demoCard').hidden=!db.demo;$('syncCard').hidden=true;const needs=!!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));$('syncStrip').hidden=!needs;document.body.classList.toggle('strip',needs);if(needs)$('syncStripTxt').textContent=syncState==='perm'?'Manca il permesso su Google Drive: tocca per riprovare':'Tocca per sincronizzare con Google Drive';_render();renderAcct();if(view==='rep')renderRep();try{document.body.classList.toggle('sec-bol',view==='doc'&&docTab==='bol')}catch(e){}if(view==='doc'){if(!db.bol)db.bol=[];if(!db.cart)db.cart=[];document.querySelectorAll('#docSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===docTab));$('docPane').hidden=docTab!=='doc';$('bolPane').hidden=docTab!=='bol';
   if(docTab==='bol'){$('saldoLbl').textContent='Bollette di casa';const n=db.bol.length;$('saldo').innerHTML=n+'<span>'+(n===1?'bolletta':'bollette')+'</span>';$('fab').hidden=false;renderBol()}
   else{$('saldoLbl').textContent='Documenti di famiglia';const n=db.doc.length;$('saldo').innerHTML=n+'<span>'+(n===1?'documento':'documenti')+'</span>';renderDoc()}}applyHide()};
 function fresh(){const now=Date.now(),old=db.demo?[]:[...db.mov,...db.scad,...db.app,...(db.doc||[]),...(db.bol||[]),...(db.cart||[])].map(x=>({id:x.id,u:now}));bClear().catch(()=>{});bolFolder=null;db={mov:[],scad:[],app:[],doc:[],bol:[],cart:[],vault:{u:now,off:true},del:[...(db.demo?[]:db.del||[]),...old]};vKey=null;docCache.clear();vClear().catch(()=>{});store();cur=new Date();cur.setDate(1);sel=iso(new Date());go('home')}
@@ -1127,7 +1136,7 @@ async function openBolForm(id,folder){const b=id?db.bol.find(x=>x.id===id):null;
   bForm={id:b?b.id:null,c:b?b.c:(folder||'luce'),files:files.map(f=>({type:f.type,name:f.name,data:f.data})),stato:'p'};
   $('bTitle').textContent=b?'Modifica bolletta':'Nuova bolletta';$('bNew').value='';$('bNewWrap').hidden=true;bCartChips();
   $('bImp').value=b?String(b.imp).replace('.',','):'';$('bPer').value=b?b.per||'':'';$('bScad').value=b?b.scad||'':'';$('bNota').value=b?b.n||'':'';
-  $('bMov').checked=b?!!m:true;$('bMovWrap').hidden=!$('bMov').checked;$('bPay').value=m&&paid(m)?m.d:iso(new Date());$('bAnt').value=String(m&&m.ant!=null?m.ant:3);bStato(m&&paid(m)?'ok':'p');
+  $('bMov').checked=b?!!m:true;$('bMovWrap').hidden=!$('bMov').checked;$('bPay').value=m&&paid(m)?m.d:iso(new Date());$('bPay').max=iso(new Date());$('bAnt').value=String(m&&m.ant!=null?m.ant:3);bStato(m&&paid(m)?'ok':'p');
   renderBAtt();openSh('B')}
 function renderBAtt(){$('bAtt').innerHTML=bForm.files.map((f,i)=>`<div class="att">${f.type==='application/pdf'?`<span class="attpdf">${ico('file','currentColor',22)}</span>`:`<img src="data:image/jpeg;base64,${esc(f.data)}" alt="">`}<button class="attx" data-brm="${i}" aria-label="Togli allegato">×</button></div>`).join('')+(bForm.files.length<3?`<label class="attadd" for="bFile">${ico('clip','currentColor',18)}<span>Aggiungi PDF o foto</span></label>`:'');
   $('bAtt').querySelectorAll('[data-brm]').forEach(b=>b.onclick=()=>{bForm.files.splice(+b.dataset.brm,1);renderBAtt()})}
@@ -1137,6 +1146,7 @@ $('bSave').onclick=async()=>{if(!db.bol)db.bol=[];if(!db.cart)db.cart=[];
   const imp=parseImp($('bImp').value);if(!imp){toast('Scrivi l\'importo, per esempio 85,40');$('bImp').focus();return}
   const scad=$('bScad').value,withMov=$('bMov').checked,st=bForm.stato;
   if(withMov&&st==='p'&&!scad){toast('Scegli la data di scadenza');$('bScad').focus();return}
+  if(withMov&&st==='ok'&&futuro($('bPay').value)){toast('La data di pagamento non può essere nel futuro: se deve ancora pagarla scegli "Da pagare"');$('bPay').focus();return}
   if(!$('bNewWrap').hidden){const nome=$('bNew').value.trim();if(!nome){toast('Scrivi il nome della nuova cartella');$('bNew').focus();return}}
   if(db.demo){db={mov:[],scad:[],app:[],del:[],doc:[],bol:[],cart:[]}}
   if(!$('bNewWrap').hidden)bForm.c=addFolder($('bNew').value.trim());
@@ -1163,10 +1173,10 @@ async function openBol(id){const b=(db.bol||[]).find(x=>x.id===id);if(!b)return;
    ${b.scad&&m&&paid(m)?`<p class="dvval" style="color:var(--muted)">Scadenza ${fd(b.scad)}</p>`:''}
    ${files.length?`<div class="thumbs">${files.map((x,i)=>x.type==='application/pdf'?`<a class="thumb pdf" href="${x.url}" target="_blank" rel="noopener" download="${esc(x.name||'bolletta.pdf')}">${ico('file','currentColor',28)}<span>${esc(x.name||'PDF')}</span></a>`:`<button class="thumb" data-bview="${i}"><img src="${x.url}" alt="Foto della bolletta ${i+1}"></button>`).join('')}</div>`
      :(b.f?'<p class="empty">Il file non è ancora su questo dispositivo: tocca Sincronizza nel menu.</p>':'<p class="empty" style="text-align:left">Nessun file allegato. Puoi aggiungerlo con Modifica.</p>')}
-   ${m&&!paid(m)?`<div class="paybox"><label for="mvPayD">Pagata il</label><input class="field" type="date" id="mvPayD" value="${iso(new Date())}"><button class="save" id="bPayBtn" style="margin-top:4px">Segna come pagata</button></div>`:''}
+   ${m&&!paid(m)?`<div class="paybox"><label for="mvPayD">Pagata il</label><input class="field" type="date" id="mvPayD" value="${iso(new Date())}" max="${iso(new Date())}"><button class="save" id="bPayBtn" style="margin-top:4px">Segna come pagata</button></div>`:''}
    ${btn2(B_EDIT,B_DEL)}`;
   $('mvBody').querySelectorAll('[data-bview]').forEach(x=>x.onclick=()=>{const fl=files[+x.dataset.bview];$('viewImg').src=fl.url;$('viewDl').href=fl.url;$('viewDl').download=fl.name||'bolletta.jpg';$('viewer').hidden=false});
-  if($('bPayBtn'))$('bPayBtn').onclick=()=>{const d=$('mvPayD').value||iso(new Date());const x=db.mov.find(y=>y.id===b.mv);if(!x)return;x.sc=x.d;x.d=d;delete x.st;delete x.ant;x.u=Date.now();store();closeSh('M');render();toast('Segnata come pagata')};
+  if($('bPayBtn'))$('bPayBtn').onclick=()=>{const d=$('mvPayD').value||iso(new Date());if(futuro(d)){toast('La data di pagamento non può essere nel futuro');return}const x=db.mov.find(y=>y.id===b.mv);if(!x)return;x.sc=x.d;x.d=d;delete x.st;delete x.ant;x.u=Date.now();store();closeSh('M');render();toast('Segnata come pagata')};
   $('mvEdit').onclick=()=>{closeSh('M');setTimeout(()=>openBolForm(id),260)};
   $('mvDel').onclick=()=>{closeSh('M');ask('Eliminare la bolletta?',(m?'Verranno cancellati la bolletta, il suo file e la spesa collegata':'Verranno cancellati la bolletta e il suo file')+', anche dagli altri dispositivi collegati.','Elimina',async()=>{const now=Date.now();db.bol=db.bol.filter(x=>x.id!==id);const dl=[{id,u:now}];if(m){db.mov=db.mov.filter(x=>x.id!==m.id);dl.push({id:m.id,u:now})}db.del=[...(db.del||[]),...dl];try{await bDel(id)}catch(e){}store();render();toast('Bolletta eliminata')},true)};
   openSh('M')}
