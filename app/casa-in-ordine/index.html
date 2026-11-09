@@ -587,9 +587,9 @@ function render(){
    const near=pl.filter(x=>x.g<=30),tu=near.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0),te=near.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0);
    $('dueCard').hidden=!pl.length;
    $('dueBody').innerHTML=`<div class="duekpi"><div class="kpi sm"><small><span class="dot" style="background:var(--red)"></span>Da pagare, 30 gg</small><strong class="dk">${eur(tu)}</strong></div><div class="kpi sm"><small><span class="dot" style="background:var(--green)"></span>Da incassare, 30 gg</small><strong class="dk">${eur(te)}</strong></div></div>
-     <button class="duemore" id="dueMore" aria-expanded="${dueOpen}"><span class="dots">•••</span> ${dueOpen?'Nascondi l\'elenco':'Vedi l\'elenco ('+pl.length+')'}</button>`
-     +(dueOpen?pl.slice(0,6).map(x=>dueRow(x)).join('')+(pl.length>6?`<button class="replink" data-go="scad">Altre ${pl.length-6} in Scadenze <span aria-hidden="true">›</span></button>`:''):'');
-   $('dueMore').onclick=()=>{dueOpen=!dueOpen;render()}}
+     <button class="duemore" id="dueMore" aria-expanded="${dueOpen}"><span class="dots">•••</span> ${dueOpen?'Chiudi l\'elenco ▴':'Vedi l\'elenco ('+pl.length+') ▾'}</button>`
+     +(dueOpen?pl.slice(0,6).map(x=>dueRow(x)).join('')+(pl.length>6?`<button class="replink" data-go="scad">Altre ${pl.length-6} in Scadenze <span aria-hidden="true">›</span></button>`:'')+`<button class="duemore" id="dueLess"><span aria-hidden="true">▴</span> Chiudi l'elenco</button>`:'');
+   $('dueMore').onclick=()=>{dueOpen=!dueOpen;render()};if($('dueLess'))$('dueLess').onclick=()=>{dueOpen=false;render();$('dueCard').scrollIntoView({block:'center',behavior:'smooth'})}}
   $('kE').textContent=eur(E);$('kU').textContent=eur(U);
   // torta
   const by={};ms.filter(x=>x.t==='U').forEach(x=>by[x.cat]=(by[x.cat]||0)+x.imp);
