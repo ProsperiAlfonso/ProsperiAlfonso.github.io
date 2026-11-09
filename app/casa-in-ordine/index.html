@@ -244,6 +244,7 @@ body.sec-bol .fcard.new{border-color:rgba(194,69,63,.35)}
 .seg button.on{background:#fff;color:var(--navy);box-shadow:0 2px 6px rgba(0,0,0,.08)}
 .seg.st{grid-template-columns:1fr 1fr;margin:-2px 0 12px}
 .prevline+.prevline{margin-top:0}
+.ripc{display:flex;align-items:center;gap:10px;margin:-4px 0 14px}.ripc span{color:var(--muted);font-size:14px}.ripc input{width:84px;flex:none;margin:0;text-align:center}.ripc select{flex:1;margin:0}
 #saldoConto{cursor:pointer}#saldoConto u{text-decoration:none;border-bottom:1px dashed rgba(255,255,255,.5)}
 .prevline{margin-top:4px;font-size:14px;color:rgba(255,255,255,.8)}.prevline b{color:#fff;font-weight:600}
 [data-mv],[data-sc],[data-ap]{cursor:pointer}
@@ -357,7 +358,8 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
     <label>Categoria</label><div class="chips" id="fCat"></div>
     <div id="fSpecWrap" hidden><label for="fSpec">Specifica</label><input class="field" id="fSpec" list="specList" placeholder="es. Ricambi bici" autocomplete="off"><datalist id="specList"></datalist></div>
     <div class="two"><div><label id="fDataL">Data</label><input class="field" type="date" id="fData"></div><div><label>Nota</label><input class="field" id="fNota" placeholder="facoltativa"></div></div>
-    <div class="two"><div><label for="fRip">Si ripete</label><select class="field" id="fRip"><option value="0">Non si ripete</option><option value="1">Ogni mese</option><option value="2">Ogni 2 mesi</option><option value="3">Ogni 3 mesi</option><option value="6">Ogni 6 mesi</option><option value="12">Ogni anno</option></select></div><div id="fAutoWrap"><label class="chk2" style="margin-top:30px"><input type="checkbox" id="fAuto"> <span id="fAutoL">Addebito automatico</span></label></div></div>
+    <div class="two"><div><label for="fRip">Si ripete</label><select class="field" id="fRip"><option value="0">Non si ripete</option><option value="w1">Ogni settimana</option><option value="w2">Ogni 2 settimane</option><option value="1">Ogni mese</option><option value="2">Ogni 2 mesi</option><option value="3">Ogni 3 mesi</option><option value="6">Ogni 6 mesi</option><option value="12">Ogni anno</option><option value="c">Personalizza…</option></select></div><div id="fAutoWrap"><label class="chk2" style="margin-top:30px"><input type="checkbox" id="fAuto"> <span id="fAutoL">Addebito automatico</span></label></div></div>
+    <div class="ripc" id="fRipC" hidden><span>Ogni</span><input class="field" type="number" id="fRipN" min="1" max="99" value="3" inputmode="numeric" aria-label="Ogni quanto"><select class="field" id="fRipU" aria-label="Settimane o mesi"><option value="w">settimane</option><option value="m">mesi</option></select></div>
     <p class="hint" id="fAutoHint" hidden><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span id="fAutoTxt"></span></p>
     <div id="fAntWrap" hidden><label for="fAnt">Promemoria tramite calendario</label><select class="field" id="fAnt"><option value="0">Nessun promemoria</option><option value="1">1 giorno prima</option><option value="3" selected>3 giorni prima</option><option value="7">7 giorni prima</option></select>
     <p class="hint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span>La scadenza compare da sola in Scadenze. Il promemoria è facoltativo: arriva tramite il calendario del telefono, non come notifica dell'app. Dopo il salvataggio tocca <b>Aggiungi al calendario</b>.</span></p></div>
@@ -366,7 +368,7 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
     <label>Cosa scade</label><input class="field" id="sTit" placeholder="es. Carta d'identità">
     <label>Tipo</label><div class="chips" id="sCat"></div>
     <div class="two"><div><label>Scade il</label><input class="field" type="date" id="sData"></div><div><label>Promemoria tramite calendario</label><select class="field" id="sAnt"><option value="7">7 giorni prima</option><option value="30" selected>30 giorni prima</option><option value="60">60 giorni prima</option></select></div></div>
-    <label for="sRip">Si ripete</label><select class="field" id="sRip"><option value="0">Non si ripete</option><option value="1">Ogni mese</option><option value="2">Ogni 2 mesi</option><option value="3">Ogni 3 mesi</option><option value="6">Ogni 6 mesi</option><option value="12">Ogni anno</option></select>
+    <label for="sRip">Si ripete</label><select class="field" id="sRip"><option value="0">Non si ripete</option><option value="w1">Ogni settimana</option><option value="w2">Ogni 2 settimane</option><option value="1">Ogni mese</option><option value="2">Ogni 2 mesi</option><option value="3">Ogni 3 mesi</option><option value="6">Ogni 6 mesi</option><option value="12">Ogni anno</option><option value="c">Personalizza…</option></select><div class="ripc" id="sRipC" hidden><span>Ogni</span><input class="field" type="number" id="sRipN" min="1" max="99" value="3" inputmode="numeric" aria-label="Ogni quanto"><select class="field" id="sRipU" aria-label="Settimane o mesi"><option value="w">settimane</option><option value="m">mesi</option></select></div>
     <p class="hint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span>L'avviso arriva tramite il calendario del telefono, non come notifica dell'app. Dopo il salvataggio tocca <b>Aggiungi al calendario</b>.</span></p>
   </div>
   <div id="fApp" hidden>
@@ -648,9 +650,15 @@ let tipo='U',cat='spesa',scat='doc',stato='ok',editId=null;
 const futuro=d=>!!d&&d>iso(new Date());
 // ---- ricorrenze: aggiunge n mesi tenendo il giorno (31 -> ultimo giorno del mese)
 function addMesi(d,n){const [y,m,g]=d.split('-').map(Number);const t=new Date(y,m-1+n,1);const last=new Date(t.getFullYear(),t.getMonth()+1,0).getDate();return iso(new Date(t.getFullYear(),t.getMonth(),Math.min(g,last)))}
-const ripTxt=n=>({1:'ogni mese',2:'ogni 2 mesi',3:'ogni 3 mesi',6:'ogni 6 mesi',12:'ogni anno'})[n]||'';
+// ripetizione: un numero = mesi (1, 2, 3, 6, 12...), "wN" = ogni N settimane
+const isW=r=>typeof r==='string'&&r[0]==='w';
+function addRip(d,r){if(isW(r)){const [y,m,g]=d.split('-').map(Number);return iso(new Date(y,m-1,g+7*(+r.slice(1)||1)))}return addMesi(d,+r)}
+function ripTxt(r){if(!r)return '';if(isW(r)){const n=+r.slice(1);return n===1?'ogni settimana':`ogni ${n} settimane`}const n=+r;return n===1?'ogni mese':n===12?'ogni anno':n%12===0?`ogni ${n/12} anni`:`ogni ${n} mesi`}
+function getRip(p){const v=$(p+'Rip').value;if(v==='0')return undefined;if(v==='c'){const n=Math.min(99,Math.max(1,parseInt($(p+'RipN').value,10)||1));return $(p+'RipU').value==='w'?'w'+n:n}return isW(v)?v:+v}
+function setRip(p,r){const sel=$(p+'Rip'),v=r?String(r):'0';if([...sel.options].some(o=>o.value===v)){sel.value=v;$(p+'RipC').hidden=true}else{sel.value='c';$(p+'RipC').hidden=false;$(p+'RipN').value=isW(r)?r.slice(1):r;$(p+'RipU').value=isW(r)?'w':'m'}}
+function ripChange(p){$(p+'RipC').hidden=$(p+'Rip').value!=='c';if(p==='f')autoUI()}
 // crea la prossima voce di una spesa/entrata che si ripete (id prevedibile: due dispositivi non la creano doppia)
-function nextOcc(x,base){if(!x.rip)return null;const ser=x.ser||x.id,d=addMesi(base,+x.rip),id=ser+'-'+d.replace(/-/g,'');
+function nextOcc(x,base){if(!x.rip)return null;const ser=x.ser||x.id,d=addRip(base,x.rip),id=ser+'-'+d.replace(/-/g,'');
   if(db.mov.some(m=>m.id===id)||(db.del||[]).some(t=>t.id===id))return null;
   const n={id,u:Date.now(),t:x.t,imp:x.imp,cat:x.cat,n:x.n,sp:x.sp||'',d,st:'p',ant:x.ant!=null?x.ant:0,rip:x.rip,ser};if(x.auto)n.auto=true;db.mov.push(n);
   delete x.rip;delete x.auto;x.ser=ser;return n}
@@ -659,11 +667,11 @@ function markPaid(x,d){const due=x.d;x.sc=due;x.d=d;delete x.st;delete x.ant;x.u
 // addebiti automatici arrivati alla data e scadenze ricorrenti passate
 function runAuto(){if(db.demo)return 0;const oggi=iso(new Date());let n=0;
   for(let k=0;k<24;k++){const due=db.mov.filter(m=>m.st==='p'&&m.auto&&m.d<=oggi);if(!due.length)break;due.forEach(m=>{markPaid(m,m.d);n++})}
-  db.scad.forEach(s=>{if(s.rip&&s.d<oggi){let d=s.d;while(d<oggi)d=addMesi(d,+s.rip);s.d=d;s.u=Date.now();n++}});return n}
-function autoUI(){const r=+$('fRip').value,a=$('fAuto').checked,e=tipo==='E';$('fAutoL').textContent=e?'Accredito automatico':'Addebito automatico';
+  db.scad.forEach(s=>{if(s.rip&&s.d<oggi){let d=s.d;while(d<oggi)d=addRip(d,s.rip);s.d=d;s.u=Date.now();n++}});return n}
+function autoUI(){const r=getRip('f'),a=$('fAuto').checked,e=tipo==='E';$('fAutoL').textContent=e?'Accredito automatico':'Addebito automatico';
   $('fAutoHint').hidden=!(r||a);if(r||a)$('fAutoTxt').innerHTML=(r?`${a?'Ogni volta':'Quando confermi di '+(e?'averla incassata':'averla pagata')+','} l'app prepara da sola la successiva, ${ripTxt(r)}.`:'')+(a?` ${r?'Con':'Con'} ${e?'l\'accredito':'l\'addebito'} automatico non devi fare niente: arrivata la data, la voce passa da sola tra le ${e?'entrate incassate':'uscite pagate'}.`:'');
   if(a&&stato!=='p'&&futuro($('fData').value)===false&&$('fData').value===iso(new Date())){}}
-$('fRip').onchange=autoUI;$('fAuto').onchange=()=>{setStato($('fAuto').checked?'p':stato)};
+$('fRip').onchange=()=>ripChange('f');$('sRip').onchange=()=>ripChange('s');['fRipN','fRipU'].forEach(k=>$(k).addEventListener('input',autoUI));$('fAuto').onchange=()=>{setStato($('fAuto').checked?'p':stato)};
 // data nel futuro: la voce non può essere già pagata, resta "da pagare" fino a quando la segni pagata
 function checkFut(){if(tipo!=='U'&&tipo!=='E')return;const f=futuro($('fData').value),b=$('fStato').querySelector('[data-s=ok]');b.disabled=f;b.style.opacity=f?.4:'';
   $('fFut').hidden=!f;if(f){$('fFutTxt').innerHTML=tipo==='E'?'La data è nel futuro, quindi l\'entrata resta tra quelle <b>da incassare</b>. Quel giorno l\'app ti chiede se è arrivata: rispondi sì e passa da sola tra le entrate.':'La data è nel futuro, quindi la spesa resta tra quelle <b>da pagare</b>. Il giorno della scadenza l\'app ti chiede se l\'hai pagata: rispondi sì e passa da sola tra le uscite pagate.';if(stato!=='p')setStato('p')}}
@@ -678,14 +686,14 @@ function setTipo(t){tipo=t;document.querySelectorAll('#seg button').forEach(b=>b
   if(t==='U'||t==='E'){const b=$('fStato').querySelectorAll('button');b[0].textContent=t==='E'?'Incassata':'Pagata';b[1].textContent=t==='E'?'Da incassare':'Da pagare';setStato(stato);checkFut()}if(t==='S')chips($('sCat'),CS,scat,k=>scat=k)}
 $('seg').onclick=e=>{const b=e.target.closest('button');if(b)setTipo(b.dataset.t)};
 function specToggle(){const on=(tipo==='U'||tipo==='E')&&(cat==='altro'||cat==='altroE');$('fSpecWrap').hidden=!on;if(on){const used=[...new Set(db.mov.filter(m=>m.t===tipo&&m.sp).map(m=>m.sp))].slice(-30);$('specList').innerHTML=used.map(v=>`<option value="${esc(v)}">`).join('');setTimeout(()=>$('fSpec').focus(),50)}}
-function openSheet(t){$('snack').classList.remove('on');editId=null;$('fRip').value='0';$('fAuto').checked=false;$('sRip').value='0';$('seg').hidden=false;stato='ok';$('fAnt').value='3';$('fSpec').value='';const calOn=view==='scad'&&scadTab==='cal',d=calOn?sel:iso(new Date());$('fData').value=d;$('fImp').value='';$('fNota').value='';$('sTit').value='';$('sData').value=calOn?sel:'';
+function openSheet(t){$('snack').classList.remove('on');editId=null;setRip('f',0);$('fAuto').checked=false;setRip('s',0);$('seg').hidden=false;stato='ok';$('fAnt').value='3';$('fSpec').value='';const calOn=view==='scad'&&scadTab==='cal',d=calOn?sel:iso(new Date());$('fData').value=d;$('fImp').value='';$('fNota').value='';$('sTit').value='';$('sData').value=calOn?sel:'';
   $('aTit').value='';$('aData').value=d;$('aOra').value='';$('aLuogo').value='';$('aNota').value='';
   setTipo(t||(view==='scad'?'S':'U'));$('bg').style.display='block';requestAnimationFrame(()=>$('sheet').classList.add('on'))}
 // modifica: riapre il modulo con i dati dell'elemento
 function editItem(k,id){
   if(k==='mv'){const m=db.mov.find(x=>x.id===id);if(!m)return;openSheet(m.t);editId=id;stato=paid(m)?'ok':'p';setTipo(m.t);cat=m.cat;chips($('fCat'),m.t==='E'?CE:CU,cat,k=>{cat=k;specToggle()});specToggle();
-    $('fImp').value=String(m.imp).replace('.',',');$('fData').value=m.d;$('fNota').value=m.n||'';$('fSpec').value=m.sp||'';$('fAnt').value=String(m.ant!=null?m.ant:3);$('fRip').value=String(m.rip||0);$('fAuto').checked=!!m.auto;setStato(stato);checkFut();autoUI();$('shTitle').textContent='Modifica movimento'}
-  else if(k==='sc'){const s=db.scad.find(x=>x.id===id);if(!s)return;openSheet('S');editId=id;scat=s.cat;chips($('sCat'),CS,scat,k=>scat=k);$('sTit').value=s.tit;$('sData').value=s.d;$('sAnt').value=String(s.ant||30);$('sRip').value=String(s.rip||0);$('shTitle').textContent='Modifica scadenza'}
+    $('fImp').value=String(m.imp).replace('.',',');$('fData').value=m.d;$('fNota').value=m.n||'';$('fSpec').value=m.sp||'';$('fAnt').value=String(m.ant!=null?m.ant:3);setRip('f',m.rip);$('fAuto').checked=!!m.auto;setStato(stato);checkFut();autoUI();$('shTitle').textContent='Modifica movimento'}
+  else if(k==='sc'){const s=db.scad.find(x=>x.id===id);if(!s)return;openSheet('S');editId=id;scat=s.cat;chips($('sCat'),CS,scat,k=>scat=k);$('sTit').value=s.tit;$('sData').value=s.d;$('sAnt').value=String(s.ant||30);setRip('s',s.rip);$('shTitle').textContent='Modifica scadenza'}
   else{const a=db.app.find(x=>x.id===id);if(!a)return;openSheet('A');editId=id;$('aTit').value=a.tit;$('aData').value=a.d;$('aOra').value=a.ora||'';$('aLuogo').value=a.luogo||'';$('aNota').value=a.nota||'';$('aAnt').value=String(a.ant||60);$('shTitle').textContent='Modifica impegno'}
   $('seg').hidden=true}
 function closeSheet(){$('sheet').classList.remove('on');setTimeout(()=>$('bg').style.display='none',250)}
@@ -695,13 +703,13 @@ document.addEventListener('click',e=>{if(e.target.closest('#addDay'))openSheet('
 function put(arr,o){const i=editId?arr.findIndex(x=>x.id===editId):-1;if(i>=0){const old=arr[i];arr[i]={...old,...o,id:old.id,u:Date.now()};return null}const id=uid();arr.push({...o,id,u:Date.now()});return id}
 $('save').onclick=()=>{
   let nuovo=null,msg='';const wasEdit=!!editId;
-  if(tipo==='S'){if(!$('sTit').value.trim()||!$('sData').value){toast('Scrivi cosa scade e la data');return}nuovo=put(db.scad,{tit:$('sTit').value.trim(),cat:scat,d:$('sData').value,ant:+$('sAnt').value,rip:+$('sRip').value||undefined});{const x=db.scad.find(y=>y.id===(nuovo||editId));if(x&&!x.rip)delete x.rip}msg='Scadenza salvata. Vuoi il promemoria?'}
+  if(tipo==='S'){if(!$('sTit').value.trim()||!$('sData').value){toast('Scrivi cosa scade e la data');return}nuovo=put(db.scad,{tit:$('sTit').value.trim(),cat:scat,d:$('sData').value,ant:+$('sAnt').value,rip:getRip('s')});{const x=db.scad.find(y=>y.id===(nuovo||editId));if(x&&!x.rip)delete x.rip}msg='Scadenza salvata. Vuoi il promemoria?'}
   else if(tipo==='A'){if(!$('aTit').value.trim()||!$('aData').value){toast('Scrivi cosa devi fare e il giorno');return}nuovo=put(db.app,{tit:$('aTit').value.trim(),d:$('aData').value,ora:$('aOra').value,luogo:$('aLuogo').value.trim(),nota:$('aNota').value.trim(),ant:+$('aAnt').value});sel=$('aData').value;msg='Impegno salvato. Vuoi il promemoria?'}
   else{const v=parseImp($('fImp').value);if(!v){toast('Scrivi un importo valido, per esempio 12,50');return}if(!$('fData').value){toast(stato==='p'?'Scegli la data di scadenza':'Scegli la data');return}
     const sp=(cat==='altro'||cat==='altroE')?$('fSpec').value.trim():'';const o={t:tipo,imp:v,cat,d:$('fData').value,n:$('fNota').value.trim(),sp};
     if(futuro(o.d))stato='p';
     if(stato==='p'){o.st='p';o.ant=+$('fAnt').value}else{o.st=undefined;o.ant=undefined}
-    const rip=+$('fRip').value;o.rip=rip||undefined;o.auto=(stato==='p'&&$('fAuto').checked)||undefined;
+    const rip=getRip('f');o.rip=rip||undefined;o.auto=(stato==='p'&&$('fAuto').checked)||undefined;
     nuovo=put(db.mov,o);const cur=db.mov.find(x=>x.id===(nuovo||editId));
     if(cur){['st','ant','rip','auto'].forEach(k=>{if(cur[k]===undefined)delete cur[k]});if(stato!=='p'&&cur.rip){const nx=nextOcc(cur,cur.d);if(nx)msg=msg||''}}
     if(stato==='p'&&+$('fAnt').value)msg=(tipo==='E'?'Entrata da incassare':'Spesa da pagare')+' salvata. Vuoi il promemoria?'}
