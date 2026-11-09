@@ -594,12 +594,12 @@ function render(){
    const sg=v=>(v<0?'−':'+')+eur(Math.abs(v));
    const pl=db.mov.filter(x=>!paid(x)&&(inMonth(x,y,mo)||(isCur&&x.d<m0))),plE=pl.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0),plU=pl.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0);
    if(big){const v=contoNow();$('saldoLbl').innerHTML='Sul conto oggi <button class="cupd" id="cUpd">aggiorna</button>';$('saldo').textContent=(v<0?'−':'')+eur(Math.abs(v));
-     $('saldoConto').hidden=false;$('saldoConto').classList.add('hbox');$('saldoConto').innerHTML=`<small>Saldo ${MESI[mo].toLowerCase()}</small><b class="pv">${sg(E-U)}</b>`;
+     $('saldoConto').hidden=false;$('saldoConto').classList.add('hbox');$('saldoConto').innerHTML=`<small>Spese ${MESI[mo].toLowerCase()}</small><b class="pv">−${eur(U)}</b>`;
      // in arrivo: le voci da pagare/incassare ancora aperte (tutte, non solo del mese), così si vede dove arriverà il conto
      const op=db.mov.filter(x=>!paid(x)&&gg(x.d)<=30),oE=op.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0),oU=op.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0);
-     $('saldoPrev').hidden=!op.length;$('saldoPrev').classList.add('hbox');if(op.length)$('saldoPrev').innerHTML=`<small>Fra 30 giorni</small><b class="pv">${(v+oE-oU<0?'−':'')+eur(Math.abs(v+oE-oU))}</b>`;
+     $('saldoPrev').hidden=!op.length;$('saldoPrev').classList.add('hbox');if(op.length)$('saldoPrev').innerHTML=`<small>Saldo a 30 gg</small><b class="pv">${(v+oE-oU<0?'−':'')+eur(Math.abs(v+oE-oU))}</b>`;
      const d30=iso(new Date(Date.now()-30*864e5)),oggi=iso(new Date()),s30=db.mov.filter(m=>paid(m)&&m.t==='U'&&m.d>d30&&m.d<=oggi).reduce((a,m)=>a+m.imp,0);
-     $('saldo30').hidden=false;$('saldo30').innerHTML=`<small>Spese 30 giorni</small><b class="pv">−${eur(s30)}</b>`;
+     $('saldo30').hidden=false;$('saldo30').innerHTML=`<small>Spese 30 gg</small><b class="pv">−${eur(s30)}</b>`;
      $('cUpd').onclick=e=>{e.stopPropagation();contoSheet()};$('saldoConto').onclick=null}
    else{$('saldo30').hidden=true;$('saldoConto').classList.remove('hbox');$('saldoPrev').classList.remove('hbox');$('saldoConto').hidden=!home||has;if(home&&!has){$('saldoConto').innerHTML='<u>+ Inserisci il saldo del conto</u>';$('saldoConto').onclick=contoSheet}
      const pv=E-U+plE-plU,show=pl.length&&(home||view==='mov');$('saldoPrev').hidden=!show;
