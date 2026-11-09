@@ -251,7 +251,7 @@ body.sec-bol .fcard.new{border-color:rgba(194,69,63,.35)}
 .obox{padding:0 14px 4px}.obox select,.obox .ripc{margin-bottom:10px}.obox .hint{margin-top:0}
 .optchk{border:1px solid var(--line);border-radius:12px;padding:11px 14px;margin:0 0 10px;color:var(--navy);font-weight:500;font-size:15px}
 .ripc{display:flex;align-items:center;gap:10px;margin:-4px 0 14px}.ripc span{color:var(--muted);font-size:14px}.ripc input{width:84px;flex:none;margin:0;text-align:center}.ripc select{flex:1;margin:0}
-#saldoConto{cursor:pointer}#saldoConto u{text-decoration:none;border-bottom:1px dashed rgba(255,255,255,.5)}
+#saldoConto{cursor:pointer}.cupd{border:0;background:rgba(255,255,255,.14);color:#fff;font:600 11px 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 9px;margin-left:8px;cursor:pointer;vertical-align:1px}#saldoConto u{text-decoration:none;border-bottom:1px dashed rgba(255,255,255,.5)}
 .prevline{margin-top:4px;font-size:14px;color:rgba(255,255,255,.8)}.prevline b{color:#fff;font-weight:600}
 [data-mv],[data-sc],[data-ap]{cursor:pointer}
 .amt.pl{color:var(--muted)}
@@ -548,7 +548,8 @@ const today0=()=>{const t=new Date();t.setHours(0,0,0,0);return t};
 let sel=iso(new Date());
 const $=id=>document.getElementById(id);
 const paid=m=>m.st!=='p';
-function contoNow(){const c=db.conto;if(!c)return 0;return db.mov.filter(m=>paid(m)&&m.d>c.d).reduce((a,m)=>a+(m.t==='E'?m.imp:-m.imp),+c.imp||0)}
+// contano i movimenti pagati dopo la data del saldo; per lo stesso giorno, quelli inseriti o segnati pagati dopo aver scritto il saldo
+function contoNow(){const c=db.conto;if(!c)return 0;return db.mov.filter(m=>paid(m)&&(m.d>c.d||(m.d===c.d&&(m.u||0)>(c.u||0)))).reduce((a,m)=>a+(m.t==='E'?m.imp:-m.imp),+c.imp||0)}
 let dueOpen=false,scadTab='list';
 
 const mvName=x=>{const c=x.t==='E'?ce(x.cat):cu(x.cat);return x.n||x.sp||c[0]};
@@ -586,15 +587,19 @@ function render(){
     $('saldo').innerHTML=`${ns}<span>${ns===1?'scadenza':'scadenze'}</span>`;
     document.querySelectorAll('#scadSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===scadTab));$('scadListPane').hidden=scadTab!=='list';$('scadCalPane').hidden=scadTab!=='cal';
   }else{$('saldoLbl').textContent='Saldo del mese';$('saldo').textContent=(E-U>=0?'+':'')+eur(E-U)}
-  // saldo del conto: saldo scritto dall'utente a una data + movimenti pagati con data successiva
-  {const c=db.conto,has=!!(c&&c.d),show=view==='home';$('saldoConto').hidden=!show;
-   if(show){const v=contoNow();$('saldoConto').innerHTML=has?`Sul conto oggi: <b class="pv">${(v<0?'−':'')+eur(Math.abs(v))}</b> <u>aggiorna</u>`:'<u>+ Inserisci il saldo del conto</u>'}}
-  // previsto a fine mese: saldo + entrate da incassare - uscite da pagare del mese (nel mese in corso anche quelle già scadute)
-  {const t=new Date(),isCur=y===t.getFullYear()&&mo===t.getMonth(),m0=iso(new Date(y,mo,1));
-   const pl=db.mov.filter(x=>!paid(x)&&(inMonth(x,y,mo)||(isCur&&x.d<m0)));
-   const pv=E-U+pl.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0)-pl.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0);
-   const show=pl.length&&(view==='home'||view==='mov');$('saldoPrev').hidden=!show;
-   if(show)$('saldoPrev').innerHTML=`Dopo i pagamenti in scadenza: <b class="pv">${(pv>=0?'+':'')+eur(pv)}</b>`}
+  // con il saldo del conto inserito, in Riepilogo il numero grande è quanto c'è sul conto; il saldo del mese scende sotto
+  {const c=db.conto,has=!!(c&&c.d),home=view==='home',big=home&&has,t=new Date(),isCur=y===t.getFullYear()&&mo===t.getMonth(),m0=iso(new Date(y,mo,1));
+   const sg=v=>(v<0?'−':'+')+eur(Math.abs(v));
+   const pl=db.mov.filter(x=>!paid(x)&&(inMonth(x,y,mo)||(isCur&&x.d<m0))),plE=pl.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0),plU=pl.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0);
+   if(big){const v=contoNow();$('saldoLbl').innerHTML='Sul conto oggi <button class="cupd" id="cUpd">aggiorna</button>';$('saldo').textContent=(v<0?'−':'')+eur(Math.abs(v));
+     $('saldoConto').hidden=false;$('saldoConto').innerHTML=`Saldo di ${MESI[mo].toLowerCase()}: <b class="pv">${sg(E-U)}</b>`;
+     // in arrivo: le voci da pagare/incassare ancora aperte (tutte, non solo del mese), così si vede dove arriverà il conto
+     const op=db.mov.filter(x=>!paid(x)&&gg(x.d)<=30),oE=op.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0),oU=op.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0);
+     $('saldoPrev').hidden=!op.length;if(op.length)$('saldoPrev').innerHTML=`Dopo i pagamenti dei prossimi 30 giorni: <b class="pv">${(v+oE-oU<0?'−':'')+eur(Math.abs(v+oE-oU))}</b>`;
+     $('cUpd').onclick=e=>{e.stopPropagation();contoSheet()};$('saldoConto').onclick=null}
+   else{$('saldoConto').hidden=!home||has;if(home&&!has){$('saldoConto').innerHTML='<u>+ Inserisci il saldo del conto</u>';$('saldoConto').onclick=contoSheet}
+     const pv=E-U+plE-plU,show=pl.length&&(home||view==='mov');$('saldoPrev').hidden=!show;
+     if(show)$('saldoPrev').innerHTML=`Dopo i pagamenti in scadenza: <b class="pv">${(pv>=0?'+':'')+eur(pv)}</b>`}}
   // da pagare / da incassare
   {const pl=db.mov.filter(x=>!paid(x)).map(x=>({...x,g:gg(x.d)})).sort((a,b)=>a.g-b.g);
    const near=pl.filter(x=>x.g<=30),tu=near.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0),te=near.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0);
@@ -1292,7 +1297,6 @@ function contoSheet(){const c=db.conto,oggi=iso(new Date());
   if($('cDel'))$('cDel').onclick=()=>{db.conto={u:Date.now(),d:null,imp:0};store();closeSh('M');render();toast('Saldo del conto tolto')};
   openSh('M')}
 $('mConto').onclick=()=>{closeMenu();setTimeout(contoSheet,260)};
-$('saldoConto').onclick=contoSheet;
 // ---- consiglia a un amico: link alla pagina di presentazione (spiega anche come installarla) e codice QR
 const SHARE_URL='https://prosperialfonso.com/casa-in-ordine.html',SHARE_TXT='Casa in Ordine: spese, scadenze, bollette e documenti di casa in un\'unica app. Gratis e senza pubblicità.';
 function copyLink(){const ok=()=>toast('Link copiato: incollalo dove vuoi');if(navigator.clipboard)navigator.clipboard.writeText(SHARE_URL).then(ok,()=>toast(SHARE_URL));else toast(SHARE_URL)}
