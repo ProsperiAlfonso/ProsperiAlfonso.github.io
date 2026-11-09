@@ -42,6 +42,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .btn2{border:0;border-radius:10px;background:var(--navy);color:#fff;font-weight:600;padding:10px 12px;cursor:pointer;white-space:nowrap;font-size:14px}
 .menu-it{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;padding:12px 0;border-top:1px solid var(--line);text-align:left;cursor:pointer}
 .menu-it:first-of-type{border-top:0}
+#mHelp{border-top:1px solid var(--line)}
 .menu-it .t{flex:1;line-height:1.25}
 .menu-it .t small{display:block;color:var(--muted);font-size:13px}
 .menu-it.danger{color:var(--red)}
@@ -242,6 +243,17 @@ body.sec-bol .fcard.new{border-color:rgba(194,69,63,.35)}
 .seg button{border:0;background:none;padding:9px 2px;border-radius:9px;font-weight:600;color:var(--muted);cursor:pointer;font-size:15px}
 .seg button.on{background:#fff;color:var(--navy);box-shadow:0 2px 6px rgba(0,0,0,.08)}
 .seg.st{grid-template-columns:1fr 1fr;margin:-2px 0 12px}
+.prevline+.prevline{margin-top:0}.hrow:has(.hbox){display:flex}.hrow:not(:has(.hbox)){display:block}
+.optrow{border:1px solid var(--line);border-radius:12px;margin:0 0 10px;background:var(--card,#fff)}
+.orow{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:12px 14px;font:500 15px Barlow,system-ui,sans-serif;color:var(--navy);cursor:pointer;text-align:left}
+.orow .ol{flex:1}.orow .oflag{width:20px;height:20px;accent-color:var(--blue);flex:none;margin:0}.orow .of{color:var(--muted);font-weight:400;font-size:13px}.orow .ov{color:var(--muted);font-size:14px}.orow .ov.set{color:var(--pri-ink);font-weight:600}
+
+.obox{padding:0 14px 4px}.obox select,.obox .ripc{margin-bottom:10px}.obox .hint{margin-top:0}
+.optchk{border:1px solid var(--line);border-radius:12px;padding:11px 14px;margin:0 0 10px;color:var(--navy);font-weight:500;font-size:15px}
+.ripc{display:flex;align-items:center;gap:10px;margin:-4px 0 14px}.ripc span{color:var(--muted);font-size:14px}.ripc input{width:84px;flex:none;margin:0;text-align:center}.ripc select{flex:1;margin:0}
+#saldoConto{cursor:pointer}
+.hrow{display:flex;gap:8px;flex-wrap:wrap;align-items:stretch}#saldoPrev.hbox{order:1}#saldo30{order:2}#saldoConto.hbox{order:3}.hrow .prevline{flex:1 1 0;min-width:0}.prevline.hbox small{white-space:normal;line-height:1.15;margin-bottom:2px}.prevline.hbox{padding:7px 10px;justify-content:space-between}.prevline.hbox{display:inline-flex;flex-direction:column;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:7px 12px;margin:10px 0 0;cursor:default;line-height:1.2}
+.saldo .prevline.hbox small{font-family:Barlow,system-ui,sans-serif;letter-spacing:0;text-transform:none;font-size:12.5px;color:rgba(255,255,255,.75)}.prevline.hbox b{font-family:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;font-size:19px;font-weight:600;color:#fff;white-space:nowrap}.cupd{border:0;background:rgba(255,255,255,.14);color:#fff;font:600 11px 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 9px;margin-left:8px;cursor:pointer;vertical-align:1px}#saldoConto u{text-decoration:none;border-bottom:1px dashed rgba(255,255,255,.5)}
 .prevline{margin-top:4px;font-size:14px;color:rgba(255,255,255,.8)}.prevline b{color:#fff;font-weight:600}
 [data-mv],[data-sc],[data-ap]{cursor:pointer}
 .amt.pl{color:var(--muted)}
@@ -260,6 +272,8 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
 .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
 .chips button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 11px;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 .chips button.on{border-color:var(--blue);background:var(--pri-t);color:var(--pri-ink);font-weight:600}
+.chips.pick{margin-bottom:10px}.chips.pick button{padding:7px 12px}
+.ripc .chips.pick{margin:0;flex:1}
 .field{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:12px;background:#fff;min-height:44px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .save{width:100%;border:0;border-radius:12px;background:var(--blue);color:var(--on-pri);font-weight:600;font-size:17px;padding:14px;cursor:pointer;margin-top:4px}
@@ -276,14 +290,14 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   <ul class="w-feat">
    <li><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 4v8l6 4"/></svg></span>Saldo del mese e grafici automatici</li>
    <li><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9"/></svg></span>Scadenze e pagamenti con il conto alla rovescia</li>
-   <li><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span>Bollette e documenti sempre a portata di mano</li>
+   <li><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.5 1.7-2 3-2s2.4.5 3 2M14 10h4M14 13h3"/></svg></span>Bollette e documenti sempre a portata di mano</li>
   </ul>
  </div>
  <div class="w-bot">
   <button class="gbtn" id="wGoogle"><svg width="22" height="22" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.9 6.2C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.2C.9 16.6 0 20.2 0 24s.9 7.4 2.6 10.8l7.9-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4.1-13.5-9.9l-7.9 6.2C6.6 42.6 14.6 48 24 48z"/></svg>Accedi con Google</button>
   <p class="w-note">I dati si salvano nel tuo Google Drive: li ritrovi su telefono e PC.</p>
   <button class="obtn" id="wGuest">Continua come ospite</button>
-  <button class="lnk" id="wDemo">Prima guarda un esempio</button>
+  <button class="lnk" id="wDemo">Prova la demo</button>
   <p class="w-note" style="margin-top:8px">Gratis, senza pubblicità · <a href="../../privacy.html#casa-in-ordine" style="color:var(--pri-ink);font-weight:600">Informativa sulla privacy</a><br>Un progetto di <a href="../../" style="color:inherit">prosperialfonso.com</a></p>
  </div>
 </div>
@@ -291,7 +305,7 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   <div class="brand"><b>Casa <i>in Ordine</i></b><div class="hr">
     <div class="month"><button id="prev" aria-label="Mese precedente">‹</button><span id="mlabel"></span><button id="next" aria-label="Mese successivo">›</button></div><button class="gear" id="menu" aria-label="Impostazioni e backup"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>
   </div>
-  <div class="saldo"><small id="saldoLbl">Saldo del mese</small><div class="saldo-row"><div id="saldo"></div><button class="eye" id="eye" aria-label="Nascondi gli importi" aria-pressed="false"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" id="eyeIc"></svg></button></div><p class="prevline" id="saldoPrev" hidden></p></div>
+  <div class="saldo"><small id="saldoLbl">Saldo del mese</small><div class="saldo-row"><div id="saldo"></div><button class="eye" id="eye" aria-label="Nascondi gli importi" aria-pressed="false"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" id="eyeIc"></svg></button></div><div class="hrow"><p class="prevline" id="saldoConto" hidden></p><p class="prevline hbox" id="saldo30" hidden></p><p class="prevline" id="saldoPrev" hidden></p></div></div>
 </div></header>
 
 <main class="wrap">
@@ -350,24 +364,32 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   <div id="fMov">
     <input class="big" id="fImp" inputmode="decimal" placeholder="0,00 €">
     <div class="seg st" id="fStato"><button data-s="ok" class="on">Pagata</button><button data-s="p">Da pagare</button></div>
+    <p class="hint" id="fFut" hidden><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span id="fFutTxt"></span></p>
     <label>Categoria</label><div class="chips" id="fCat"></div>
     <div id="fSpecWrap" hidden><label for="fSpec">Specifica</label><input class="field" id="fSpec" list="specList" placeholder="es. Ricambi bici" autocomplete="off"><datalist id="specList"></datalist></div>
     <div class="two"><div><label id="fDataL">Data</label><input class="field" type="date" id="fData"></div><div><label>Nota</label><input class="field" id="fNota" placeholder="facoltativa"></div></div>
-    <div id="fAntWrap" hidden><label for="fAnt">Promemoria tramite calendario</label><select class="field" id="fAnt"><option value="0">Nessun promemoria</option><option value="1">1 giorno prima</option><option value="3" selected>3 giorni prima</option><option value="7">7 giorni prima</option></select>
-    <p class="hint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span>La scadenza compare da sola in Scadenze. Il promemoria è facoltativo: arriva tramite il calendario del telefono, non come notifica dell'app. Dopo il salvataggio tocca <b>Aggiungi al calendario</b>.</span></p></div>
+    <div class="optrow"><label class="orow"><input type="checkbox" class="oflag" id="fRipOn"><span class="ol">Si ripete</span><span class="ov" id="fRipVal"></span></label>
+      <div class="obox" id="fRipBox" hidden><select class="field" id="fRip"><option value="0">Non si ripete</option><option value="w1">Ogni settimana</option><option value="w2">Ogni 2 settimane</option><option value="1">Ogni mese</option><option value="2">Ogni 2 mesi</option><option value="3">Ogni 3 mesi</option><option value="6">Ogni 6 mesi</option><option value="12">Ogni anno</option><option value="c">Personalizza…</option></select><div class="ripc" id="fRipC" hidden><span>Ogni</span><input class="field" type="number" id="fRipN" min="1" max="99" value="3" inputmode="numeric" aria-label="Ogni quanto"><select class="field" id="fRipU" aria-label="Settimane o mesi"><option value="w">settimane</option><option value="m">mesi</option></select></div></div></div>
+    <label class="chk2 optchk" id="fAutoWrap"><input type="checkbox" id="fAuto"> <span id="fAutoL">Addebito automatico</span></label>
+    <p class="hint" id="fAutoHint" hidden><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span id="fAutoTxt"></span></p>
+    <div class="optrow" id="fAntWrap" hidden><label class="orow"><input type="checkbox" class="oflag" id="fAntOn"><span class="ol">Promemoria <span class="of">(facoltativo)</span></span><span class="ov" id="fAntVal"></span></label>
+      <div class="obox" id="fAntBox" hidden><select class="field" id="fAnt"><option value="0">Nessun promemoria</option><option value="1">1 giorno prima</option><option value="3" selected>3 giorni prima</option><option value="7">7 giorni prima</option></select><p class="hint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span>Arriva tramite il calendario del telefono, non come notifica dell'app. Dopo il salvataggio tocca <b>Aggiungi al calendario</b>.</span></p></div></div>
   </div>
   <div id="fScad" hidden>
     <label>Cosa scade</label><input class="field" id="sTit" placeholder="es. Carta d'identità">
     <label>Tipo</label><div class="chips" id="sCat"></div>
-    <div class="two"><div><label>Scade il</label><input class="field" type="date" id="sData"></div><div><label>Promemoria tramite calendario</label><select class="field" id="sAnt"><option value="7">7 giorni prima</option><option value="30" selected>30 giorni prima</option><option value="60">60 giorni prima</option></select></div></div>
-    <p class="hint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span>L'avviso arriva tramite il calendario del telefono, non come notifica dell'app. Dopo il salvataggio tocca <b>Aggiungi al calendario</b>.</span></p>
+    <label>Scade il</label><input class="field" type="date" id="sData">
+    <div class="optrow"><label class="orow"><input type="checkbox" class="oflag" id="sAntOn"><span class="ol">Promemoria <span class="of">(facoltativo)</span></span><span class="ov" id="sAntVal"></span></label>
+      <div class="obox" id="sAntBox" hidden><select class="field" id="sAnt"><option value="0">Nessuno</option><option value="1">1 giorno prima</option><option value="3">3 giorni prima</option><option value="7" selected>7 giorni prima</option><option value="30">30 giorni prima</option><option value="60">60 giorni prima</option></select><p class="hint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span>Arriva tramite il calendario del telefono, non come notifica dell'app. Dopo il salvataggio tocca <b>Aggiungi al calendario</b>.</span></p></div></div>
+    <div class="optrow"><label class="orow"><input type="checkbox" class="oflag" id="sRipOn"><span class="ol">Si ripete</span><span class="ov" id="sRipVal"></span></label>
+      <div class="obox" id="sRipBox" hidden><select class="field" id="sRip"><option value="0">Non si ripete</option><option value="w1">Ogni settimana</option><option value="w2">Ogni 2 settimane</option><option value="1">Ogni mese</option><option value="2">Ogni 2 mesi</option><option value="3">Ogni 3 mesi</option><option value="6">Ogni 6 mesi</option><option value="12">Ogni anno</option><option value="c">Personalizza…</option></select><div class="ripc" id="sRipC" hidden><span>Ogni</span><input class="field" type="number" id="sRipN" min="1" max="99" value="3" inputmode="numeric" aria-label="Ogni quanto"><select class="field" id="sRipU" aria-label="Settimane o mesi"><option value="w">settimane</option><option value="m">mesi</option></select></div></div></div>
   </div>
   <div id="fApp" hidden>
     <input class="big txt" id="aTit" placeholder="Cosa devi fare?">
     <div class="two"><div><label>Giorno</label><input class="field" type="date" id="aData"></div><div><label>Ora</label><input class="field" type="time" id="aOra"></div></div>
     <label>Luogo</label><input class="field" id="aLuogo" placeholder="facoltativo">
     <label>Nota</label><input class="field" id="aNota" placeholder="facoltativa">
-    <label>Promemoria tramite calendario</label><select class="field" id="aAnt"><option value="15">15 minuti prima</option><option value="60" selected>1 ora prima</option><option value="1440">1 giorno prima</option></select>
+    <label>Promemoria tramite calendario <span style="color:var(--muted);font-weight:400">(facoltativo)</span></label><select class="field" id="aAnt"><option value="15">15 minuti prima</option><option value="60" selected>1 ora prima</option><option value="1440">1 giorno prima</option></select>
     <p class="hint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span>L'avviso arriva tramite il calendario del telefono, non come notifica dell'app. Dopo il salvataggio tocca <b>Aggiungi al calendario</b>.</span></p>
   </div>
   <button class="save" id="save">Salva</button>
@@ -380,8 +402,10 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   <div class="privacy"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5F6B80" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 18px;margin-top:1px"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span><span id="privTxt">I tuoi dati restano solo su questo telefono: niente account, niente server. Fai ogni tanto un backup.</span></span></div>
   <button class="menu-it" id="mInst" hidden><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M12 8v6M9 11.5l3 3 3-3"/></svg></span><span class="t">Installa sul telefono<small>Aggiunge l'icona alla schermata Home</small></span></button>
   <button class="menu-it" id="mOut" hidden><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l-4-4 4-4M6 12h10"/></svg></span><span class="t">Scollega Google<small>Esci dall'account su questo dispositivo</small></span></button>
+  <button class="menu-it" id="mConto"><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg></span><span class="t">Aggiorna il saldo<small>Scrivi quanto hai oggi sul conto: l'app tiene il conto da qui in poi</small></span></button>
   <button class="menu-it" id="mExp"><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M8 11l4 4 4-4"/><path d="M5 19h14"/></svg></span><span class="t">Esporta backup<small>Salva un file con tutti i dati</small></span></button>
   <button class="menu-it" id="mImp"><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M5 19h14"/></svg></span><span class="t">Importa backup<small>Ripristina i dati da un file salvato</small></span></button>
+  <button class="menu-it" id="mShare"><span class="ic" style="background:var(--acc-t);color:#B87A12"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.4M8.2 13.2l7.6 4.4"/></svg></span><span class="t">Consiglia a un amico<small>Manda il link o fai inquadrare il codice QR</small></span></button>
   <a class="menu-it" id="mHelp" href="mailto:casainordine.app@gmail.com?subject=Casa%20in%20Ordine%3A%20supporto" style="text-decoration:none;color:inherit"><span class="ic" style="background:var(--pri-t);color:var(--pri-ink)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span><span class="t">Supporto<small>Dubbi, problemi o idee? Scrivimi a casainordine.app@gmail.com</small></span></a>
   <button class="menu-it danger" id="mDel"><span class="ic" style="background:#FDECEC"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D9534F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13"/></svg></span><span class="t">Ricomincia da zero<small>Cancella tutti i dati e torna alla schermata iniziale</small></span></button>
   <input type="file" id="impFile" accept=".json,application/json" hidden>
@@ -413,7 +437,7 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   <div id="dNomeWrap" hidden><label for="dNome">Che documento è</label><input class="field" id="dNome" placeholder="es. ISEE, contratto d'affitto, libretto auto" maxlength="60" autocomplete="off"></div>
   <label for="dChi">Di chi è</label><input class="field" id="dChi" list="chiList" placeholder="es. Mario" autocomplete="off"><datalist id="chiList"></datalist>
   <label for="dNum">Numero del documento</label><input class="field mono" id="dNum" autocomplete="off" placeholder="facoltativo">
-  <div class="two"><div><label for="dScad">Scadenza</label><input class="field" type="date" id="dScad"></div><div><label for="dAnt">Promemoria</label><select class="field" id="dAnt"><option value="30">30 giorni prima</option><option value="60" selected>60 giorni prima</option><option value="90">90 giorni prima</option></select></div></div>
+  <div class="two"><div><label for="dScad">Scadenza</label><input class="field" type="date" id="dScad"></div><div><label for="dAnt">Promemoria <span style="color:var(--muted);font-weight:400">(facoltativo)</span></label><select class="field" id="dAnt"><option value="30">30 giorni prima</option><option value="60" selected>60 giorni prima</option><option value="90">90 giorni prima</option></select></div></div>
   <label>Foto fronte e retro, o PDF</label><div class="attlist" id="dAtt"></div><input type="file" id="dFile" accept="image/*,application/pdf" multiple hidden>
   <label for="dNote">Note</label><input class="field" id="dNote" placeholder="es. rilasciata dal Comune di…">
   <p class="hint" id="dPinHint"><span>Consiglio: proteggi i documenti con un PIN, dal tasto in alto nella sezione Documenti.</span></p>
@@ -432,7 +456,7 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   <div id="bMovWrap">
     <div class="seg st" id="bStato"><button data-s="p" class="on">Da pagare</button><button data-s="ok">Già pagata</button></div>
     <div id="bPayWrap" hidden><label for="bPay">Pagata il</label><input class="field" type="date" id="bPay"></div>
-    <div id="bAntWrap"><label for="bAnt">Promemoria tramite calendario</label><select class="field" id="bAnt"><option value="0">Nessun promemoria</option><option value="1">1 giorno prima</option><option value="3" selected>3 giorni prima</option><option value="7">7 giorni prima</option></select>
+    <div id="bAntWrap"><label for="bAnt">Promemoria tramite calendario <span style="color:var(--muted);font-weight:400">(facoltativo)</span></label><select class="field" id="bAnt"><option value="0">Nessun promemoria</option><option value="1">1 giorno prima</option><option value="3" selected>3 giorni prima</option><option value="7">7 giorni prima</option></select>
     <p class="hint"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span>La spesa compare in Scadenze fino a quando la segni pagata. Il promemoria è facoltativo e arriva tramite il calendario del telefono, non come notifica dell'app.</span></p></div>
   </div>
   <button class="save" id="bSave">Salva bolletta</button>
@@ -498,6 +522,8 @@ function saveProf(){try{prof?localStorage.setItem(PK,JSON.stringify(prof)):local
 let db; try{db=JSON.parse(localStorage.getItem(K))}catch(e){}
 if(!db){db=(!prof||prof.mode==='esempio')?Object.assign(demo(),{demo:true}):{mov:[],scad:[],app:[]}}
 db.app=db.app||[];db.del=db.del||[];db.bol=db.bol||[];db.cart=db.cart||[];
+// uscite/entrate segnate pagate ma con data futura (anche inserite prima di questa regola o da un altro dispositivo) diventano da pagare
+function normFut(){if(db.demo)return 0;const oggi=iso(new Date());let n=0;db.mov.forEach(m=>{if(m.st!=='p'&&!m.sc&&m.d>oggi){m.st='p';m.ant=0;m.u=Date.now();n++}});return n}
 function localSave(){try{localStorage.setItem(K,JSON.stringify(db))}catch(e){}}
 function store(){if(db.demo)return;localSave();if(prof&&prof.mode==='google'){prof.dirty=true;saveProf();clearTimeout(store.t);store.t=setTimeout(()=>sync(false),1500)}}
 function demo(){
@@ -509,21 +535,23 @@ function demo(){
     add(o,10,'U',Math.round(120*f),'figli','Materiale scolastico');add(o,20,'U',90,'sport','Piscina');add(o,22,'U',Math.round(45*f),'salute','Farmacia');add(o,25,'U',Math.round(60*(2-f)),'risto','Pizzeria');
     if(o===1)add(o,16,'U',420,'assic','RC auto');if(o===3)add(o,14,'E',350,'rimb','Rimborso 730');if(o%2===0)add(o,27,'U',Math.round(80*f),'abbigl','Scarpe');if(o===0)add(o,8,'U',210,'casa','Idraulico');}
   const rel=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
-  const s=[],ds=(days,tit,cat,ant)=>s.push({id:uid(),tit,cat,d:rel(days),ant});
-  ds(5,'Bollo auto','auto',7);ds(23,'Revisione auto','auto',30);ds(41,'ISEE da rinnovare','fisco',30);ds(70,"Carta d'identità",'doc',60);ds(118,'Assicurazione casa','assic',30);
+  const s=[],ds=(days,tit,cat,ant,rip)=>s.push({id:uid(),tit,cat,d:rel(days),ant,...(rip?{rip}:{})});
+  ds(5,'Bollo auto','auto',7,12);ds(23,'Revisione auto','auto',30);ds(41,'ISEE da rinnovare','fisco',30);ds(70,"Carta d'identità",'doc',60);ds(118,'Assicurazione casa','assic',30,12);
   // da pagare / da incassare e bollette di esempio
-  const pl=(days,imp,cat,n,t)=>{const id=uid();m.push({id,t:t||'U',imp,cat,d:rel(days),n,sp:'',st:'p',ant:3});return id};
+  const pl=(days,imp,cat,n,t,x)=>{const id=uid();m.push({id,t:t||'U',imp,cat,d:rel(days),n,sp:'',st:'p',ant:3,...(x||{})});return id};
   const bl=[],b=(c,imp,per,n,mv,scad,paidOff)=>{bl.push({id:uid(),c,imp,per,n,scad,mv,f:0})};
-  const lu=pl(6,94.6,'bollette','Luce set-ott'),ga=pl(13,138.2,'bollette','Gas set-ott');pl(20,85,'casa','Rata condominio');pl(9,350,'rimb','Rimborso 730','E');
+  const lu=pl(6,94.6,'bollette','Luce set-ott'),ga=pl(13,138.2,'bollette','Gas set-ott');pl(20,85,'casa','Rata condominio','U',{rip:3});pl(11,29.9,'bollette','Telefono e internet','U',{rip:1,auto:true,ant:0});pl(16,90,'sport','Piscina ragazzi','U',{rip:1});pl(9,350,'rimb','Rimborso 730','E');
   b('luce',94.6,'set-ott','Fornitore luce',lu,rel(6));b('gas',138.2,'set-ott','Fornitore gas',ga,rel(13));
   b('luce',88.3,'lug-ago','Fornitore luce',null,rel(-55));b('acqua',62,'2° semestre','Acquedotto',null,rel(-20));b('tel',29.9,'ottobre','Fibra di casa',null,rel(-12));
-  return {mov:m,scad:s,app:[],bol:bl,cart:[]};
+  return {mov:m,scad:s,app:[],bol:bl,cart:[],conto:{u:1,imp:2350,d:rel(-4)}};
 }
 let cur=new Date();cur.setDate(1);
 const today0=()=>{const t=new Date();t.setHours(0,0,0,0);return t};
 let sel=iso(new Date());
 const $=id=>document.getElementById(id);
 const paid=m=>m.st!=='p';
+// contano i movimenti pagati dopo la data del saldo; per lo stesso giorno, quelli inseriti o segnati pagati dopo aver scritto il saldo
+function contoNow(){const c=db.conto;if(!c)return 0;return db.mov.filter(m=>paid(m)&&(m.d>c.d||(m.d===c.d&&(m.u||0)>(c.u||0)))).reduce((a,m)=>a+(m.t==='E'?m.imp:-m.imp),+c.imp||0)}
 let dueOpen=false,scadTab='list';
 
 const mvName=x=>{const c=x.t==='E'?ce(x.cat):cu(x.cat);return x.n||x.sp||c[0]};
@@ -561,20 +589,29 @@ function render(){
     $('saldo').innerHTML=`${ns}<span>${ns===1?'scadenza':'scadenze'}</span>`;
     document.querySelectorAll('#scadSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===scadTab));$('scadListPane').hidden=scadTab!=='list';$('scadCalPane').hidden=scadTab!=='cal';
   }else{$('saldoLbl').textContent='Saldo del mese';$('saldo').textContent=(E-U>=0?'+':'')+eur(E-U)}
-  // previsto a fine mese: saldo + entrate da incassare - uscite da pagare del mese (nel mese in corso anche quelle già scadute)
-  {const t=new Date(),isCur=y===t.getFullYear()&&mo===t.getMonth(),m0=iso(new Date(y,mo,1));
-   const pl=db.mov.filter(x=>!paid(x)&&(inMonth(x,y,mo)||(isCur&&x.d<m0)));
-   const pv=E-U+pl.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0)-pl.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0);
-   const show=pl.length&&(view==='home'||view==='mov');$('saldoPrev').hidden=!show;
-   if(show)$('saldoPrev').innerHTML=`Dopo i pagamenti in scadenza: <b class="pv">${(pv>=0?'+':'')+eur(pv)}</b>`}
+  // con il saldo del conto inserito, in Riepilogo il numero grande è quanto c'è sul conto; il saldo del mese scende sotto
+  {const c=db.conto,has=!!(c&&c.d),home=view==='home',big=home&&has,t=new Date(),isCur=y===t.getFullYear()&&mo===t.getMonth(),m0=iso(new Date(y,mo,1));
+   const sg=v=>(v<0?'−':'+')+eur(Math.abs(v));
+   const pl=db.mov.filter(x=>!paid(x)&&(inMonth(x,y,mo)||(isCur&&x.d<m0))),plE=pl.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0),plU=pl.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0);
+   if(big){const v=contoNow();$('saldoLbl').innerHTML='Sul conto oggi <button class="cupd" id="cUpd">aggiorna</button>';$('saldo').textContent=(v<0?'−':'')+eur(Math.abs(v));
+     $('saldoConto').hidden=false;$('saldoConto').classList.add('hbox');$('saldoConto').innerHTML=`<small>Spese ${MESI[mo].toLowerCase()}</small><b class="pv">−${eur(U)}</b>`;
+     // in arrivo: le voci da pagare/incassare ancora aperte (tutte, non solo del mese), così si vede dove arriverà il conto
+     const op=db.mov.filter(x=>!paid(x)&&gg(x.d)<=30),oE=op.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0),oU=op.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0);
+     $('saldoPrev').hidden=!op.length;$('saldoPrev').classList.add('hbox');if(op.length)$('saldoPrev').innerHTML=`<small>Saldo a 30 gg</small><b class="pv">${(v+oE-oU<0?'−':'')+eur(Math.abs(v+oE-oU))}</b>`;
+     const d30=iso(new Date(Date.now()-30*864e5)),oggi=iso(new Date()),s30=db.mov.filter(m=>paid(m)&&m.t==='U'&&m.d>d30&&m.d<=oggi).reduce((a,m)=>a+m.imp,0);
+     $('saldo30').hidden=false;$('saldo30').innerHTML=`<small>Spese 30 gg</small><b class="pv">−${eur(s30)}</b>`;
+     $('cUpd').onclick=e=>{e.stopPropagation();contoSheet()};$('saldoConto').onclick=null}
+   else{$('saldo30').hidden=true;$('saldoConto').classList.remove('hbox');$('saldoPrev').classList.remove('hbox');$('saldoConto').hidden=!home||has;if(home&&!has){$('saldoConto').innerHTML='<u>+ Inserisci il saldo del conto</u>';$('saldoConto').onclick=contoSheet}
+     const pv=E-U+plE-plU,show=pl.length&&(home||view==='mov');$('saldoPrev').hidden=!show;
+     if(show)$('saldoPrev').innerHTML=`Dopo i pagamenti in scadenza: <b class="pv">${(pv>=0?'+':'')+eur(pv)}</b>`}}
   // da pagare / da incassare
   {const pl=db.mov.filter(x=>!paid(x)).map(x=>({...x,g:gg(x.d)})).sort((a,b)=>a.g-b.g);
    const near=pl.filter(x=>x.g<=30),tu=near.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0),te=near.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0);
    $('dueCard').hidden=!pl.length;
    $('dueBody').innerHTML=`<div class="duekpi"><div class="kpi sm"><small><span class="dot" style="background:var(--red)"></span>Da pagare, 30 gg</small><strong class="dk">${eur(tu)}</strong></div><div class="kpi sm"><small><span class="dot" style="background:var(--green)"></span>Da incassare, 30 gg</small><strong class="dk">${eur(te)}</strong></div></div>
-     <button class="duemore" id="dueMore" aria-expanded="${dueOpen}"><span class="dots">•••</span> ${dueOpen?'Nascondi l\'elenco':'Vedi l\'elenco ('+pl.length+')'}</button>`
-     +(dueOpen?pl.slice(0,6).map(x=>dueRow(x)).join('')+(pl.length>6?`<button class="replink" data-go="scad">Altre ${pl.length-6} in Scadenze <span aria-hidden="true">›</span></button>`:''):'');
-   $('dueMore').onclick=()=>{dueOpen=!dueOpen;render()}}
+     <button class="duemore" id="dueMore" aria-expanded="${dueOpen}"><span class="dots">•••</span> ${dueOpen?'Chiudi l\'elenco ▴':'Vedi l\'elenco ('+pl.length+') ▾'}</button>`
+     +(dueOpen?pl.slice(0,6).map(x=>dueRow(x)).join('')+(pl.length>6?`<button class="replink" data-go="scad">Altre ${pl.length-6} in Scadenze <span aria-hidden="true">›</span></button>`:'')+`<button class="duemore" id="dueLess"><span aria-hidden="true">▴</span> Chiudi l'elenco</button>`:'');
+   $('dueMore').onclick=()=>{dueOpen=!dueOpen;render()};if($('dueLess'))$('dueLess').onclick=()=>{dueOpen=false;render();$('dueCard').scrollIntoView({block:'center',behavior:'smooth'})}}
   $('kE').textContent=eur(E);$('kU').textContent=eur(U);
   // torta
   const by={};ms.filter(x=>x.t==='U').forEach(x=>by[x.cat]=(by[x.cat]||0)+x.imp);
@@ -597,7 +634,7 @@ function render(){
     :`<div class="alert" data-ap="${esc(x.id)}">${badge(x.g,'A')}<p>${esc(x.tit)}<small>${x.ora?esc(x.ora)+' · ':''}${x.luogo?esc(x.luogo)+' · ':''}${pd(x.d).toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'short'})}</small></p></div>`;
   const home=up.filter(x=>x.k==='S'&&x.g<=Math.max(x.ant,30)).slice(0,4);
   $('alerts').innerHTML=home.map(upRow).join('')||'<p class="empty">Nessuna scadenza nei prossimi 30 giorni.</p>';
-  $('scadlist').innerHTML=[...sc.map(s=>({...s,k:'S'})),...pm.map(m=>({...m,k:'M'}))].sort((a,b)=>a.g-b.g).map(s=>s.k==='M'?dueRow(s,true):`<div class="alert" data-sc="${esc(s.id)}">${badge(s.g,'S')}<p>${esc(s.tit)}<small>${fd(s.d)} · avviso ${+s.ant||0} gg prima</small></p><button class="cal" data-ics="${esc(s.id)}">Calendario</button></div>`).join('')||'<p class="empty">Aggiungi la prima scadenza con il tasto +.</p>';
+  $('scadlist').innerHTML=[...sc.map(s=>({...s,k:'S'})),...pm.map(m=>({...m,k:'M'}))].sort((a,b)=>a.g-b.g).map(s=>s.k==='M'?dueRow(s,true):`<div class="alert" data-sc="${esc(s.id)}">${badge(s.g,'S')}<p>${esc(s.tit)}<small>${fd(s.d)}${+s.ant?' · avviso '+s.ant+' gg prima':''}</small></p><button class="cal" data-ics="${esc(s.id)}">Calendario</button></div>`).join('')||'<p class="empty">Aggiungi la prima scadenza con il tasto +.</p>';
   // movimenti
   const groups={};msAll.slice().sort((a,b)=>b.d.localeCompare(a.d)).forEach(x=>(groups[x.d]=groups[x.d]||[]).push(x));
   const movRow=x=>{const c=x.t==='E'?ce(x.cat):cu(x.cat),pl=!paid(x);return `<div class="row" data-mv="${esc(x.id)}"><div class="ic" style="background:${tint(c[2])}">${ico(c[1],c[2])}</div><div class="t">${esc(x.n)||esc(x.sp)||c[0]}${pl?`<span class="tag" style="background:#FDECEC;color:#D9534F">${x.t==='E'?'da incassare':'da pagare'}</span>`:''}<small>${c[0]}${x.sp&&x.n?' · '+esc(x.sp):''}${pl?' · scade il '+fd(x.d):''}</small></div><div class="amt ${x.t==='E'?'e':''} ${pl?'pl':''}">${x.t==='E'?'+':'−'} ${eur(x.imp)}</div></div>`};
@@ -630,24 +667,63 @@ $('prev').onclick=()=>shiftMonth(-1);$('next').onclick=()=>shiftMonth(1);
 $('grid').addEventListener('click',e=>{const b=e.target.closest('[data-day]');if(!b)return;sel=b.dataset.day;render()});
 // foglio aggiunta
 let tipo='U',cat='spesa',scat='doc',stato='ok',editId=null;
-function setStato(s){stato=s;document.querySelectorAll('#fStato button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));const p=s==='p';
-  $('fDataL').textContent=p?'Scade il':tipo==='E'?'Incassata il':'Pagata il';$('fAntWrap').hidden=!p}
+const futuro=d=>!!d&&d>iso(new Date());
+// ---- ricorrenze: aggiunge n mesi tenendo il giorno (31 -> ultimo giorno del mese)
+function addMesi(d,n){const [y,m,g]=d.split('-').map(Number);const t=new Date(y,m-1+n,1);const last=new Date(t.getFullYear(),t.getMonth()+1,0).getDate();return iso(new Date(t.getFullYear(),t.getMonth(),Math.min(g,last)))}
+// ripetizione: un numero = mesi (1, 2, 3, 6, 12...), "wN" = ogni N settimane
+const isW=r=>typeof r==='string'&&r[0]==='w';
+function addRip(d,r){if(isW(r)){const [y,m,g]=d.split('-').map(Number);return iso(new Date(y,m-1,g+7*(+r.slice(1)||1)))}return addMesi(d,+r)}
+function ripTxt(r){if(!r)return '';if(isW(r)){const n=+r.slice(1);return n===1?'ogni settimana':`ogni ${n} settimane`}const n=+r;return n===1?'ogni mese':n===12?'ogni anno':n%12===0?`ogni ${n/12} anni`:`ogni ${n} mesi`}
+function getRip(p){const v=$(p+'Rip').value;if(v==='0')return undefined;if(v==='c'){const n=Math.min(99,Math.max(1,parseInt($(p+'RipN').value,10)||1));return $(p+'RipU').value==='w'?'w'+n:n}return isW(v)?v:+v}
+function setRip(p,r){const sel=$(p+'Rip'),v=r?String(r):'0';if([...sel.options].some(o=>o.value===v)){sel.value=v;$(p+'RipC').hidden=true}else{sel.value='c';$(p+'RipC').hidden=false;$(p+'RipN').value=isW(r)?r.slice(1):r;$(p+'RipU').value=isW(r)?'w':'m'}}
+// righe "Si ripete" e "Promemoria": anteprima del valore, si aprono con un tocco
+const capF=t=>t?t.charAt(0).toUpperCase()+t.slice(1):t;
+function optSum(p){const r=getRip(p),a=+$(p+'Ant').value;
+  [['Rip',!!r],['Ant',!!a]].forEach(([k,on])=>{const f=$(p+k+'On');if(f)f.checked=on;boxSet(p+k+'Box',on)});
+  const rv=$(p+'RipVal'),av=$(p+'AntVal');rv.textContent='';av.textContent=''}
+function boxSet(id,open){const b=$(id);if(!b)return;b.hidden=!open;b.parentNode.classList.toggle('open',open)}
+function optSet(p,open){optSum(p)}
+// flag: acceso mette un valore di partenza, spento azzera
+const FLAG_DEF={fRip:'1',sRip:'12',fAnt:'3',sAnt:'7'};
+['fRip','sRip','fAnt','sAnt'].forEach(k=>{$(k+'On').onchange=()=>{const sel=$(k);sel.value=$(k+'On').checked?FLAG_DEF[k]:'0';sel.dispatchEvent(new Event('change',{bubbles:true}))}});
+['fAnt','sAnt','sRip','sRipN','sRipU','fRipN','fRipU'].forEach(k=>$(k).addEventListener('change',()=>optSum(k[0])));
+function ripChange(p){$(p+'RipC').hidden=$(p+'Rip').value!=='c';if(p==='f')autoUI();optSum(p)}
+// crea la prossima voce di una spesa/entrata che si ripete (id prevedibile: due dispositivi non la creano doppia)
+function nextOcc(x,base){if(!x.rip)return null;const ser=x.ser||x.id,d=addRip(base,x.rip),id=ser+'-'+d.replace(/-/g,'');
+  if(db.mov.some(m=>m.id===id)||(db.del||[]).some(t=>t.id===id))return null;
+  const n={id,u:Date.now(),t:x.t,imp:x.imp,cat:x.cat,n:x.n,sp:x.sp||'',d,st:'p',ant:x.ant!=null?x.ant:0,rip:x.rip,ser};if(x.auto)n.auto=true;db.mov.push(n);
+  delete x.rip;delete x.auto;x.ser=ser;return n}
+// segna pagata (a mano o in automatico) e, se si ripete, prepara la prossima
+function markPaid(x,d){const due=x.d;x.sc=due;x.d=d;delete x.st;delete x.ant;x.u=Date.now();return nextOcc(x,due)}
+// addebiti automatici arrivati alla data e scadenze ricorrenti passate
+function runAuto(){if(db.demo)return 0;const oggi=iso(new Date());let n=0;
+  for(let k=0;k<24;k++){const due=db.mov.filter(m=>m.st==='p'&&m.auto&&m.d<=oggi);if(!due.length)break;due.forEach(m=>{markPaid(m,m.d);n++})}
+  db.scad.forEach(s=>{if(s.rip&&s.d<oggi){let d=s.d;while(d<oggi)d=addRip(d,s.rip);s.d=d;s.u=Date.now();n++}});return n}
+function autoUI(){const a=$('fAuto').checked,e=tipo==='E';$('fAutoL').textContent=e?'Accredito automatico':'Addebito automatico';
+  $('fAutoHint').hidden=!a;if(a)$('fAutoTxt').innerHTML=`Non devi fare niente: arrivata la data, la voce passa da sola tra le ${e?'entrate incassate':'uscite pagate'}.`;if($('fRipVal'))optSum('f')}
+$('fRip').onchange=()=>ripChange('f');$('sRip').onchange=()=>ripChange('s');['fRipN','fRipU'].forEach(k=>$(k).addEventListener('input',autoUI));$('fAuto').onchange=()=>{setStato($('fAuto').checked?'p':stato);autoUI();optSum('f')};
+// data nel futuro: la voce non può essere già pagata, resta "da pagare" fino a quando la segni pagata
+function checkFut(){if(tipo!=='U'&&tipo!=='E')return;const f=futuro($('fData').value),b=$('fStato').querySelector('[data-s=ok]');b.disabled=f;b.style.opacity=f?.4:'';
+  $('fFut').hidden=!f;if(f){$('fFutTxt').innerHTML=tipo==='E'?'Data futura: resta <b>da incassare</b>. Quel giorno l\'app ti chiede se è arrivata.':'Data futura: resta <b>da pagare</b>. Il giorno della scadenza l\'app ti chiede se l\'hai pagata.';if(stato!=='p')setStato('p')}}
+$('fData').addEventListener('input',checkFut);$('fData').addEventListener('change',checkFut);
+function setStato(s){if(s==='ok'&&(tipo==='U'||tipo==='E')&&futuro($('fData').value))s='p';stato=s;document.querySelectorAll('#fStato button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));const p=s==='p';
+  $('fDataL').textContent=p?($('fAuto').checked?(tipo==='E'?'Accredito il':'Addebito il'):'Scade il'):tipo==='E'?'Incassata il':'Pagata il';$('fAntWrap').hidden=!p;if($('fRipVal'))optSum('f');$('fAutoWrap').style.display=p?'':'none';if(!p&&$('fAuto').checked){$('fAuto').checked=false}if(typeof autoUI==='function')autoUI()}
 $('fStato').onclick=e=>{const b=e.target.closest('button');if(b)setStato(b.dataset.s)};
 function chips(el,set,selk,cb){el.innerHTML=Object.entries(set).map(([k,v])=>`<button data-k="${k}" class="${k===selk?'on':''}">${ico(v[1],v[2],16)} ${v[0]}</button>`).join('');el.onclick=e=>{const b=e.target.closest('button');if(!b)return;el.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));cb(b.dataset.k)}}
 function setTipo(t){tipo=t;document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));$('fMov').hidden=!(t==='U'||t==='E');$('fScad').hidden=t!=='S';$('fApp').hidden=t!=='A';
   $('shTitle').textContent=t==='S'?'Nuova scadenza':t==='A'?'Nuovo impegno':'Nuovo movimento';
   if(t==='U'){cat='spesa';chips($('fCat'),CU,cat,k=>{cat=k;specToggle()})}if(t==='E'){cat='stip';chips($('fCat'),CE,cat,k=>{cat=k;specToggle()})}specToggle();
-  if(t==='U'||t==='E'){const b=$('fStato').querySelectorAll('button');b[0].textContent=t==='E'?'Incassata':'Pagata';b[1].textContent=t==='E'?'Da incassare':'Da pagare';setStato(stato)}if(t==='S')chips($('sCat'),CS,scat,k=>scat=k)}
+  if(t==='U'||t==='E'){const b=$('fStato').querySelectorAll('button');b[0].textContent=t==='E'?'Incassata':'Pagata';b[1].textContent=t==='E'?'Da incassare':'Da pagare';setStato(stato);checkFut()}if(t==='S')chips($('sCat'),CS,scat,k=>scat=k)}
 $('seg').onclick=e=>{const b=e.target.closest('button');if(b)setTipo(b.dataset.t)};
 function specToggle(){const on=(tipo==='U'||tipo==='E')&&(cat==='altro'||cat==='altroE');$('fSpecWrap').hidden=!on;if(on){const used=[...new Set(db.mov.filter(m=>m.t===tipo&&m.sp).map(m=>m.sp))].slice(-30);$('specList').innerHTML=used.map(v=>`<option value="${esc(v)}">`).join('');setTimeout(()=>$('fSpec').focus(),50)}}
-function openSheet(t){$('snack').classList.remove('on');editId=null;$('seg').hidden=false;stato='ok';$('fAnt').value='3';$('fSpec').value='';const calOn=view==='scad'&&scadTab==='cal',d=calOn?sel:iso(new Date());$('fData').value=d;$('fImp').value='';$('fNota').value='';$('sTit').value='';$('sData').value=calOn?sel:'';
+function openSheet(t){$('snack').classList.remove('on');editId=null;setRip('f',0);$('fAuto').checked=false;setRip('s',0);$('sAnt').value='0';$('seg').hidden=false;stato='ok';$('fAnt').value='0';$('fSpec').value='';const calOn=view==='scad'&&scadTab==='cal',d=calOn?sel:iso(new Date());$('fData').value=d;$('fImp').value='';$('fNota').value='';$('sTit').value='';$('sData').value=calOn?sel:'';
   $('aTit').value='';$('aData').value=d;$('aOra').value='';$('aLuogo').value='';$('aNota').value='';
-  setTipo(t||(view==='scad'?'S':'U'));$('bg').style.display='block';requestAnimationFrame(()=>$('sheet').classList.add('on'))}
+  setTipo(t||(view==='scad'?'S':'U'));optSet('f',false);optSet('s',false);$('bg').style.display='block';requestAnimationFrame(()=>$('sheet').classList.add('on'))}
 // modifica: riapre il modulo con i dati dell'elemento
 function editItem(k,id){
   if(k==='mv'){const m=db.mov.find(x=>x.id===id);if(!m)return;openSheet(m.t);editId=id;stato=paid(m)?'ok':'p';setTipo(m.t);cat=m.cat;chips($('fCat'),m.t==='E'?CE:CU,cat,k=>{cat=k;specToggle()});specToggle();
-    $('fImp').value=String(m.imp).replace('.',',');$('fData').value=m.d;$('fNota').value=m.n||'';$('fSpec').value=m.sp||'';$('fAnt').value=String(m.ant!=null?m.ant:3);$('shTitle').textContent='Modifica movimento'}
-  else if(k==='sc'){const s=db.scad.find(x=>x.id===id);if(!s)return;openSheet('S');editId=id;scat=s.cat;chips($('sCat'),CS,scat,k=>scat=k);$('sTit').value=s.tit;$('sData').value=s.d;$('sAnt').value=String(s.ant||30);$('shTitle').textContent='Modifica scadenza'}
+    $('fImp').value=String(m.imp).replace('.',',');$('fData').value=m.d;$('fNota').value=m.n||'';$('fSpec').value=m.sp||'';$('fAnt').value=String(m.ant!=null?m.ant:3);setRip('f',m.rip);$('fAuto').checked=!!m.auto;setStato(stato);checkFut();autoUI();optSet('f',false);boxSet('fRipBox',!!m.rip);$('shTitle').textContent='Modifica movimento'}
+  else if(k==='sc'){const s=db.scad.find(x=>x.id===id);if(!s)return;openSheet('S');editId=id;scat=s.cat;chips($('sCat'),CS,scat,k=>scat=k);$('sTit').value=s.tit;$('sData').value=s.d;$('sAnt').value=String(s.ant!=null?s.ant:7);setRip('s',s.rip);optSet('s',false);boxSet('sRipBox',!!s.rip);$('shTitle').textContent='Modifica scadenza'}
   else{const a=db.app.find(x=>x.id===id);if(!a)return;openSheet('A');editId=id;$('aTit').value=a.tit;$('aData').value=a.d;$('aOra').value=a.ora||'';$('aLuogo').value=a.luogo||'';$('aNota').value=a.nota||'';$('aAnt').value=String(a.ant||60);$('shTitle').textContent='Modifica impegno'}
   $('seg').hidden=true}
 function closeSheet(){$('sheet').classList.remove('on');setTimeout(()=>$('bg').style.display='none',250)}
@@ -657,15 +733,18 @@ document.addEventListener('click',e=>{if(e.target.closest('#addDay'))openSheet('
 function put(arr,o){const i=editId?arr.findIndex(x=>x.id===editId):-1;if(i>=0){const old=arr[i];arr[i]={...old,...o,id:old.id,u:Date.now()};return null}const id=uid();arr.push({...o,id,u:Date.now()});return id}
 $('save').onclick=()=>{
   let nuovo=null,msg='';const wasEdit=!!editId;
-  if(tipo==='S'){if(!$('sTit').value.trim()||!$('sData').value){toast('Scrivi cosa scade e la data');return}nuovo=put(db.scad,{tit:$('sTit').value.trim(),cat:scat,d:$('sData').value,ant:+$('sAnt').value});msg='Scadenza salvata. Vuoi il promemoria?'}
+  if(tipo==='S'){if(!$('sTit').value.trim()||!$('sData').value){toast('Scrivi cosa scade e la data');return}nuovo=put(db.scad,{tit:$('sTit').value.trim(),cat:scat,d:$('sData').value,ant:+$('sAnt').value,rip:getRip('s')});{const x=db.scad.find(y=>y.id===(nuovo||editId));if(x&&!x.rip)delete x.rip}msg=+$('sAnt').value?'Scadenza salvata. Vuoi il promemoria?':''}
   else if(tipo==='A'){if(!$('aTit').value.trim()||!$('aData').value){toast('Scrivi cosa devi fare e il giorno');return}nuovo=put(db.app,{tit:$('aTit').value.trim(),d:$('aData').value,ora:$('aOra').value,luogo:$('aLuogo').value.trim(),nota:$('aNota').value.trim(),ant:+$('aAnt').value});sel=$('aData').value;msg='Impegno salvato. Vuoi il promemoria?'}
   else{const v=parseImp($('fImp').value);if(!v){toast('Scrivi un importo valido, per esempio 12,50');return}if(!$('fData').value){toast(stato==='p'?'Scegli la data di scadenza':'Scegli la data');return}
     const sp=(cat==='altro'||cat==='altroE')?$('fSpec').value.trim():'';const o={t:tipo,imp:v,cat,d:$('fData').value,n:$('fNota').value.trim(),sp};
+    if(futuro(o.d))stato='p';
     if(stato==='p'){o.st='p';o.ant=+$('fAnt').value}else{o.st=undefined;o.ant=undefined}
-    nuovo=put(db.mov,o);if(editId&&o.st===undefined){const m=db.mov.find(x=>x.id===editId);if(m){delete m.st;delete m.ant}}
+    const rip=getRip('f');o.rip=rip||undefined;o.auto=(stato==='p'&&$('fAuto').checked)||undefined;
+    nuovo=put(db.mov,o);const cur=db.mov.find(x=>x.id===(nuovo||editId));
+    if(cur){['st','ant','rip','auto'].forEach(k=>{if(cur[k]===undefined)delete cur[k]});if(stato!=='p'&&cur.rip){const nx=nextOcc(cur,cur.d);if(nx)msg=msg||''}}
     if(stato==='p'&&+$('fAnt').value)msg=(tipo==='E'?'Entrata da incassare':'Spesa da pagare')+' salvata. Vuoi il promemoria?'}
   editId=null;store();closeSheet();render();
-  if(nuovo&&msg&&(tipo!=='U'&&tipo!=='E'||stato==='p'))snack(msg,nuovo);else if(wasEdit)toast('Modifiche salvate');
+  if(nuovo&&msg&&(tipo!=='U'&&tipo!=='E'||stato==='p'))snack(msg,nuovo);else if(wasEdit)toast('Modifiche salvate');else if(nuovo)toast(tipo==='S'?'Scadenza salvata':'Salvato');
 };
 function snack(t,id){$('snackTxt').textContent=t;$('snackBtn').dataset.ics=id;$('snack').classList.add('on');clearTimeout(snack.h);snack.h=setTimeout(()=>$('snack').classList.remove('on'),9000)}
 $('snackBtn').addEventListener('click',()=>setTimeout(()=>$('snack').classList.remove('on'),300));
@@ -678,17 +757,17 @@ function delItem(arr,id,what){ask('Eliminare '+what+'?','Verrà cancellato anche
 function bindEdit(k,id,arr,what){$('mvEdit').onclick=()=>{closeSh('M');setTimeout(()=>editItem(k,id),260)};$('mvDel').onclick=()=>{closeSh('M');delItem(arr,id,what)}}
 function openMv(id){const m=db.mov.find(x=>x.id===id);if(!m)return;const e=m.t==='E',c=e?ce(m.cat):cu(m.cat),pl=!paid(m),g=gg(m.d);
   const when=pl?(g<0?`<b style="color:var(--red)">Scaduta il ${fd(m.d)}</b>`:`${e?'Da incassare':'Da pagare'} entro il ${fd(m.d)}`):`${e?'Incassata':'Pagata'} il ${fd(m.d)}${m.sc&&m.sc!==m.d?` · scadeva il ${fd(m.sc)}`:''}`;
-  $('mvBody').innerHTML=`<h4>${esc(mvName(m))}</h4><p class="dvsub">${c[0]}${m.sp&&m.n?' · '+esc(m.sp):''}</p><p class="mvbig ${e?'e':''}">${e?'+':'−'} ${hideAmt?'•••• €':eur(m.imp)}</p><p class="dvval">${when}</p>
-   ${pl?`<div class="paybox"><label for="mvPayD">${e?'Incassata il':'Pagata il'}</label><input class="field" type="date" id="mvPayD" value="${iso(new Date())}"><button class="save" id="mvPay" style="margin-top:4px">${e?'Segna come incassata':'Segna come pagata'}</button></div><button class="lnk" data-ics="${esc(m.id)}" style="width:100%">Aggiungi promemoria al calendario</button>`
+  $('mvBody').innerHTML=`<h4>${esc(mvName(m))}</h4><p class="dvsub">${c[0]}${m.sp&&m.n?' · '+esc(m.sp):''}</p><p class="mvbig ${e?'e':''}">${e?'+':'−'} ${hideAmt?'•••• €':eur(m.imp)}</p><p class="dvval">${when}</p>${m.rip||m.auto?`<p class="dvval" style="color:var(--muted)">${m.rip?'Si ripete '+ripTxt(m.rip):''}${m.rip&&m.auto?' · ':''}${m.auto?(e?'accredito automatico':'addebito automatico'):''}</p>`:''}
+   ${pl?`<div class="paybox"><label for="mvPayD">${e?'Incassata il':'Pagata il'}</label><input class="field" type="date" id="mvPayD" value="${iso(new Date())}" max="${iso(new Date())}"><button class="save" id="mvPay" style="margin-top:4px">${e?'Segna come incassata':'Segna come pagata'}</button></div><button class="lnk" data-ics="${esc(m.id)}" style="width:100%">Aggiungi promemoria al calendario</button>`
        :(m.sc?`<button class="lnk" id="mvUnpay" style="width:100%">Rimetti ${e?'da incassare':'da pagare'}</button>`:'')}
    ${(db.bol||[]).some(b=>b.mv===id)?`<button class="lnk" id="mvBol" style="width:100%">Apri la bolletta</button>`:''}
    ${btn2(B_EDIT,B_DEL)}`;
   if($('mvBol'))$('mvBol').onclick=()=>{const b=db.bol.find(x=>x.mv===id);closeSh('M');docTab='bol';bolFolder=b.c;go('doc');setTimeout(()=>openBol(b.id),280)};
-  if($('mvPay'))$('mvPay').onclick=()=>{const d=$('mvPayD').value||iso(new Date());const x=db.mov.find(y=>y.id===id);if(!x)return;x.sc=x.d;x.d=d;delete x.st;delete x.ant;x.u=Date.now();store();closeSh('M');render();toast(e?'Segnata come incassata':'Segnata come pagata')};
+  if($('mvPay'))$('mvPay').onclick=()=>{const d=$('mvPayD').value||iso(new Date());if(futuro(d)){toast(e?'La data di incasso non può essere nel futuro':'La data di pagamento non può essere nel futuro');return}const x=db.mov.find(y=>y.id===id);if(!x)return;const nx=markPaid(x,d);store();closeSh('M');render();toast((e?'Segnata come incassata':'Segnata come pagata')+(nx?`: la prossima è il ${fd(nx.d)}`:''))};
   if($('mvUnpay'))$('mvUnpay').onclick=()=>{const x=db.mov.find(y=>y.id===id);if(!x)return;x.d=x.sc;delete x.sc;x.st='p';x.ant=x.ant||3;x.u=Date.now();store();closeSh('M');render();toast(e?'Di nuovo da incassare':'Di nuovo da pagare')};
   bindEdit('mv',id,'mov','il movimento');openSh('M')}
 function openSc(id){const s=db.scad.find(x=>x.id===id);if(!s)return;
-  $('mvBody').innerHTML=`<h4>${esc(s.tit)}</h4><p class="dvsub">Scadenza · ${cs(s.cat)[0]}</p><p class="dvval">Scade il ${fd(s.d)} · avviso ${+s.ant||0} giorni prima</p><button class="lnk" data-ics="${esc(s.id)}" style="width:100%">Aggiungi promemoria al calendario</button>`+(s.doc?`<button class="save" id="mvDoc" style="margin-top:14px">Apri il documento</button>`:btn2(B_EDIT,B_DEL));
+  $('mvBody').innerHTML=`<h4>${esc(s.tit)}</h4><p class="dvsub">Scadenza · ${cs(s.cat)[0]}</p><p class="dvval">Scade il ${fd(s.d)}${+s.ant?' · avviso '+s.ant+' giorni prima':''}</p>${s.rip?`<p class="dvval" style="color:var(--muted)">Si ripete ${ripTxt(s.rip)}</p>`:''}<button class="lnk" data-ics="${esc(s.id)}" style="width:100%">Aggiungi promemoria al calendario</button>`+(s.doc?`<button class="save" id="mvDoc" style="margin-top:14px">Apri il documento</button>`:btn2(B_EDIT,B_DEL));
   if(s.doc)$('mvDoc').onclick=()=>{closeSh('M');go('doc');setTimeout(()=>openDocDetail(s.doc),260)};else bindEdit('sc',id,'scad','la scadenza');openSh('M')}
 function openAp(id){const a=db.app.find(x=>x.id===id);if(!a)return;
   $('mvBody').innerHTML=`<h4>${esc(a.tit)}</h4><p class="dvsub">Impegno</p><p class="dvval">${fd(a.d)}${a.ora?' alle '+esc(a.ora):''}</p>${a.luogo?`<p class="dvval">${esc(a.luogo)}</p>`:''}${a.nota?`<p class="dvval" style="white-space:pre-wrap;color:var(--muted)">${esc(a.nota)}</p>`:''}<button class="lnk" data-ics="${esc(a.id)}" style="width:100%">Aggiungi promemoria al calendario</button>${btn2(B_EDIT,B_DEL)}`;
@@ -753,9 +832,9 @@ $('repDa').addEventListener('change',()=>{rep.da=$('repDa').value;renderRep()});
 $('repMesi').addEventListener('click',e=>{const b=e.target.closest('[data-ym]');if(!b)return;const [y,m]=b.dataset.ym.split('-').map(Number);cur=new Date(y,m,1);go('mov')});
 let hideAmt=false;try{hideAmt=localStorage.getItem('casainordine.nascondi')==='1'}catch(e){}
 function applyHide(){$('eye').hidden=view==='scad'||view==='doc';$('eyeIc').innerHTML=hideAmt?'<path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.3 2 12 2 12s3.5 7 10 7c1.9 0 3.5-.6 4.9-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>':'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>';$('eye').setAttribute('aria-label',hideAmt?'Mostra gli importi':'Nascondi gli importi');$('eye').setAttribute('aria-pressed',hideAmt);
-  if(!hideAmt)return;const dots='•••••• €';if(view!=='scad'&&view!=='doc')$('saldo').textContent=dots;['kE','kU'].forEach(k=>$(k).textContent='•••• €');document.querySelectorAll('#saldoPrev .pv,#dueBody .dk').forEach(e=>e.textContent='•••• €');if(view==='rep')document.querySelectorAll('#repKpi strong').forEach(e=>e.textContent='•••• €')}
+  if(!hideAmt)return;const dots='•••••• €';if(view!=='scad'&&view!=='doc')$('saldo').textContent=dots;['kE','kU'].forEach(k=>$(k).textContent='•••• €');document.querySelectorAll('#saldoPrev .pv,#saldoConto .pv,#saldo30 .pv,#dueBody .dk').forEach(e=>e.textContent='•••• €');if(view==='rep')document.querySelectorAll('#repKpi strong').forEach(e=>e.textContent='•••• €')}
 $('eye').onclick=()=>{hideAmt=!hideAmt;try{localStorage.setItem('casainordine.nascondi',hideAmt?'1':'0')}catch(e){}render()};
-const _render=render;render=function(){try{maybeInst()}catch(e){}if(!db.doc)db.doc=[];$('demoCard').hidden=!db.demo;$('syncCard').hidden=true;const needs=!!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));$('syncStrip').hidden=!needs;document.body.classList.toggle('strip',needs);if(needs)$('syncStripTxt').textContent=syncState==='perm'?'Manca il permesso su Google Drive: tocca per riprovare':'Tocca per sincronizzare con Google Drive';_render();renderAcct();if(view==='rep')renderRep();try{document.body.classList.toggle('sec-bol',view==='doc'&&docTab==='bol')}catch(e){}if(view==='doc'){if(!db.bol)db.bol=[];if(!db.cart)db.cart=[];document.querySelectorAll('#docSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===docTab));$('docPane').hidden=docTab!=='doc';$('bolPane').hidden=docTab!=='bol';
+const _render=render;render=function(){if(normFut()+runAuto())setTimeout(store,0);clearTimeout(render.ad);render.ad=setTimeout(()=>{try{askDue()}catch(e){}},700);try{maybeInst()}catch(e){}if(!db.doc)db.doc=[];$('demoCard').hidden=!db.demo;$('syncCard').hidden=true;const needs=!!(prof&&prof.mode==='google'&&(syncState==='auth'||syncState==='perm'));$('syncStrip').hidden=!needs;document.body.classList.toggle('strip',needs);if(needs)$('syncStripTxt').textContent=syncState==='perm'?'Manca il permesso su Google Drive: tocca per riprovare':'Tocca per sincronizzare con Google Drive';_render();renderAcct();if(view==='rep')renderRep();try{document.body.classList.toggle('sec-bol',view==='doc'&&docTab==='bol')}catch(e){}if(view==='doc'){if(!db.bol)db.bol=[];if(!db.cart)db.cart=[];document.querySelectorAll('#docSeg button').forEach(b=>b.classList.toggle('on',b.dataset.k===docTab));$('docPane').hidden=docTab!=='doc';$('bolPane').hidden=docTab!=='bol';
   if(docTab==='bol'){$('saldoLbl').textContent='Bollette di casa';const n=db.bol.length;$('saldo').innerHTML=n+'<span>'+(n===1?'bolletta':'bollette')+'</span>';$('fab').hidden=false;renderBol()}
   else{$('saldoLbl').textContent='Documenti di famiglia';const n=db.doc.length;$('saldo').innerHTML=n+'<span>'+(n===1?'documento':'documenti')+'</span>';renderDoc()}}applyHide()};
 function fresh(){const now=Date.now(),old=db.demo?[]:[...db.mov,...db.scad,...db.app,...(db.doc||[]),...(db.bol||[]),...(db.cart||[])].map(x=>({id:x.id,u:now}));bClear().catch(()=>{});bolFolder=null;db={mov:[],scad:[],app:[],doc:[],bol:[],cart:[],vault:{u:now,off:true},del:[...(db.demo?[]:db.del||[]),...old]};vKey=null;docCache.clear();vClear().catch(()=>{});store();cur=new Date();cur.setDate(1);sel=iso(new Date());go('home')}
@@ -764,12 +843,12 @@ const _save=$('save').onclick;$('save').onclick=()=>{if(db.demo){db={mov:[],scad
 function openMenu(){$('toast').classList.remove('on');loadGIS().catch(()=>{});$('bg2').style.display='block';requestAnimationFrame(()=>$('sheet2').classList.add('on'))}
 function closeMenu(){$('sheet2').classList.remove('on');setTimeout(()=>$('bg2').style.display='none',250)}
 $('menu').onclick=()=>{renderAcct();openMenu()};$('bg2').onclick=closeMenu;
-$('mExp').onclick=async()=>{let vr=[],br=[];try{vr=await vAll()}catch(e){}try{br=await bAll()}catch(e){}const data={app:'Casa in Ordine',versione:2,esportato:new Date().toISOString(),dati:{mov:db.mov,scad:db.scad,app:db.app,doc:db.doc,bol:db.bol||[],cart:db.cart||[],vault:pinOn()?db.vault:null,archivio:vr,bollette:br}};
+$('mExp').onclick=async()=>{let vr=[],br=[];try{vr=await vAll()}catch(e){}try{br=await bAll()}catch(e){}const data={app:'Casa in Ordine',versione:2,esportato:new Date().toISOString(),dati:{mov:db.mov,scad:db.scad,app:db.app,doc:db.doc,bol:db.bol||[],cart:db.cart||[],conto:db.conto||null,vault:pinOn()?db.vault:null,archivio:vr,bollette:br}};
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,1)],{type:'application/json'}));a.download='casa-in-ordine-backup-'+iso(new Date())+'.json';document.body.appendChild(a);a.click();a.remove();closeMenu();toast('Backup salvato nei download')};
 $('mImp').onclick=()=>$('impFile').click();
 $('impFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result),d=j.dati||j;
   if(!Array.isArray(d.mov)||!Array.isArray(d.scad))throw 0;
-  closeMenu();ask('Ripristinare il backup?','I dati di questo dispositivo verranno sostituiti con quelli del file scelto.','Ripristina',async()=>{const n=Date.now();db={mov:d.mov,scad:d.scad,app:Array.isArray(d.app)?d.app:[],doc:Array.isArray(d.doc)?d.doc:[],bol:Array.isArray(d.bol)?d.bol:[],cart:Array.isArray(d.cart)?d.cart:[],del:[],vault:d.vault&&d.vault.salt?{...d.vault,u:n}:{u:n,off:true}};['mov','scad','app','doc','bol','cart'].forEach(k=>db[k].forEach(x=>x.u=n));
+  closeMenu();ask('Ripristinare il backup?','I dati di questo dispositivo verranno sostituiti con quelli del file scelto.','Ripristina',async()=>{const n=Date.now();db={mov:d.mov,scad:d.scad,app:Array.isArray(d.app)?d.app:[],doc:Array.isArray(d.doc)?d.doc:[],bol:Array.isArray(d.bol)?d.bol:[],cart:Array.isArray(d.cart)?d.cart:[],conto:d.conto&&d.conto.d?{...d.conto,u:n}:null,del:[],vault:d.vault&&d.vault.salt?{...d.vault,u:n}:{u:n,off:true}};['mov','scad','app','doc','bol','cart'].forEach(k=>db[k].forEach(x=>x.u=n));
     vKey=null;docCache.clear();try{await vClear();for(const r of (Array.isArray(d.archivio)?d.archivio:[]))if(r&&r.id)await vPut({...r,u:n})}catch(e){}try{await bClear();for(const r of (Array.isArray(d.bollette)?d.bollette:[]))if(r&&r.id)await bPut({...r,u:n})}catch(e){}bolFolder=null;store();go('home');toast('Backup ripristinato')})}
   catch(_){toast('Questo file non è un backup valido')}$('impFile').value=''};r.readAsText(f)};
 $('mDel').onclick=()=>{closeMenu();const g=prof&&prof.mode==='google';
@@ -940,7 +1019,7 @@ function docErr(e){toast(e==='manca'?'Documento non ancora scaricato su questo d
 async function openDocDetail(id){if(!db.doc)db.doc=[];const d=db.doc.find(x=>x.id===id);if(!d)return;let c;try{c=await getDoc(id)}catch(e){docErr(e);return}
   const t=dtOf(d);
   $('dvBody').innerHTML=`<h4>${esc(t[0])}</h4><p class="dvsub">${esc(d.chi||'')}</p>
-   <div class="dvgrid"><div><label>Numero</label><p class="dvval mono">${c.num?esc(c.num):'—'}</p></div><div><label>Scadenza</label><p class="dvval">${d.scad?fd(d.scad):'nessuna'}</p></div></div>
+   <div class="dvgrid"><div><label>Numero</label><p class="dvval mono">${c.num?esc(c.num):'non indicato'}</p></div><div><label>Scadenza</label><p class="dvval">${d.scad?fd(d.scad):'nessuna'}</p></div></div>
    ${c.num?`<button class="pill" id="dvCopy">Copia il numero</button>`:''}
    ${c.note?`<label>Note</label><p class="dvval" style="white-space:pre-wrap">${esc(c.note)}</p>`:''}
    <div class="thumbs">${c.files.map((f,i)=>f.type==='application/pdf'?`<a class="thumb pdf" href="${f.url}" target="_blank" rel="noopener">${ico('file','currentColor',28)}<span>${esc(f.name||'PDF')}</span></a>`:`<button class="thumb" data-view="${i}"><img src="${f.url}" alt="Allegato ${i+1}"></button>`).join('')}</div>
@@ -1055,7 +1134,7 @@ function forgotSheet(){$('pinTitle').textContent='PIN dimenticato';
    <button class="lnk" id="recNone" style="width:100%;color:var(--red)">Non ho il codice</button>`;
   $('recF').onsubmit=async e=>{e.preventDefault();$('recF').querySelector('button').textContent='Verifico…';
     if(await unlockRecovery($('recCode').value)){const raw=recRaw;recRaw=null;render();newPinForm(raw,true)}else{$('recF').querySelector('button').textContent='Riapri i documenti';toast('Codice non corretto')}};
-  $('recNone').onclick=()=>{closeSh('P');setTimeout(()=>ask('Senza PIN e senza codice','I documenti protetti non si possono aprire in nessun altro modo. Puoi solo cancellarli e ricominciare la sezione Documenti. Movimenti, scadenze e agenda restano.','Continua',()=>setTimeout(()=>ask('Ultima conferma','Verranno cancellati tutti i documenti e le loro foto, anche da Google Drive. Non si può annullare.','Sì, cancella i documenti',async()=>{await wipeDocs();toast('Documenti cancellati')},true),320),true),260)};
+  $('recNone').onclick=()=>{closeSh('P');setTimeout(()=>ask('Senza PIN e senza codice','I documenti protetti non si possono aprire in nessun altro modo. Puoi solo cancellarli e ricominciare la sezione Documenti. Movimenti, scadenze e bollette restano.','Continua',()=>setTimeout(()=>ask('Ultima conferma','Verranno cancellati tutti i documenti e le loro foto, anche da Google Drive. Non si può annullare.','Sì, cancella i documenti',async()=>{await wipeDocs();toast('Documenti cancellati')},true),320),true),260)};
   openSh('P')}
 function bgPclose(){closeSh('P')}$('bgP').onclick=bgPclose;
 // ---- sincronizzazione documenti su Drive (un file per documento)
@@ -1096,7 +1175,7 @@ const bolTitle=b=>b.per||(b.scad?'Scad. '+pd(b.scad).toLocaleDateString('it-IT',
 function renderBol(){const el=$('bolList');if(!el)return;const all=db.bol||[];
   if(!bolFolder){
     el.innerHTML=`<div class="fgrid">${folders().map(f=>{const l=all.filter(b=>b.c===f.k).sort((a,b)=>(b.scad||'').localeCompare(a.scad||''));const last=l[0];
-      return `<button class="fcard" data-fold="${esc(f.k)}"><span class="ic" style="background:${tint(f.c)}">${ico(f.i,f.c)}</span><b>${esc(f.n)}</b><small>${l.length?l.length+' '+(l.length===1?'bolletta':'bollette')+(last?' · ultima '+eur(last.imp):''):'Vuota'}</small></button>`}).join('')}<button class="fcard new" id="fNew">${ico('plus','currentColor',22)}Nuova cartella</button></div>`;
+      return `<button class="fcard" data-fold="${esc(f.k)}"><span class="ic" style="background:${tint(f.c)}">${ico(f.i,f.c)}</span><b>${esc(f.n)}</b><small>${l.length?l.length+' '+(l.length===1?'bolletta':'bollette')+(last?` · ultima <span style="white-space:nowrap">${eur(last.imp)}</span>`:''):'Vuota'}</small></button>`}).join('')}<button class="fcard new" id="fNew">${ico('plus','currentColor',22)}Nuova cartella</button></div>`;
     el.querySelectorAll('[data-fold]').forEach(b=>b.onclick=()=>{bolFolder=b.dataset.fold;render();scrollTo(0,0)});$('fNew').onclick=newFolder;return}
   const f=fOf(bolFolder),l=all.filter(b=>b.c===bolFolder).sort((a,b)=>(b.scad||'').localeCompare(a.scad||'')||(b.u||0)-(a.u||0));
   el.innerHTML=`<div class="fhead"><button class="pill" id="fBack">‹ Cartelle</button><h3></h3>${f.own?'<button class="pill" id="fRen">Rinomina</button>':''}</div>
@@ -1125,7 +1204,7 @@ async function openBolForm(id,folder){const b=id?db.bol.find(x=>x.id===id):null;
   bForm={id:b?b.id:null,c:b?b.c:(folder||'luce'),files:files.map(f=>({type:f.type,name:f.name,data:f.data})),stato:'p'};
   $('bTitle').textContent=b?'Modifica bolletta':'Nuova bolletta';$('bNew').value='';$('bNewWrap').hidden=true;bCartChips();
   $('bImp').value=b?String(b.imp).replace('.',','):'';$('bPer').value=b?b.per||'':'';$('bScad').value=b?b.scad||'':'';$('bNota').value=b?b.n||'':'';
-  $('bMov').checked=b?!!m:true;$('bMovWrap').hidden=!$('bMov').checked;$('bPay').value=m&&paid(m)?m.d:iso(new Date());$('bAnt').value=String(m&&m.ant!=null?m.ant:3);bStato(m&&paid(m)?'ok':'p');
+  $('bMov').checked=b?!!m:true;$('bMovWrap').hidden=!$('bMov').checked;$('bPay').value=m&&paid(m)?m.d:iso(new Date());$('bPay').max=iso(new Date());$('bAnt').value=String(m&&m.ant!=null?m.ant:3);bStato(m&&paid(m)?'ok':'p');
   renderBAtt();openSh('B')}
 function renderBAtt(){$('bAtt').innerHTML=bForm.files.map((f,i)=>`<div class="att">${f.type==='application/pdf'?`<span class="attpdf">${ico('file','currentColor',22)}</span>`:`<img src="data:image/jpeg;base64,${esc(f.data)}" alt="">`}<button class="attx" data-brm="${i}" aria-label="Togli allegato">×</button></div>`).join('')+(bForm.files.length<3?`<label class="attadd" for="bFile">${ico('clip','currentColor',18)}<span>Aggiungi PDF o foto</span></label>`:'');
   $('bAtt').querySelectorAll('[data-brm]').forEach(b=>b.onclick=()=>{bForm.files.splice(+b.dataset.brm,1);renderBAtt()})}
@@ -1135,6 +1214,7 @@ $('bSave').onclick=async()=>{if(!db.bol)db.bol=[];if(!db.cart)db.cart=[];
   const imp=parseImp($('bImp').value);if(!imp){toast('Scrivi l\'importo, per esempio 85,40');$('bImp').focus();return}
   const scad=$('bScad').value,withMov=$('bMov').checked,st=bForm.stato;
   if(withMov&&st==='p'&&!scad){toast('Scegli la data di scadenza');$('bScad').focus();return}
+  if(withMov&&st==='ok'&&futuro($('bPay').value)){toast('La data di pagamento non può essere nel futuro: se deve ancora pagarla scegli "Da pagare"');$('bPay').focus();return}
   if(!$('bNewWrap').hidden){const nome=$('bNew').value.trim();if(!nome){toast('Scrivi il nome della nuova cartella');$('bNew').focus();return}}
   if(db.demo){db={mov:[],scad:[],app:[],del:[],doc:[],bol:[],cart:[]}}
   if(!$('bNewWrap').hidden)bForm.c=addFolder($('bNew').value.trim());
@@ -1161,10 +1241,10 @@ async function openBol(id){const b=(db.bol||[]).find(x=>x.id===id);if(!b)return;
    ${b.scad&&m&&paid(m)?`<p class="dvval" style="color:var(--muted)">Scadenza ${fd(b.scad)}</p>`:''}
    ${files.length?`<div class="thumbs">${files.map((x,i)=>x.type==='application/pdf'?`<a class="thumb pdf" href="${x.url}" target="_blank" rel="noopener" download="${esc(x.name||'bolletta.pdf')}">${ico('file','currentColor',28)}<span>${esc(x.name||'PDF')}</span></a>`:`<button class="thumb" data-bview="${i}"><img src="${x.url}" alt="Foto della bolletta ${i+1}"></button>`).join('')}</div>`
      :(b.f?'<p class="empty">Il file non è ancora su questo dispositivo: tocca Sincronizza nel menu.</p>':'<p class="empty" style="text-align:left">Nessun file allegato. Puoi aggiungerlo con Modifica.</p>')}
-   ${m&&!paid(m)?`<div class="paybox"><label for="mvPayD">Pagata il</label><input class="field" type="date" id="mvPayD" value="${iso(new Date())}"><button class="save" id="bPayBtn" style="margin-top:4px">Segna come pagata</button></div>`:''}
+   ${m&&!paid(m)?`<div class="paybox"><label for="mvPayD">Pagata il</label><input class="field" type="date" id="mvPayD" value="${iso(new Date())}" max="${iso(new Date())}"><button class="save" id="bPayBtn" style="margin-top:4px">Segna come pagata</button></div>`:''}
    ${btn2(B_EDIT,B_DEL)}`;
   $('mvBody').querySelectorAll('[data-bview]').forEach(x=>x.onclick=()=>{const fl=files[+x.dataset.bview];$('viewImg').src=fl.url;$('viewDl').href=fl.url;$('viewDl').download=fl.name||'bolletta.jpg';$('viewer').hidden=false});
-  if($('bPayBtn'))$('bPayBtn').onclick=()=>{const d=$('mvPayD').value||iso(new Date());const x=db.mov.find(y=>y.id===b.mv);if(!x)return;x.sc=x.d;x.d=d;delete x.st;delete x.ant;x.u=Date.now();store();closeSh('M');render();toast('Segnata come pagata')};
+  if($('bPayBtn'))$('bPayBtn').onclick=()=>{const d=$('mvPayD').value||iso(new Date());if(futuro(d)){toast('La data di pagamento non può essere nel futuro');return}const x=db.mov.find(y=>y.id===b.mv);if(!x)return;markPaid(x,d);store();closeSh('M');render();toast('Segnata come pagata')};
   $('mvEdit').onclick=()=>{closeSh('M');setTimeout(()=>openBolForm(id),260)};
   $('mvDel').onclick=()=>{closeSh('M');ask('Eliminare la bolletta?',(m?'Verranno cancellati la bolletta, il suo file e la spesa collegata':'Verranno cancellati la bolletta e il suo file')+', anche dagli altri dispositivi collegati.','Elimina',async()=>{const now=Date.now();db.bol=db.bol.filter(x=>x.id!==id);const dl=[{id,u:now}];if(m){db.mov=db.mov.filter(x=>x.id!==m.id);dl.push({id:m.id,u:now})}db.del=[...(db.del||[]),...dl];try{await bDel(id)}catch(e){}store();render();toast('Bolletta eliminata')},true)};
   openSh('M')}
@@ -1184,6 +1264,53 @@ async function bolSync(){if(!db.bol)db.bol=[];
     try{await gf('https://www.googleapis.com/upload/drive/v3/files'+(r?'/'+r.fid:'')+'?uploadType=multipart',{method:r?'PATCH':'POST',body:fd})}catch(e){if(e==='auth'||e==='perm')throw e;fail++}}
   if(fail)toast(fail===1?'Il file di una bolletta non è stato salvato su Drive':'I file di '+fail+' bollette non sono stati salvati su Drive');
   return changed}
+// ---- scelte dentro l'app al posto del menu a tendina del telefono
+// il <select> resta (nascosto) come valore; sopra mettiamo dei bottoni come le categorie
+function chipSelect(id){const sel=$(id);if(!sel||sel.dataset.chips)return;sel.dataset.chips=1;sel.hidden=true;
+  const box=document.createElement('div');box.className='chips pick';sel.after(box);
+  const short=t=>t.replace(' prima','').replace('Non si ripete','No').replace('Nessun promemoria','Nessuno');
+  const draw=()=>{box.innerHTML=[...sel.options].filter(o=>!(o.value==='0'&&['fRip','sRip','fAnt','sAnt'].includes(id))).map(o=>`<button type="button" data-v="${esc(o.value)}" class="${o.value===sel.value?'on':''}">${esc(short(o.textContent))}</button>`).join('')};
+  const P=Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,'value');
+  Object.defineProperty(sel,'value',{get(){return P.get.call(this)},set(v){P.set.call(this,v);draw()},configurable:true});
+  box.onclick=e=>{const b=e.target.closest('button');if(!b)return;sel.value=b.dataset.v;sel.dispatchEvent(new Event('change',{bubbles:true}));sel.dispatchEvent(new Event('input',{bubbles:true}))};
+  draw()}
+['fRip','fRipU','fAnt','sAnt','sRip','sRipU','bAnt','dAnt'].forEach(chipSelect);
+// ---- scadenza arrivata: l'app chiede conferma ("oggi scade, l'hai pagata?"); "Non ancora" la richiede il giorno dopo
+const ASK_K='casainordine.chiesto';
+function askedToday(id){try{return (JSON.parse(localStorage.getItem(ASK_K)||'{}'))[id]===iso(new Date())}catch(e){return false}}
+function setAsked(id){try{const o=JSON.parse(localStorage.getItem(ASK_K)||'{}'),oggi=iso(new Date());for(const k in o)if(o[k]!==oggi)delete o[k];o[id]=oggi;localStorage.setItem(ASK_K,JSON.stringify(o))}catch(e){}}
+let dueAskOn=false;
+function askDue(){if(dueAskOn||db.demo||view!=='home'||document.querySelector('.sheet.on')||!prof)return;const oggi=iso(new Date());
+  const m=db.mov.filter(x=>x.st==='p'&&!x.auto&&x.d<=oggi&&!askedToday(x.id)).sort((a,b)=>a.d.localeCompare(b.d))[0];if(!m)return;
+  dueAskOn=true;const e=m.t==='E',nm=mvName(m),oggiS=m.d===oggi;setAsked(m.id);
+  ask(oggiS?`Oggi scade "${nm}"`:`"${nm}" è scaduta il ${fd(m.d)}`,`${e?'+':'−'} ${eur(m.imp)}. ${e?"L'hai già incassata?":"L'hai già pagata?"}`,e?"Sì, l'ho incassata":"Sì, l'ho pagata",
+    ()=>{const x=db.mov.find(y=>y.id===m.id);dueAskOn=false;if(!x||x.st!=='p')return;const nx=markPaid(x,x.d);store();render();toast((e?'Segnata come incassata':'Segnata come pagata')+(nx?`: la prossima è il ${fd(nx.d)}`:''));setTimeout(askDue,900)},
+    false,()=>{dueAskOn=false;setTimeout(askDue,900)},'Non ancora')}
+// ---- saldo del conto
+function contoSheet(){const c=db.conto,oggi=iso(new Date());
+  $('mvBody').innerHTML=`<h4>Il saldo ad oggi è?</h4><p class="dvsub">Guarda il saldo nell'app della banca e scrivilo qui. Da lì in poi l'app aggiunge le entrate e toglie le uscite che segni come pagate, così sai sempre quanto hai davvero.</p>
+   <label for="cImp">Saldo del conto</label><input class="big" id="cImp" inputmode="decimal" placeholder="0,00 €" value="${c?String(c.imp).replace('.',','):''}">
+   <label for="cData">Alla data del</label><input class="field" type="date" id="cData" value="${c?c.d:oggi}" max="${oggi}">
+   <p class="hint" style="margin-top:4px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 15px;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/></svg><span>Contano i movimenti con data <b>successiva</b> a questa. Se il saldo è in rosso, scrivi il numero con il meno davanti, per esempio −120.</span></p>
+   <button class="save" id="cSave">Aggiorna il saldo</button>${c?'<button class="lnk" id="cDel" style="width:100%;color:var(--red)">Togli il saldo del conto</button>':''}`;
+  $('cSave').onclick=()=>{const raw=($('cImp').value||'').trim().replace(/^[−–]/,'-'),neg=raw.startsWith('-'),v=parseImp(raw.replace(/^-/,''));
+    if(!raw||(!v&&!/^-?\s*0+([.,]0*)?\s*€?$/.test(raw))){toast('Scrivi il saldo, per esempio 2.350,00');return}
+    const d=$('cData').value||oggi;if(d>oggi){toast('La data non può essere nel futuro');return}
+    if(db.demo){db={mov:[],scad:[],app:[],del:[],doc:[],bol:[],cart:[]}}
+    db.conto={u:Date.now(),imp:neg?-v:v,d};store();closeSh('M');render();toast('Saldo aggiornato')};
+  if($('cDel'))$('cDel').onclick=()=>{db.conto={u:Date.now(),d:null,imp:0};store();closeSh('M');render();toast('Saldo del conto tolto')};
+  openSh('M')}
+$('mConto').onclick=()=>{closeMenu();setTimeout(contoSheet,260)};
+// ---- consiglia a un amico: link alla pagina di presentazione (spiega anche come installarla) e codice QR
+const SHARE_URL='https://prosperialfonso.com/casa-in-ordine.html',SHARE_TXT='Casa in Ordine: spese, scadenze, bollette e documenti di casa in un\'unica app. Gratis e senza pubblicità.';
+function copyLink(){const ok=()=>toast('Link copiato: incollalo dove vuoi');if(navigator.clipboard)navigator.clipboard.writeText(SHARE_URL).then(ok,()=>toast(SHARE_URL));else toast(SHARE_URL)}
+function shareLink(){if(navigator.share){navigator.share({title:'Casa in Ordine',text:SHARE_TXT,url:SHARE_URL}).catch(e=>{if(e&&e.name!=='AbortError')copyLink()})}else copyLink()}
+$('mShare').onclick=()=>{closeMenu();setTimeout(()=>{
+  $('mvBody').innerHTML=`<h4>Consiglia Casa in Ordine</h4><p class="dvsub">Fai inquadrare il codice con la fotocamera, oppure manda il link: si apre la pagina che spiega cos'è e come installarla.</p>
+   <img src="qr.png" alt="Codice QR per aprire Casa in Ordine" width="220" height="220" style="display:block;margin:6px auto 14px;border-radius:14px;box-shadow:0 4px 16px rgba(20,33,61,.12)">
+   <button class="save" id="shLink">${ico('share','currentColor',18)} Condividi il link</button>
+   <button class="lnk" id="shCopy" style="width:100%">Copia il link</button>`;
+  $('shLink').onclick=shareLink;$('shCopy').onclick=copyLink;openSh('M')},260)};
 // ---- tasto Indietro del telefono: chiude il foglio aperto o torna alla schermata precedente, invece di uscire
 let skipPop=false;
 const isOn=id=>{const e=$(id);return !!(e&&e.classList.contains('on'))};
@@ -1231,9 +1358,10 @@ function token(interactive){
 async function gf(url,opt,interactive){const t=await token(interactive);const r=await fetch(url,{...(opt||{}),headers:{Authorization:'Bearer '+t}});if(r.status===401){tok=null;keepTok();throw 'auth'}if(r.status===403){tok=null;keepTok();throw 'perm'}if(!r.ok)throw 'drive';return r}
 function merge(a,b){const dl=new Map();[...(a.del||[]),...(b.del||[])].forEach(d=>dl.set(d.id,Math.max(dl.get(d.id)||0,d.u||0)));
   const lim=Date.now()-180*864e5;const o={del:[...dl].filter(([,u])=>u>lim).map(([id,u])=>({id,u}))};
+  o.conto=(a.conto&&b.conto)?((a.conto.u||0)>=(b.conto.u||0)?a.conto:b.conto):(a.conto||b.conto||null);
   o.vault=(a.vault&&b.vault)?((a.vault.u||0)>=(b.vault.u||0)?a.vault:b.vault):(a.vault||b.vault||null);
   ['mov','scad','app','doc','bol','cart'].forEach(k=>{const m=new Map();[...(a[k]||[]),...(b[k]||[])].forEach(x=>{const y=m.get(x.id);if(!y||(x.u||0)>(y.u||0))m.set(x.id,x)});o[k]=[...m.values()].filter(x=>!(dl.has(x.id)&&dl.get(x.id)>=(x.u||0)))});return o}
-const sig=o=>['mov','scad','app','del','doc','bol','cart'].map(k=>(o[k]||[]).map(x=>x.id+':'+(x.u||0)).sort().join(',')).join('|')+'|v'+((o.vault&&o.vault.u)||0);
+const sig=o=>['mov','scad','app','del','doc','bol','cart'].map(k=>(o[k]||[]).map(x=>x.id+':'+(x.u||0)).sort().join(',')).join('|')+'|v'+((o.vault&&o.vault.u)||0)+'|c'+((o.conto&&o.conto.u)||0);
 async function sync(interactive){
   if(!prof||prof.mode!=='google'||!navigator.onLine||syncState==='busy')return;
   const prev=syncState;syncState='busy';if(interactive||prev!=='ok')renderAcct();
