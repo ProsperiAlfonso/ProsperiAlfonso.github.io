@@ -243,7 +243,7 @@ body.sec-bol .fcard.new{border-color:rgba(194,69,63,.35)}
 .seg button{border:0;background:none;padding:9px 2px;border-radius:9px;font-weight:600;color:var(--muted);cursor:pointer;font-size:15px}
 .seg button.on{background:#fff;color:var(--navy);box-shadow:0 2px 6px rgba(0,0,0,.08)}
 .seg.st{grid-template-columns:1fr 1fr;margin:-2px 0 12px}
-.prevline+.prevline{margin-top:0}
+.prevline+.prevline{margin-top:0}.hrow:has(.hbox){display:flex}.hrow:not(:has(.hbox)){display:block}
 .optrow{border:1px solid var(--line);border-radius:12px;margin:0 0 10px;background:var(--card,#fff)}
 .orow{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:12px 14px;font:500 15px Barlow,system-ui,sans-serif;color:var(--navy);cursor:pointer;text-align:left}
 .orow .ol{flex:1}.orow .oflag{width:20px;height:20px;accent-color:var(--blue);flex:none;margin:0}.orow .of{color:var(--muted);font-weight:400;font-size:13px}.orow .ov{color:var(--muted);font-size:14px}.orow .ov.set{color:var(--pri-ink);font-weight:600}
@@ -251,7 +251,9 @@ body.sec-bol .fcard.new{border-color:rgba(194,69,63,.35)}
 .obox{padding:0 14px 4px}.obox select,.obox .ripc{margin-bottom:10px}.obox .hint{margin-top:0}
 .optchk{border:1px solid var(--line);border-radius:12px;padding:11px 14px;margin:0 0 10px;color:var(--navy);font-weight:500;font-size:15px}
 .ripc{display:flex;align-items:center;gap:10px;margin:-4px 0 14px}.ripc span{color:var(--muted);font-size:14px}.ripc input{width:84px;flex:none;margin:0;text-align:center}.ripc select{flex:1;margin:0}
-#saldoConto{cursor:pointer}.cupd{border:0;background:rgba(255,255,255,.14);color:#fff;font:600 11px 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 9px;margin-left:8px;cursor:pointer;vertical-align:1px}#saldoConto u{text-decoration:none;border-bottom:1px dashed rgba(255,255,255,.5)}
+#saldoConto{cursor:pointer}
+.hrow{display:flex;gap:8px;flex-wrap:wrap;align-items:stretch}.hrow .prevline{flex:0 1 auto}.prevline.hbox{display:inline-flex;flex-direction:column;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:7px 12px;margin:10px 0 0;cursor:default;line-height:1.2}
+.saldo .prevline.hbox small{font-family:Barlow,system-ui,sans-serif;letter-spacing:0;text-transform:none;font-size:12.5px;color:rgba(255,255,255,.75)}.prevline.hbox b{font-family:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;font-size:22px;font-weight:600;color:#fff}.cupd{border:0;background:rgba(255,255,255,.14);color:#fff;font:600 11px 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 9px;margin-left:8px;cursor:pointer;vertical-align:1px}#saldoConto u{text-decoration:none;border-bottom:1px dashed rgba(255,255,255,.5)}
 .prevline{margin-top:4px;font-size:14px;color:rgba(255,255,255,.8)}.prevline b{color:#fff;font-weight:600}
 [data-mv],[data-sc],[data-ap]{cursor:pointer}
 .amt.pl{color:var(--muted)}
@@ -303,7 +305,7 @@ label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   <div class="brand"><b>Casa <i>in Ordine</i></b><div class="hr">
     <div class="month"><button id="prev" aria-label="Mese precedente">‹</button><span id="mlabel"></span><button id="next" aria-label="Mese successivo">›</button></div><button class="gear" id="menu" aria-label="Impostazioni e backup"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>
   </div>
-  <div class="saldo"><small id="saldoLbl">Saldo del mese</small><div class="saldo-row"><div id="saldo"></div><button class="eye" id="eye" aria-label="Nascondi gli importi" aria-pressed="false"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" id="eyeIc"></svg></button></div><p class="prevline" id="saldoConto" hidden></p><p class="prevline" id="saldoPrev" hidden></p></div>
+  <div class="saldo"><small id="saldoLbl">Saldo del mese</small><div class="saldo-row"><div id="saldo"></div><button class="eye" id="eye" aria-label="Nascondi gli importi" aria-pressed="false"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" id="eyeIc"></svg></button></div><div class="hrow"><p class="prevline" id="saldoConto" hidden></p><p class="prevline" id="saldoPrev" hidden></p></div></div>
 </div></header>
 
 <main class="wrap">
@@ -592,12 +594,12 @@ function render(){
    const sg=v=>(v<0?'−':'+')+eur(Math.abs(v));
    const pl=db.mov.filter(x=>!paid(x)&&(inMonth(x,y,mo)||(isCur&&x.d<m0))),plE=pl.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0),plU=pl.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0);
    if(big){const v=contoNow();$('saldoLbl').innerHTML='Sul conto oggi <button class="cupd" id="cUpd">aggiorna</button>';$('saldo').textContent=(v<0?'−':'')+eur(Math.abs(v));
-     $('saldoConto').hidden=false;$('saldoConto').innerHTML=`Saldo di ${MESI[mo].toLowerCase()}: <b class="pv">${sg(E-U)}</b>`;
+     $('saldoConto').hidden=false;$('saldoConto').classList.add('hbox');$('saldoConto').innerHTML=`<small>Saldo di ${MESI[mo].toLowerCase()}</small><b class="pv">${sg(E-U)}</b>`;
      // in arrivo: le voci da pagare/incassare ancora aperte (tutte, non solo del mese), così si vede dove arriverà il conto
      const op=db.mov.filter(x=>!paid(x)&&gg(x.d)<=30),oE=op.filter(x=>x.t==='E').reduce((a,b)=>a+b.imp,0),oU=op.filter(x=>x.t==='U').reduce((a,b)=>a+b.imp,0);
-     $('saldoPrev').hidden=!op.length;if(op.length)$('saldoPrev').innerHTML=`Dopo i pagamenti dei prossimi 30 giorni: <b class="pv">${(v+oE-oU<0?'−':'')+eur(Math.abs(v+oE-oU))}</b>`;
+     $('saldoPrev').hidden=!op.length;$('saldoPrev').classList.add('hbox');if(op.length)$('saldoPrev').innerHTML=`<small>Dopo i pagamenti a 30 giorni</small><b class="pv">${(v+oE-oU<0?'−':'')+eur(Math.abs(v+oE-oU))}</b>`;
      $('cUpd').onclick=e=>{e.stopPropagation();contoSheet()};$('saldoConto').onclick=null}
-   else{$('saldoConto').hidden=!home||has;if(home&&!has){$('saldoConto').innerHTML='<u>+ Inserisci il saldo del conto</u>';$('saldoConto').onclick=contoSheet}
+   else{$('saldoConto').classList.remove('hbox');$('saldoPrev').classList.remove('hbox');$('saldoConto').hidden=!home||has;if(home&&!has){$('saldoConto').innerHTML='<u>+ Inserisci il saldo del conto</u>';$('saldoConto').onclick=contoSheet}
      const pv=E-U+plE-plU,show=pl.length&&(home||view==='mov');$('saldoPrev').hidden=!show;
      if(show)$('saldoPrev').innerHTML=`Dopo i pagamenti in scadenza: <b class="pv">${(pv>=0?'+':'')+eur(pv)}</b>`}}
   // da pagare / da incassare
