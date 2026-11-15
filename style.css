@@ -334,19 +334,21 @@ a.project:hover h3::after { opacity: 1; transform: translate(.12em, -.27em); }
 
 /* Potrebbe interessarti anche (fondo articoli) */
 .related { margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--line); }
-.rel-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 14px; }
+.rel-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
 .rel-card { display: flex; flex-direction: column; border: 1px solid var(--card-line); border-radius: 14px; overflow: hidden; background: #fff; color: var(--navy); }
 .rel-card:hover { border-color: var(--blue); color: var(--navy); }
-.rel-img { display: block; aspect-ratio: 16 / 9; overflow: hidden; background: var(--line); }
+.rel-img { display: block; aspect-ratio: 2 / 1; overflow: hidden; background: var(--line); }
 .rel-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.rel-txt { display: flex; flex-direction: column; gap: 6px; padding: 12px 14px 16px; }
+.rel-txt { display: flex; flex-direction: column; gap: 5px; padding: 10px 12px 12px; }
 .rel-txt small { font-family: var(--mono); font-size: 11px; color: var(--text-2); }
-.rel-txt strong { font-size: 16px; font-weight: 600; line-height: 1.3; }
+.rel-txt strong { font-size: 15px; font-weight: 600; line-height: 1.3; }
 .rel-all { display: inline-block; margin-top: 18px; font-weight: 600; }
 @media (max-width: 720px) {
   .rel-grid { grid-template-columns: 1fr; gap: 12px; }
   .rel-card { flex-direction: row; align-items: stretch; }
-  .rel-img { flex: 0 0 116px; aspect-ratio: auto; }
+  .rel-img { flex: 0 0 88px; aspect-ratio: auto; }
   .rel-txt { padding: 10px 12px; }
-  .rel-txt strong { font-size: 15px; }
+  .rel-txt strong { font-size: 14px; }
+  .rel-txt small { font-size: 10.5px; }
+  .rel-grid { gap: 8px; }
 }
