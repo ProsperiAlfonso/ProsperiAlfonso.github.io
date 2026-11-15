@@ -25,7 +25,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../style.css?v=20261115">
+<link rel="stylesheet" href="../style.css?v=20261115b">
 </head>
 <body>
 
@@ -54,7 +54,7 @@
 
 <main class="wrap section blog-list">
   <div class="filters" role="group" aria-label="Filtra per categoria">
-    <button class="filter active" data-cat="all">Tutti</button><button class="filter" data-cat="accessori">Accessori</button><button class="filter" data-cat="approfondimenti">Approfondimenti</button><button class="filter" data-cat="consigli">Consigli</button><button class="filter" data-cat="programmazione">Programmazione</button><button class="filter" data-cat="telefonia">Telefonia</button><button class="filter filter-outdated" data-cat="outdated">Superati (13)</button>
+    <button class="filter active" data-cat="all">Tutti <small></small></button><button class="filter" data-cat="approfondimenti"><i style="background:#1FA6C4"></i>Approfondimenti <small></small></button><button class="filter" data-cat="consigli"><i style="background:#E8960F"></i>Consigli <small></small></button><button class="filter" data-cat="programmazione"><i style="background:#E0559C"></i>Programmazione <small></small></button><button class="filter" data-cat="telefonia"><i style="background:#22A35A"></i>Telefonia <small></small></button><button class="filter" data-cat="accessori"><i style="background:#9B6FE8"></i>Accessori <small></small></button><button class="filter filter-outdated" data-cat="outdated">Superati <small></small></button>
   </div>
   <div class="note-grid" id="noteGrid">
 
@@ -478,6 +478,11 @@
 (function(){
   var buttons = document.querySelectorAll('.filter');
   var cards = document.querySelectorAll('.note-card');
+  buttons.forEach(function(b){
+    var k = b.dataset.cat, n = 0;
+    cards.forEach(function(c){ if (k === 'all' || c.dataset.cat === k || (k === 'outdated' && c.dataset.outdated === '1')) n++; });
+    var sm = b.querySelector('small'); if (sm) sm.textContent = n;
+  });
   buttons.forEach(function(b){
     b.addEventListener('click', function(){
       buttons.forEach(function(x){x.classList.remove('active');});

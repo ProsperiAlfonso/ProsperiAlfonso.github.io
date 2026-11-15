@@ -322,3 +322,12 @@ a.project:hover h3::after { opacity: 1; transform: translate(.12em, -.27em); }
   .more-notes > a:not(.btn-all) { border-bottom: 1px solid var(--line); padding: 14px 0; }
   .btn-all { justify-content: center; margin-top: 20px; width: 100%; }
 }
+
+/* Filtri categorie compatti (15/11) */
+.filters { gap: 8px; }
+.filter { font-size: 14px; padding: 7px 13px; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+.filter i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.filter small { font-size: 12px; font-weight: 500; color: #7A8BA6; }
+.filter.active small { color: #9FC4EA; }
+.filter-outdated { border-style: dashed; color: #8A5A12; }
+.filter-outdated.active small { color: #E9C89A; }
