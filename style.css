@@ -352,3 +352,11 @@ a.project:hover h3::after { opacity: 1; transform: translate(.12em, -.27em); }
   .rel-txt small { font-size: 10.5px; }
   .rel-grid { gap: 8px; }
 }
+
+/* Libro tra i progetti (17/11) */
+.shot-book { background: linear-gradient(135deg, #EAF1FA, #D7E4F4); display: flex; align-items: center; justify-content: center; padding: 22px 0; }
+.project-book .shot.shot-book { height: clamp(240px, 24vw, 320px); }
+.shot-book img { height: 100%; width: auto; border-radius: 4px 8px 8px 4px; box-shadow: 0 14px 30px rgba(11,42,85,.28), -3px 0 0 rgba(0,0,0,.08) inset; }
+.book-sub { font-weight: 500; color: var(--navy); margin-top: -4px; }
+.btn-amazon { align-self: flex-start; margin-top: 6px; }
+.project-book .project-body { display: flex; flex-direction: column; gap: 12px; }
