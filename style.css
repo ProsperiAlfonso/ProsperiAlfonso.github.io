@@ -362,3 +362,5 @@ a.project:hover h3::after { opacity: 1; transform: translate(.12em, -.27em); }
 .project-book .project-body { display: flex; flex-direction: column; gap: 12px; }
 .shot-book img { transition: transform .25s ease; }
 a.shot-book:hover img { transform: translateY(-4px) scale(1.02); }
+.project-head h3 a { color: inherit; }
+.project-head h3 a:hover { color: var(--blue); }
