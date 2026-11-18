@@ -46,13 +46,9 @@
 .eb-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:4px}
 .eb-cta .btn,.article-body .eb-cta a.btn{text-decoration:none;color:#fff;border:0}
 .eb-cta .btn.btn-off,.btn-off{background:#DCE3EC;color:#4A5D7A;cursor:not-allowed}
-.eb-more{border-top:1px solid var(--line);margin-top:6px;padding-top:4px}
-.eb-more summary{cursor:pointer;font-weight:600;color:var(--blue);padding:10px 0;list-style:none;display:flex;align-items:center;gap:8px}
-.eb-more summary::-webkit-details-marker{display:none}
-.eb-more summary::after{content:"+";font-family:var(--mono);font-size:18px;line-height:1}
-.eb-more[open] summary::after{content:"−"}
+.eb-more{border-top:1px solid var(--line);margin-top:16px;padding-top:12px}
 .eb-more h4{font-family:var(--display);font-weight:600;font-size:20px;color:var(--navy);margin:14px 0 8px}
-.eb-chapters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px;padding:0;margin:0;list-style:none;counter-reset:cap}
+.article-body ol.eb-chapters,.eb-chapters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px;padding:0;margin:0;list-style:none;counter-reset:cap}
 .eb-chapters li{counter-increment:cap;display:flex;gap:10px;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--line);font-size:16px}
 .eb-chapters li::before{content:counter(cap,decimal-leading-zero);font-family:var(--mono);font-size:12px;color:var(--blue)}
 .eb-more ul{margin:0;padding-left:20px}
@@ -63,7 +59,9 @@
 @media(max-width:640px){
   .eb-card{grid-template-columns:1fr;gap:18px;padding:20px}
   .eb-cover{width:150px}
-  .eb-chapters{grid-template-columns:1fr}
+  .article-body ol.eb-chapters{gap:0 14px}
+  .article-body ol.eb-chapters li{font-size:13.5px;padding:5px 0;line-height:1.25;gap:7px}
+  .eb-chapters li::before{font-size:10.5px}
 }
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BookSeries", "@id": "https://prosperialfonso.com/ebook/#collana", "name": "L'IA in tasca", "description": "Collana di eBook per usare l'intelligenza artificiale nella vita di tutti i giorni, in tre volumi dal principiante all'esperto.", "url": "https://prosperialfonso.com/ebook/", "inLanguage": "it", "image": "https://prosperialfonso.com/assets/ebook/og-collana.jpg", "author": {"@type": "Person", "@id": "https://prosperialfonso.com/#alfonso", "name": "Alfonso Prosperi", "url": "https://prosperialfonso.com/"}, "hasPart": [{"@id": "https://prosperialfonso.com/#libro"}]}, {"@type": "Book", "@id": "https://prosperialfonso.com/#libro", "name": "L'IA che ti risolve la giornata", "alternativeHeadline": "Oltre 100 prompt pronti per la vita di tutti i giorni in Italia", "position": 1, "isPartOf": {"@id": "https://prosperialfonso.com/ebook/#collana"}, "author": {"@id": "https://prosperialfonso.com/#alfonso"}, "bookFormat": "https://schema.org/EBook", "inLanguage": "it", "datePublished": "2026-11-17", "image": "https://prosperialfonso.com/assets/ebook/copertina-1.jpg", "url": "https://prosperialfonso.com/ebook/", "sameAs": "https://www.amazon.it/dp/B0HRXCWRG5", "offers": {"@type": "Offer", "price": "4.99", "priceCurrency": "EUR", "url": "https://www.amazon.it/dp/B0HRXCWRG5", "availability": "https://schema.org/InStock"}}]}</script>
@@ -112,8 +110,7 @@
               <a class="btn btn-blue" href="https://www.amazon.it/dp/B0HRXCWRG5" target="_blank" rel="noopener">Disponibile su Amazon <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
               <span class="eb-meta">eBook Kindle · italiano · 4,99 €</span>
             </div>
-            <details class="eb-more">
-              <summary>Di cosa parla e i capitoli</summary>
+            <div class="eb-more">
               <p>Ogni capitolo si apre con un episodio che mi è capitato davvero, e poi propone circa dieci prompt pronti.</p>
               <h4>Gli 11 capitoli</h4>
               <ol class="eb-chapters">
@@ -138,7 +135,7 @@
                 <li>un glossario con le parole che si incontrano più spesso.</li>
               </ul>
               <p class="eb-box"><strong>La regola di fondo:</strong> l'IA aiuta, ma le informazioni e le nozioni importanti vanno sempre ricontrollate, corrette e confermate.</p>
-            </details>
+            </div>
           </div>
         </section>
 
