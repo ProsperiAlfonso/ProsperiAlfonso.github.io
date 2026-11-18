@@ -4,20 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="max-image-preview:large">
-<title>L'IA che ti risolve la giornata · eBook di Alfonso Prosperi</title>
-<meta name="description" content="Guida pratica per usare ChatGPT, Gemini e Claude nella vita di tutti i giorni: oltre 100 prompt pronti in 11 capitoli, pensata per chi non è esperto.">
-<meta property="og:title" content="L'IA che ti risolve la giornata · eBook Kindle">
-<meta property="og:description" content="Oltre 100 prompt pronti per la vita di tutti i giorni in Italia: casa, burocrazia, scuola, soldi, salute, truffe online. Per chi non è esperto.">
-<meta property="og:type" content="book">
+<title>L'IA in tasca · la collana di eBook di Alfonso Prosperi</title>
+<meta name="description" content="L'IA in tasca: la collana di eBook per usare l'intelligenza artificiale nella vita di tutti i giorni, in tre volumi indipendenti. Il primo è su Amazon.">
+<meta property="og:title" content="L'IA in tasca · la collana di eBook di Alfonso Prosperi">
+<meta property="og:description" content="La collana di eBook per usare l'intelligenza artificiale nella vita di tutti i giorni, in tre volumi indipendenti: ognuno sceglie quello che gli serve.">
+<meta property="og:type" content="website">
 <meta property="og:locale" content="it_IT">
 <meta property="og:url" content="https://prosperialfonso.com/ebook/">
-<meta property="og:image" content="https://prosperialfonso.com/assets/ebook/og-ebook.jpg?v=1">
+<meta property="og:image" content="https://prosperialfonso.com/assets/ebook/og-collana.jpg?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="627">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="L'IA che ti risolve la giornata · eBook Kindle">
-<meta name="twitter:description" content="Oltre 100 prompt pronti per la vita di tutti i giorni in Italia, per chi non è esperto.">
-<meta name="twitter:image" content="https://prosperialfonso.com/assets/ebook/og-ebook.jpg?v=1">
+<meta name="twitter:title" content="L'IA in tasca · la collana di eBook di Alfonso Prosperi">
+<meta name="twitter:description" content="La collana di eBook per usare l'intelligenza artificiale nella vita di tutti i giorni, in tre volumi indipendenti.">
+<meta name="twitter:image" content="https://prosperialfonso.com/assets/ebook/og-collana.jpg?v=2">
 <link rel="canonical" href="https://prosperialfonso.com/ebook/">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon-96.png" type="image/png" sizes="96x96">
@@ -25,20 +25,48 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preload" href="/assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/barlow-condensed-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../style.css?v=20261117c">
+<link rel="stylesheet" href="../style.css?v=20261118b">
 <style>
-.eb-banner{width:100%;height:auto;border-radius:20px;display:block;box-shadow:0 14px 34px rgba(11,42,85,.18)}
-.eb-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-.eb-cta .btn,.article-body .eb-cta .btn{text-decoration:none;color:#fff;border:0}
+.eb-list{display:flex;flex-direction:column;gap:20px;margin-top:8px}
+.eb-card{display:grid;grid-template-columns:190px minmax(0,1fr);gap:26px;align-items:start;background:#fff;border:1px solid var(--card-line);border-radius:20px;padding:24px}
+.eb-cover{display:block;border-radius:6px;overflow:hidden;box-shadow:0 12px 26px rgba(11,42,85,.24)}
+.eb-cover img{display:block;width:100%;height:auto}
+.eb-card.is-soon .eb-cover{opacity:.92}
+.eb-info{display:flex;flex-direction:column;gap:10px;min-width:0}
+.eb-top{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.eb-num{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+.eb-badge{font-family:var(--mono);font-size:12px;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.eb-ok{background:#DDF3E6;color:#14683D}
+.eb-soon{background:#FDEFC8;color:#7A5200}
+.eb-wip{background:#E3E9F2;color:#42587A}
+.article-body .eb-card h2{font-family:var(--display);font-weight:600;font-size:28px;line-height:1.1;color:var(--navy);margin:0}
+.eb-sub{font-weight:500;color:var(--navy);margin:0}
+.eb-info p{margin:0}
 .eb-meta{font-family:var(--mono);font-size:13px;color:var(--muted)}
-.eb-chapters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 24px;padding:0;list-style:none;counter-reset:cap}
-.eb-chapters li{counter-increment:cap;display:flex;gap:12px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line)}
-.eb-chapters li::before{content:counter(cap,decimal-leading-zero);font-family:var(--mono);font-size:13px;color:var(--blue)}
-.eb-box{border:1px solid var(--card-line);border-left:4px solid #F5C93A;border-radius:16px;padding:20px 22px;background:#fff}
-.eb-box p{margin:0}
-@media(max-width:700px){.eb-chapters{grid-template-columns:1fr}}
+.eb-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:4px}
+.eb-cta .btn,.article-body .eb-cta a.btn{text-decoration:none;color:#fff;border:0}
+.eb-cta .btn.btn-off,.btn-off{background:#DCE3EC;color:#4A5D7A;cursor:not-allowed}
+.eb-more{border-top:1px solid var(--line);margin-top:6px;padding-top:4px}
+.eb-more summary{cursor:pointer;font-weight:600;color:var(--blue);padding:10px 0;list-style:none;display:flex;align-items:center;gap:8px}
+.eb-more summary::-webkit-details-marker{display:none}
+.eb-more summary::after{content:"+";font-family:var(--mono);font-size:18px;line-height:1}
+.eb-more[open] summary::after{content:"−"}
+.eb-more h4{font-family:var(--display);font-weight:600;font-size:20px;color:var(--navy);margin:14px 0 8px}
+.eb-chapters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px;padding:0;margin:0;list-style:none;counter-reset:cap}
+.eb-chapters li{counter-increment:cap;display:flex;gap:10px;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--line);font-size:16px}
+.eb-chapters li::before{content:counter(cap,decimal-leading-zero);font-family:var(--mono);font-size:12px;color:var(--blue)}
+.eb-more ul{margin:0;padding-left:20px}
+.eb-parts,.article-body .eb-parts{display:flex;flex-wrap:wrap;gap:8px;padding:0;margin:0;list-style:none}
+.article-body .eb-parts li{margin:0;font-size:14px;border:1px solid var(--card-line);border-radius:999px;padding:5px 12px;background:var(--bg)}
+.eb-parts b{font-family:var(--mono);font-weight:500;font-size:12px;color:var(--blue);margin-right:6px}
+.eb-box{border-left:4px solid #F5C93A;border-radius:0 12px 12px 0;padding:12px 16px;background:var(--bg);margin-top:14px}
+@media(max-width:640px){
+  .eb-card{grid-template-columns:1fr;gap:18px;padding:20px}
+  .eb-cover{width:150px}
+  .eb-chapters{grid-template-columns:1fr}
+}
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Book","@id":"https://prosperialfonso.com/#libro","name":"L'IA che ti risolve la giornata","alternativeHeadline":"Oltre 100 prompt pronti per la vita di tutti i giorni in Italia","author":{"@type":"Person","@id":"https://prosperialfonso.com/#alfonso","name":"Alfonso Prosperi","url":"https://prosperialfonso.com/"},"bookFormat":"https://schema.org/EBook","inLanguage":"it","numberOfPages":93,"datePublished":"2026-11-17","image":"https://prosperialfonso.com/assets/foto/libro-copertina.jpg","url":"https://prosperialfonso.com/ebook/","sameAs":"https://www.amazon.it/dp/B0HRXCWRG5","offers":{"@type":"Offer","price":"4.99","priceCurrency":"EUR","url":"https://www.amazon.it/dp/B0HRXCWRG5","availability":"https://schema.org/InStock"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BookSeries", "@id": "https://prosperialfonso.com/ebook/#collana", "name": "L'IA in tasca", "description": "Collana di eBook per usare l'intelligenza artificiale nella vita di tutti i giorni, in tre volumi indipendenti.", "url": "https://prosperialfonso.com/ebook/", "inLanguage": "it", "image": "https://prosperialfonso.com/assets/ebook/og-collana.jpg", "author": {"@type": "Person", "@id": "https://prosperialfonso.com/#alfonso", "name": "Alfonso Prosperi", "url": "https://prosperialfonso.com/"}, "hasPart": [{"@id": "https://prosperialfonso.com/#libro"}]}, {"@type": "Book", "@id": "https://prosperialfonso.com/#libro", "name": "L'IA che ti risolve la giornata", "alternativeHeadline": "Oltre 100 prompt pronti per la vita di tutti i giorni in Italia", "position": 1, "isPartOf": {"@id": "https://prosperialfonso.com/ebook/#collana"}, "author": {"@id": "https://prosperialfonso.com/#alfonso"}, "bookFormat": "https://schema.org/EBook", "inLanguage": "it", "datePublished": "2026-11-17", "image": "https://prosperialfonso.com/assets/ebook/copertina-1.jpg", "url": "https://prosperialfonso.com/ebook/", "sameAs": "https://www.amazon.it/dp/B0HRXCWRG5", "offers": {"@type": "Offer", "price": "4.99", "priceCurrency": "EUR", "url": "https://www.amazon.it/dp/B0HRXCWRG5", "availability": "https://schema.org/InStock"}}]}</script>
 </head>
 <body>
 
@@ -64,54 +92,88 @@
   <a class="back-link" href="../#progetti">&larr; Torna ai progetti</a>
   <article class="article">
     <header class="article-head">
-      <p class="label">Progetti · eBook Kindle</p>
-      <h1>L'IA che ti risolve la giornata</h1>
-      <p class="intro">Oltre 100 prompt pronti per la vita di tutti i giorni in Italia.</p>
-      <div class="eb-cta">
-        <a class="btn btn-blue" href="https://www.amazon.it/dp/B0HRXCWRG5" target="_blank" rel="noopener">Disponibile su Amazon
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-        <span class="eb-meta">eBook Kindle · 93 pagine · italiano · 4,99 €</span>
-      </div>
+      <p class="label">Progetti · Collana di eBook Kindle</p>
+      <h1>L'IA in tasca</h1>
+      <p class="intro">Tre eBook per usare l'intelligenza artificiale nella vita di tutti i giorni. Si leggono anche separatamente: ognuno sceglie quello che gli serve.</p>
     </header>
     <div class="article-body">
-      <a href="https://www.amazon.it/dp/B0HRXCWRG5" target="_blank" rel="noopener"><img class="eb-banner" src="../assets/ebook/banner-ebook.jpg?v=1" alt="Copertina dell'eBook L'IA che ti risolve la giornata di Alfonso Prosperi, eBook Kindle in italiano" width="1600" height="836"></a>
+      <p>Il primo parte da zero, con i prompt già pronti da copiare. Il secondo insegna a ragionare con l'IA e a darle i tuoi documenti. Il terzo, in lavorazione, è dedicato ad assistenti e automazioni senza programmare.</p>
 
-      <h3>Di cosa parla</h3>
-      <p>Una guida pratica per usare ChatGPT, Gemini e Claude nella vita di tutti i giorni, pensata per chi non è esperto. Niente teoria: per ogni situazione trovi il prompt già scritto, da copiare e adattare.</p>
-      <p>Ogni capitolo si apre con un episodio che mi è capitato davvero, e poi propone circa dieci prompt pronti.</p>
+      <div class="eb-list">
 
-      <h3>Gli 11 capitoli</h3>
-      <ol class="eb-chapters">
-        <li>Casa e bollette</li>
-        <li>Burocrazia</li>
-        <li>Scuola e figli</li>
-        <li>Lavoro, con le regole sulla privacy</li>
-        <li>Soldi di famiglia</li>
-        <li>Salute e prenotazioni</li>
-        <li>Cucina e spesa</li>
-        <li>Tempo libero e viaggi</li>
-        <li>Auto</li>
-        <li>Tecnologia di casa</li>
-        <li>Truffe online</li>
-      </ol>
+        <section class="eb-card" id="ebook-1">
+          <a class="eb-cover" href="https://www.amazon.it/dp/B0HRXCWRG5" target="_blank" rel="noopener" aria-label="L'IA che ti risolve la giornata su Amazon"><img src="../assets/ebook/copertina-1.jpg?v=1" alt="Copertina dell'eBook L'IA che ti risolve la giornata, L'IA in tasca 1" width="600" height="957"></a>
+          <div class="eb-info">
+            <div class="eb-top"><span class="eb-num">L'IA in tasca · 1</span><span class="eb-badge eb-ok">Disponibile</span></div>
+            <h2>L'IA che ti risolve la giornata</h2>
+            <p class="eb-sub">Oltre 100 prompt pronti per la vita di tutti i giorni in Italia</p>
+            <p>Una guida pratica per usare ChatGPT, Gemini e Claude, pensata per chi non è esperto. Niente teoria: per ogni situazione trovi il prompt già scritto, da copiare e adattare.</p>
+            <div class="eb-cta">
+              <a class="btn btn-blue" href="https://www.amazon.it/dp/B0HRXCWRG5" target="_blank" rel="noopener">Disponibile su Amazon <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+              <span class="eb-meta">eBook Kindle · italiano · 4,99 €</span>
+            </div>
+            <details class="eb-more">
+              <summary>Di cosa parla e i capitoli</summary>
+              <p>Ogni capitolo si apre con un episodio che mi è capitato davvero, e poi propone circa dieci prompt pronti. L'edizione aggiornata presenta anche la collana.</p>
+              <h4>Gli 11 capitoli</h4>
+              <ol class="eb-chapters">
+                <li>Casa e bollette</li>
+                <li>Burocrazia</li>
+                <li>Scuola e figli</li>
+                <li>Lavoro, con le regole sulla privacy</li>
+                <li>Soldi di famiglia</li>
+                <li>Salute e prenotazioni</li>
+                <li>Cucina e spesa</li>
+                <li>Tempo libero e viaggi</li>
+                <li>Auto</li>
+                <li>Tecnologia di casa</li>
+                <li>Truffe online</li>
+              </ol>
+              <h4>In più</h4>
+              <ul>
+                <li>una guida per i primi 5 minuti, se non hai mai usato un'intelligenza artificiale;</li>
+                <li>un esempio completo di conversazione, dall'inizio alla fine;</li>
+                <li>un modello di prompt da riusare per qualsiasi richiesta;</li>
+                <li>i 10 errori più comuni e come evitarli;</li>
+                <li>un glossario con le parole che si incontrano più spesso.</li>
+              </ul>
+              <p class="eb-box"><strong>La regola di fondo:</strong> l'IA aiuta, ma le informazioni importanti si controllano sempre.</p>
+            </details>
+          </div>
+        </section>
 
-      <h3>In più</h3>
-      <ul>
-        <li>una guida per i primi 5 minuti, se non hai mai usato un'intelligenza artificiale;</li>
-        <li>un esempio completo di conversazione, dall'inizio alla fine;</li>
-        <li>un modello di prompt da riusare per qualsiasi richiesta;</li>
-        <li>i 10 errori più comuni e come evitarli;</li>
-        <li>un glossario con le parole che si incontrano più spesso.</li>
-      </ul>
+        <section class="eb-card is-soon" id="ebook-2">
+          <div class="eb-cover"><img src="../assets/ebook/copertina-2.jpg?v=1" alt="Copertina dell'eBook L'IA che ragiona con te, L'IA in tasca 2" width="600" height="957" loading="lazy"></div>
+          <div class="eb-info">
+            <div class="eb-top"><span class="eb-num">L'IA in tasca · 2</span><span class="eb-badge eb-soon">In arrivo</span></div>
+            <h2>L'IA che ragiona con te</h2>
+            <p class="eb-sub">Impara a chiedere, a usare i documenti e a controllare</p>
+            <p>Come costruire un prompt, il botta e risposta, scrivere con l'IA, darle foto e documenti e cosa non darle mai per privacy. Poi farsi fare le domande, controllare le risposte, le istruzioni personalizzate e i progetti, con cinque casi completi dall'inizio alla fine.</p>
+            <ul class="eb-parts" aria-label="12 capitoli in tre parti">
+              <li><b>1</b>Smettere di copiare</li>
+              <li><b>2</b>Darle il materiale</li>
+              <li><b>3</b>Farla lavorare sul serio</li>
+            </ul>
+            <p class="eb-meta">12 capitoli in tre parti · si legge anche senza aver letto il primo</p>
+            <div class="eb-cta"><span class="btn btn-off" aria-disabled="true">Presto su Amazon</span></div>
+          </div>
+        </section>
 
-      <div class="eb-box"><p><strong>La regola di fondo:</strong> l'IA aiuta, ma le informazioni importanti si controllano sempre.</p></div>
+        <section class="eb-card is-soon" id="ebook-3">
+          <div class="eb-cover"><img src="../assets/ebook/copertina-3.jpg?v=1" alt="Copertina dell'eBook L'IA che lavora per te, L'IA in tasca 3" width="600" height="957" loading="lazy"></div>
+          <div class="eb-info">
+            <div class="eb-top"><span class="eb-num">L'IA in tasca · 3</span><span class="eb-badge eb-wip">In lavorazione</span></div>
+            <h2>L'IA che lavora per te</h2>
+            <p class="eb-sub">Assistenti, automazioni e strumenti senza programmare</p>
+            <p>Per chi vuole fare un passo in più: assistenti su misura e piccole automazioni che tolgono di mezzo i lavori ripetitivi, senza scrivere codice.</p>
+          </div>
+        </section>
 
-      <h3>Come è nato</h3>
-      <p>L'ho scritto con l'aiuto dell'intelligenza artificiale e l'ho rivisto pagina per pagina: lo stesso metodo che racconto nell'eBook, usato per davvero. È autopubblicato con Amazon KDP ed è uscito il 17 novembre 2026.</p>
+      </div>
+
+      <h3>Come è nata la collana</h3>
+      <p>Gli eBook li scrivo con l'aiuto dell'intelligenza artificiale e li rivedo pagina per pagina: lo stesso metodo che racconto al loro interno, usato per davvero. Sono autopubblicati con Amazon KDP. Il primo è uscito il 17 novembre 2026.</p>
       <p>Se hai domande o vuoi dirmi cosa ne pensi, <a href="../#contatti">scrivimi</a>: mi fa piacere.</p>
-
-      <div class="eb-cta"><a class="btn btn-blue" href="https://www.amazon.it/dp/B0HRXCWRG5" target="_blank" rel="noopener">Disponibile su Amazon
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></div>
     </div>
   </article>
 </main>
