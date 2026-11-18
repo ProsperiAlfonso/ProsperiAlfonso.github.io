@@ -364,3 +364,9 @@ a.project:hover h3::after { opacity: 1; transform: translate(.12em, -.27em); }
 a.shot-book:hover img { transform: translateY(-4px) scale(1.02); }
 .project-head h3 a { color: inherit; }
 .project-head h3 a:hover { color: var(--blue); }
+
+/* Collana L'IA in tasca: tre copertine nella scheda (18/11) */
+.shot-trio { flex-direction: row; gap: clamp(8px, 1.6vw, 16px); padding: 22px 14px; }
+.shot-trio img { flex: 0 1 29%; width: 29%; min-width: 0; height: auto; max-height: 100%; object-fit: contain; }
+a.shot-trio:hover img { transform: translateY(-3px); }
+@media (max-width: 860px) { .project-book .shot.shot-trio { height: auto; padding: 24px 14px; } }
