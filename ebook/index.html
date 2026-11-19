@@ -60,6 +60,10 @@
 .article-body .eb-parts li{margin:0;font-size:14px;border:1px solid var(--card-line);border-radius:999px;padding:5px 12px;background:var(--bg)}
 .eb-parts b{font-family:var(--mono);font-weight:500;font-size:12px;color:var(--blue);margin-right:6px}
 .eb-box{border-left:4px solid #F5C93A;border-radius:0 12px 12px 0;padding:12px 16px;background:var(--bg);margin-top:14px}
+.eb-part{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:14px 0 2px!important}
+.eb-more.fold{max-height:300px;overflow:hidden;-webkit-mask-image:linear-gradient(#000 55%,transparent);mask-image:linear-gradient(#000 55%,transparent)}
+.eb-toggle{align-self:flex-start;margin-top:4px;background:none;border:1px solid var(--card-line);border-radius:999px;padding:9px 18px;font:inherit;font-weight:600;color:var(--blue);cursor:pointer}
+.eb-toggle:hover{background:var(--bg)}
 @media(max-width:640px){
   .eb-card{grid-template-columns:1fr;gap:18px;padding:20px}
   .eb-cover{width:150px}
@@ -152,15 +156,45 @@
             <h2>L'IA che ragiona con te</h2>
             <p class="eb-sub">Impara a chiedere, a usare i documenti e a controllare</p>
             <p>Come costruire un prompt, il botta e risposta, scrivere con l'IA, darle foto e documenti e cosa non darle mai per privacy. Poi farsi fare le domande, controllare le risposte, le istruzioni personalizzate e i progetti, con cinque casi completi dall'inizio alla fine.</p>
-            <ul class="eb-parts" aria-label="12 capitoli in tre parti">
-              <li><b>1</b>Smettere di copiare</li>
-              <li><b>2</b>Darle il materiale</li>
-              <li><b>3</b>Farla lavorare sul serio</li>
-            </ul>
             <p class="eb-meta">12 capitoli in tre parti · si legge anche senza aver letto il primo</p>
             <div class="eb-cta">
               <a class="btn btn-blue" href="https://www.amazon.it/dp/B0HL4ZW87S" target="_blank" rel="noopener">Disponibile su Amazon <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
               <span class="eb-meta">eBook Kindle · italiano · 4,99 €</span>
+            </div>
+            <div class="eb-more">
+              <p>Ogni capitolo spiega un metodo con parole semplici e lo mostra su esempi concreti: lo stesso prompt prima e dopo, gli errori più comuni e una lista di controllo da tenere a mente.</p>
+              <h4>I 12 capitoli</h4>
+              <p class="eb-part">Parte 1 · Smettere di copiare</p>
+              <ol class="eb-chapters">
+                <li>Da dove partiamo</li>
+                <li>Come si costruisce un prompt</li>
+                <li>Il botta e risposta</li>
+                <li>Scrivere con l'IA</li>
+              </ol>
+              <p class="eb-part">Parte 2 · Darle il materiale</p>
+              <ol class="eb-chapters" style="counter-reset:cap 4">
+                <li>Foto e documenti</li>
+                <li>Cosa non dare all'IA</li>
+                <li>Farsi fare le domande</li>
+                <li>Fidarsi ma controllare</li>
+              </ol>
+              <p class="eb-part">Parte 3 · Farla lavorare sul serio</p>
+              <ol class="eb-chapters" style="counter-reset:cap 8">
+                <li>Le istruzioni personalizzate</li>
+                <li>I progetti</li>
+                <li>Cinque casi completi dall'inizio alla fine</li>
+                <li>Per finire</li>
+              </ol>
+              <h4>In più</h4>
+              <ul>
+                <li>cinque casi completi seguiti dall'inizio alla fine: il 730, un viaggio, il confronto tra preventivi, una mail a un fornitore estero, un trasloco;</li>
+                <li>un capitolo sulla privacy: cosa non dare mai all'IA;</li>
+                <li>istruzioni personalizzate pronte da copiare;</li>
+                <li>le frasi utili, capitolo per capitolo;</li>
+                <li>una settimana di pratica, un esercizio al giorno;</li>
+                <li>domande frequenti e un glossario.</li>
+              </ul>
+              <p class="eb-box"><strong>La regola di fondo:</strong> l'IA aiuta, ma le informazioni e le nozioni importanti vanno sempre ricontrollate, corrette e confermate.</p>
             </div>
           </div>
         </section>
@@ -193,6 +227,14 @@
   <a class="footer-home" href="/">prosperialfonso.com</a>
 </footer>
 
+<script>
+document.querySelectorAll('.eb-more').forEach(function(m){
+  m.classList.add('fold');
+  var b=document.createElement('button');b.type='button';b.className='eb-toggle';b.textContent='Leggi tutto';b.setAttribute('aria-expanded','false');
+  b.addEventListener('click',function(){var o=m.classList.toggle('fold');b.textContent=o?'Leggi tutto':'Mostra meno';b.setAttribute('aria-expanded',o?'false':'true');if(o)m.closest('.eb-card').scrollIntoView({behavior:'smooth',block:'start'});});
+  m.after(b);
+});
+</script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f60ffb502b034f91a7bcbfd4a35d2593"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
