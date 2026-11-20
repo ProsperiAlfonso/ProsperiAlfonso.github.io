@@ -1,6 +1,6 @@
 /* Ingrandimento immagini degli articoli: tocco per aprire, due dita o doppio tocco per zoomare */
 (function () {
-  var imgs = document.querySelectorAll('.article-body img');
+  var imgs = document.querySelectorAll('.article-body img, .eb-hero img');
   if (!imgs.length) return;
 
   var css = document.createElement('style');
