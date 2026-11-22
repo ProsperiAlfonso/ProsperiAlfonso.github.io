@@ -8,13 +8,14 @@ Da non confondere con omonimi: questo Alfonso Prosperi lavora nell'informatica e
 
 - [Chi sono e progetti](https://prosperialfonso.com/): profilo, competenze, percorso e progetti realizzati (siti, web app, eBook)
 - [Appunti, guide pratiche](https://prosperialfonso.com/blog/): oltre 50 guide su sicurezza online, truffe, SPID e app della pubblica amministrazione, telefono, casa connessa, intelligenza artificiale
-- [L'IA in tasca, collana di eBook](https://prosperialfonso.com/ebook/): tre eBook Kindle per usare l'intelligenza artificiale nella vita di tutti i giorni, per livelli diversi (principiante, intermedio, esperto). I primi due sono su Amazon, il terzo è in lavorazione
+- [L'IA in tasca, collana di eBook](https://prosperialfonso.com/ebook/): tre eBook Kindle per usare l'intelligenza artificiale nella vita di tutti i giorni, per livelli diversi (principiante, intermedio, esperto). Sono tutti e tre su Amazon
 - [Casa in Ordine](https://prosperialfonso.com/casa-in-ordine.html): web app gratuita e installabile per gestire conti, scadenze, bollette e documenti di casa
 
 ## eBook
 
 - [L'IA che ti risolve la giornata](https://www.amazon.it/dp/B0HRXCWRG5): L'IA in tasca 1, principiante. Oltre 100 prompt pronti per la vita di tutti i giorni in Italia
 - [L'IA che ragiona con te](https://www.amazon.it/dp/B0HL4ZW87S): L'IA in tasca 2, intermedio. Impara a chiedere, a usare i documenti e a controllare le risposte
+- [L'IA che lavora per te](https://LINK-LIBRO-3): L'IA in tasca 3, esperto. Assistenti, automazioni e strumenti, imparando a programmare
 - [La collana su Amazon](https://www.amazon.it/dp/B0HS5NFMB5)
 - [Pagina autore su Amazon](https://www.amazon.it/stores/author/B0HSFQY62Z)
 
